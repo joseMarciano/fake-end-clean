@@ -5,12 +5,14 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "husky install",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test:unit": "npm test -- --silent --coverage=false --watch -c='./jest-unit.config.js'",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "27.4.0",
     "@typescript-eslint/eslint-plugin": "4.33.0",
     "eslint": "7.32.0",
     "eslint-config-standard-with-typescript": "21.0.1",
@@ -19,7 +21,9 @@
     "eslint-plugin-promise": "5.2.0",
     "git-commit-msg-linter": "4.0.7",
     "husky": "7.0.4",
+    "jest": "27.4.7",
     "lint-staged": "12.2.2",
+    "ts-jest": "27.1.3",
     "typescript": "4.5.5"
   }
 }
