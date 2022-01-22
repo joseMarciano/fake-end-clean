@@ -1,0 +1,2 @@
+
+"*.ts": "npx eslint 'src/**' --fix"

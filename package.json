@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install .config/.husky"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +17,9 @@
     "eslint-plugin-import": "2.25.4",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-promise": "5.2.0",
+    "git-commit-msg-linter": "4.0.7",
+    "husky": "7.0.4",
+    "lint-staged": "12.2.2",
     "typescript": "4.5.5"
   }
 }
