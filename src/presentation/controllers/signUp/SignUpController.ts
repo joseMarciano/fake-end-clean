@@ -12,12 +12,11 @@ export class SignUpController implements Controller {
     try {
       const { body } = httpRequest
 
-      if (!body?.name) {
-        return badRequest(new MissingParamError('name'))
-      }
-      if (!body?.email) {
-        return badRequest(new MissingParamError('email'))
-      }
+      if (!body?.name) { return badRequest(new MissingParamError('name')) }
+
+      if (!body?.email) { return badRequest(new MissingParamError('email')) }
+
+      if (!body?.password) { return badRequest(new MissingParamError('password')) }
 
       const user = await this.addUser.add({
         email: body.email,
