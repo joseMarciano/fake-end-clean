@@ -9,6 +9,9 @@ export class SignUpController implements Controller {
     if (!body?.name) {
       return badRequest(new MissingParamError('name'))
     }
+    if (!body?.email) {
+      return badRequest(new MissingParamError('email'))
+    }
 
     return await Promise.resolve({
       statusCode: 200,
