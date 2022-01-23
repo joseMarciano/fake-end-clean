@@ -1,6 +1,6 @@
 import { User } from '../../../domain/model/User'
 import { AddUser, UserModel } from '../../../domain/usecases/AddUser'
-import { badRequest, serverError } from '../../helper/httpHelper'
+import { badRequest, ok, serverError } from '../../helper/httpHelper'
 import { HttpRequest } from '../../protocols'
 import { MissingParamError } from '../errors/MissingParamError'
 import { SignUpController } from './SignUpController'
@@ -97,5 +97,17 @@ describe('SignUpController', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
 
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  test('Should return 200 if AddUser success', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+
+    expect(httpResponse).toEqual(ok({
+      id: 'any_id',
+      email: 'any_email@mail.com',
+      name: 'any_name',
+      password: 'any_password'
+    }))
   })
 })
