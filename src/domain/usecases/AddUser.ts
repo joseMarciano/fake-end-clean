@@ -1,12 +1,11 @@
 import { User } from '../model/User'
 
 export interface AddUser {
-  addUser: (user: UserModel) => Promise<User>
+  add: (user: UserModel) => Promise<User>
 }
 
-interface UserModel {
+export interface UserModel {
   email: string
   name: string
   password?: string
-  passwordConfirmation?: string
 }
