@@ -1,6 +1,6 @@
-import { AddUserRepository } from 'src/data/protocols/AddUserRepository'
-import { User } from 'src/domain/model/User'
-import { AddUser, UserModel } from 'src/domain/usecases/AddUser'
+import { AddUserRepository } from '../../../data/protocols/AddUserRepository'
+import { User } from '../../../domain/model/User'
+import { AddUser, UserModel } from '../../../domain/usecases/AddUser'
 
 export class DbAddUser implements AddUser {
   constructor (

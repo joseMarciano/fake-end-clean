@@ -1,4 +1,4 @@
-import { AddUser } from 'src/domain/usecases/AddUser'
+import { AddUser } from '../../../domain/usecases/AddUser'
 import { badRequest, ok, serverError } from '../../helper/httpHelper'
 import { Controller, HttpRequest, HttpResponse } from '../../protocols'
 import { MissingParamError } from '../errors/MissingParamError'
