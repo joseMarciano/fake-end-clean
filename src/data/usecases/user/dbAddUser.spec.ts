@@ -13,7 +13,8 @@ const makeFakeUser = (): User => ({
   id: 'any_id',
   email: 'any_email@mail.com',
   name: 'any_name',
-  password: 'any_password'
+  password: 'any_password',
+  isActive: true
 })
 
 const makeAddUserRepository = (): AddUserRepository => {

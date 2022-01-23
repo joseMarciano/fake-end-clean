@@ -22,7 +22,8 @@ const makeAddUser = (): AddUser => {
         id: 'any_id',
         email: 'any_email@mail.com',
         name: 'any_name',
-        password: 'any_password'
+        password: 'any_password',
+        isActive: true
       })
     }
   }
@@ -122,7 +123,8 @@ describe('SignUpController', () => {
       id: 'any_id',
       email: 'any_email@mail.com',
       name: 'any_name',
-      password: 'any_password'
+      password: 'any_password',
+      isActive: true
     }))
   })
 })
