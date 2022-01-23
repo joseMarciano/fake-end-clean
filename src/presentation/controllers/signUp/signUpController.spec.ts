@@ -1,6 +1,6 @@
 import { User } from '../../../domain/model/User'
 import { AddUser, UserModel } from '../../../domain/usecases/AddUser'
-import { badRequest } from '../../helper/httpHelper'
+import { badRequest, serverError } from '../../helper/httpHelper'
 import { HttpRequest } from '../../protocols'
 import { MissingParamError } from '../errors/MissingParamError'
 import { SignUpController } from './SignUpController'
@@ -87,5 +87,15 @@ describe('SignUpController', () => {
       email: 'any_email@mail.com',
       password: 'any_password'
     })
+  })
+
+  test('Should return 500 if AddUser throws', async () => {
+    const { sut, addUserStub } = makeSut()
+
+    jest.spyOn(addUserStub, 'add').mockRejectedValueOnce(new Error())
+
+    const httpResponse = await sut.handle(makeFakeRequest())
+
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
