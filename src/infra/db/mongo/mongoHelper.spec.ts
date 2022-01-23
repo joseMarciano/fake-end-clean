@@ -1,6 +1,6 @@
 import { MongoHelper } from './mongoHelper'
 
-const MONGO_URL = 'mongodb://localhost:27017/fake-end'
+const MONGO_URL = process.env.MONGO_URL as string
 
 describe('mongoHelper', () => {
   test('Should connect when connect is called', async () => {

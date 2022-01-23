@@ -8,5 +8,6 @@ module.exports = {
   coverageDirectory: 'coverage',
   transform: {
     '^.+\\.ts$': 'ts-jest'
-  }
+  },
+  preset: '@shelf/jest-mongodb'
 }
