@@ -1,4 +1,6 @@
-import { HttpRequest } from 'src/presentation/protocols'
+import { badRequest } from '../../helper/httpHelper'
+import { HttpRequest } from '../../protocols'
+import { MissingParamError } from '../errors/MissingParamError'
 import { SignUpController } from './SignUpController'
 
 interface SutTypes {
@@ -26,8 +28,6 @@ describe('SignUpController', () => {
 
     const httpResponse = await sut.handle(fakeHttpRequest)
 
-    expect(httpResponse).toEqual({
-      body: new Error()
-    })
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('email')))
   })
 })
