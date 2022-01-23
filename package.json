@@ -6,7 +6,8 @@
   "scripts": {
     "postinstall": "husky install",
     "test:unit": "npm test -- --silent --coverage=false --watch -c='./jest-unit.config.js'",
-    "test": "jest --silent"
+    "test": "jest --silent",
+    "test:verbose": "jest"
   },
   "keywords": [],
   "author": "",
