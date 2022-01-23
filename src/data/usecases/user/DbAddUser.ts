@@ -8,13 +8,6 @@ export class DbAddUser implements AddUser {
   ) {}
 
   async add (user: UserModel): Promise<User> {
-    await this.addUserRepository.add(user)
-
-    return await Promise.resolve({
-      email: 'any',
-      id: 'any',
-      name: 'any',
-      password: 'any'
-    })
+    return await this.addUserRepository.add(user)
   }
 }
