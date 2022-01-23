@@ -50,4 +50,13 @@ describe('DbAddUser usecase', () => {
 
     expect(addUserSpy).toHaveBeenCalledWith(makeFakeUserModel())
   })
+  test('Should throws if AddUserRepository throws', async () => {
+    const { sut, addUserRepositoryStub } = makeSut()
+
+    jest.spyOn(addUserRepositoryStub, 'add').mockRejectedValueOnce(new Error())
+
+    const promise = sut.add(makeFakeUserModel())
+
+    await expect(promise).rejects.toThrowError()
+  })
 })
