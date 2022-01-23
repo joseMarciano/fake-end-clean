@@ -59,4 +59,11 @@ describe('DbAddUser usecase', () => {
 
     await expect(promise).rejects.toThrowError()
   })
+  test('Should return User AddUserRepository success', async () => {
+    const { sut } = makeSut()
+
+    const user = await sut.add(makeFakeUserModel())
+
+    await expect(user).toEqual(makeFakeUser())
+  })
 })
