@@ -1,5 +1,5 @@
 import { AddUser } from 'src/domain/usecases/AddUser'
-import { badRequest, serverError } from '../../helper/httpHelper'
+import { badRequest, ok, serverError } from '../../helper/httpHelper'
 import { Controller, HttpRequest, HttpResponse } from '../../protocols'
 import { MissingParamError } from '../errors/MissingParamError'
 
@@ -19,16 +19,13 @@ export class SignUpController implements Controller {
         return badRequest(new MissingParamError('email'))
       }
 
-      await this.addUser.add({
+      const user = await this.addUser.add({
         email: body.email,
         name: body.name,
         password: body.password
       })
 
-      return await Promise.resolve({
-        statusCode: 200,
-        body: null
-      })
+      return ok(user)
     } catch (error) {
       return serverError(error)
     }
