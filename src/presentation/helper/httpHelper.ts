@@ -20,6 +20,14 @@ export const ok = (body: any): HttpResponse => {
     body
   }
 }
+export const redirect = (to: string): HttpResponse => {
+  return {
+    statusCode: 302,
+    body: {
+      to
+    }
+  }
+}
 
 function getDefaultErrorStructure (error: Error): any {
   return {
