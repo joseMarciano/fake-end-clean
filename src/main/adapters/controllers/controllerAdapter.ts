@@ -10,6 +10,8 @@ export const controllerAdapter = (controller: Controller): RequestHandler => {
 
     const httpResponse = await controller.handle(httpRequest)
 
+    if (httpResponse.statusCode === 302) return res.redirect(httpResponse.body.to)
+
     return res.status(httpResponse.statusCode).send(httpResponse.body)
   }
 }
