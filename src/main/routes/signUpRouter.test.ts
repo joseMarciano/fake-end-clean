@@ -24,7 +24,8 @@ describe('signUpRouter', () => {
         .send({
           email: 'marcianojosepaulo@email.com',
           name: 'marcianojosepaulo',
-          password: '123'
+          password: '123',
+          passwordConfirmation: '123'
         })
 
       expect(response.status).toBe(200)
