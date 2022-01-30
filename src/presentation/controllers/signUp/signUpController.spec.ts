@@ -1,7 +1,7 @@
 import { Validator } from '../../../presentation/protocols'
 import { User } from '../../../domain/model/User'
 import { AddUser, UserModel } from '../../../domain/usecases/AddUser'
-import { ok, serverError } from '../../helper/httpHelper'
+import { badRequest, ok, serverError } from '../../helper/httpHelper'
 import { HttpRequest } from '../../protocols'
 import { SignUpController } from './SignUpController'
 
@@ -71,6 +71,18 @@ describe('SignUpController', () => {
     await sut.handle(httpRequest)
 
     expect(validatorSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  test('Should return badRequest if Validators returns an error', async () => {
+    const { sut, validatorStub } = makeSut()
+
+    jest.spyOn(validatorStub, 'validate').mockReturnValueOnce(new Error())
+
+    const httpRequest = makeFakeRequest()
+
+    const error = await sut.handle(httpRequest)
+
+    expect(error).toEqual(badRequest(new Error()))
   })
 
   test('Should call AddUser with correct values', async () => {
