@@ -25,4 +25,18 @@ describe('CompareFieldsValition', () => {
 
     expect(error).toEqual(new InvalidParamError('passwordConfirmation'))
   })
+
+  test('Should return null if fields  match', () => {
+    const sut = CompareFieldsValidation.builder()
+      .field('password')
+      .fieldToCompare('passwordConfirmation')
+      .build()
+
+    const error = sut.validate({
+      password: 'any_password',
+      passwordConfirmation: 'any_password'
+    })
+
+    expect(error).toBeNull()
+  })
 })
