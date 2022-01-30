@@ -13,15 +13,15 @@ export class SignUpController implements Controller {
     try {
       const { body } = httpRequest
 
-      if (!body?.name) { return badRequest(new MissingParamError('name')) }
+      if (!body.name) { return badRequest(new MissingParamError('name')) }
 
-      if (!body?.email) { return badRequest(new MissingParamError('email')) }
+      if (!body.email) { return badRequest(new MissingParamError('email')) }
 
-      if (!body?.password) { return badRequest(new MissingParamError('password')) }
+      if (!body.password) { return badRequest(new MissingParamError('password')) }
 
-      if (!body?.passwordConfirmation) { return badRequest(new MissingParamError('passwordConfirmation')) }
+      if (!body.passwordConfirmation) { return badRequest(new MissingParamError('passwordConfirmation')) }
 
-      if (body?.password !== body?.passwordConfirmation) { return badRequest(new InvalidParamError('passwordConfirmation')) }
+      if (body.password !== body.passwordConfirmation) { return badRequest(new InvalidParamError('passwordConfirmation')) }
 
       const user = await this.addUser.add({
         email: body.email,
