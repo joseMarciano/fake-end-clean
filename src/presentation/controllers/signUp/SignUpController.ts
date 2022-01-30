@@ -1,27 +1,18 @@
 import { AddUser } from '../../../domain/usecases/AddUser'
-import { badRequest, ok, serverError } from '../../helper/httpHelper'
-import { Controller, HttpRequest, HttpResponse } from '../../protocols'
-import { InvalidParamError } from '../errors/InvalidParamError'
-import { MissingParamError } from '../errors/MissingParamError'
+import { ok, serverError } from '../../helper/httpHelper'
+import { Controller, HttpRequest, HttpResponse, Validator } from '../../protocols'
 
 export class SignUpController implements Controller {
   constructor (
-    private readonly addUser: AddUser
+    private readonly addUser: AddUser,
+    private readonly validator: Validator
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const { body } = httpRequest
 
-      if (!body.name) { return badRequest(new MissingParamError('name')) }
-
-      if (!body.email) { return badRequest(new MissingParamError('email')) }
-
-      if (!body.password) { return badRequest(new MissingParamError('password')) }
-
-      if (!body.passwordConfirmation) { return badRequest(new MissingParamError('passwordConfirmation')) }
-
-      if (body.password !== body.passwordConfirmation) { return badRequest(new InvalidParamError('passwordConfirmation')) }
+      this.validator.validate(body)
 
       const user = await this.addUser.add({
         email: body.email,
