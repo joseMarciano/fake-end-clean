@@ -1,5 +1,5 @@
 import { AddUser } from '../../../domain/usecases/AddUser'
-import { ok, serverError } from '../../helper/httpHelper'
+import { badRequest, ok, serverError } from '../../helper/httpHelper'
 import { Controller, HttpRequest, HttpResponse, Validator } from '../../protocols'
 
 export class SignUpController implements Controller {
@@ -12,7 +12,9 @@ export class SignUpController implements Controller {
     try {
       const { body } = httpRequest
 
-      this.validator.validate(body)
+      const validationError = this.validator.validate(body)
+
+      if (validationError) return badRequest(validationError)
 
       const user = await this.addUser.add({
         email: body.email,
