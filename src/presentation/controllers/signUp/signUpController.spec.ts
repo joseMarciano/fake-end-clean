@@ -80,9 +80,21 @@ describe('SignUpController', () => {
 
     const httpRequest = makeFakeRequest()
 
-    const error = await sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
 
-    expect(error).toEqual(badRequest(new Error()))
+    expect(httpResponse).toEqual(badRequest(new Error()))
+  })
+
+  test('Should return 500 if Validators throws', async () => {
+    const { sut, validatorStub } = makeSut()
+
+    jest.spyOn(validatorStub, 'validate').mockImplementationOnce(() => { throw new Error() })
+
+    const httpRequest = makeFakeRequest()
+
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 
   test('Should call AddUser with correct values', async () => {
