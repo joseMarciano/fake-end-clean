@@ -37,4 +37,18 @@ describe('ValidationErrorComposite', () => {
 
     expect(error).toEqual(new Error())
   })
+
+  test('Should return null if validate succeeds', () => {
+    const validationStub = makeValidatorStub()
+
+    const sut = ValidationErrorComposite
+      .builder()
+      .validator(validationStub)
+      .validator(validationStub)
+      .build()
+
+    const error = sut.validate({})
+
+    expect(error).toBeNull()
+  })
 })
