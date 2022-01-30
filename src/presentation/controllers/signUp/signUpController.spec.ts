@@ -107,7 +107,8 @@ describe('SignUpController', () => {
     expect(addUserSpy).toHaveBeenCalledWith({
       name: 'any_name',
       email: 'any_email@mail.com',
-      password: 'any_password'
+      password: 'any_password',
+      isActive: false
     })
   })
 

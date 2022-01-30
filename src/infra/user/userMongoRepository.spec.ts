@@ -5,7 +5,8 @@ import { UserMongoRespository } from './UserMongoRepository'
 const makeFakeUserModel = (): UserModel => ({
   email: 'any_email@mail.com',
   name: 'any_name',
-  password: 'any_password'
+  password: 'any_password',
+  isActive: false
 })
 interface SutTypes {
   sut: UserMongoRespository

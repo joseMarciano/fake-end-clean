@@ -19,7 +19,8 @@ export class SignUpController implements Controller {
       const user = await this.addUser.add({
         email: body.email,
         name: body.name,
-        password: body.password
+        password: body.password,
+        isActive: false
       })
 
       return ok(user)
