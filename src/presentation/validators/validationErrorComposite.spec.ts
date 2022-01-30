@@ -21,4 +21,20 @@ describe('ValidationErrorComposite', () => {
 
     expect(sut.validators.length).toBe(2)
   })
+
+  test('Should return an error if validate fails', () => {
+    const validationStub = makeValidatorStub()
+
+    jest.spyOn(validationStub, 'validate').mockImplementationOnce(() => new Error())
+
+    const sut = ValidationErrorComposite
+      .builder()
+      .validator(validationStub)
+      .validator(validationStub)
+      .build()
+
+    const error = sut.validate({})
+
+    expect(error).toEqual(new Error())
+  })
 })
