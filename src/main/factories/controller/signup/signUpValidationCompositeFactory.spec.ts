@@ -15,7 +15,7 @@ describe('signUpValidationComposioteFactory', () => {
     validators.push(CompareFieldsValidation
       .builder()
       .field('password')
-      .field('passwordConfirmation')
+      .fieldToCompare('passwordConfirmation')
       .build())
 
     expect(sut.validators).toEqual(validators)

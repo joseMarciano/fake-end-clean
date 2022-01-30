@@ -12,7 +12,7 @@ export const makeValidationComposite = (): Validator => {
   const compareFieldsValidation = CompareFieldsValidation
     .builder()
     .field('password')
-    .field('passwordConfirmation')
+    .fieldToCompare('passwordConfirmation')
     .build()
 
   return composite.validator(compareFieldsValidation).build()
