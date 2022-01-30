@@ -1,6 +1,7 @@
 import { AddUser } from '../../../domain/usecases/AddUser'
 import { badRequest, ok, serverError } from '../../helper/httpHelper'
 import { Controller, HttpRequest, HttpResponse } from '../../protocols'
+import { InvalidParamError } from '../errors/InvalidParamError'
 import { MissingParamError } from '../errors/MissingParamError'
 
 export class SignUpController implements Controller {
@@ -19,6 +20,8 @@ export class SignUpController implements Controller {
       if (!body?.password) { return badRequest(new MissingParamError('password')) }
 
       if (!body?.passwordConfirmation) { return badRequest(new MissingParamError('passwordConfirmation')) }
+
+      if (body?.password !== body?.passwordConfirmation) { return badRequest(new InvalidParamError('passwordConfirmation')) }
 
       const user = await this.addUser.add({
         email: body.email,
