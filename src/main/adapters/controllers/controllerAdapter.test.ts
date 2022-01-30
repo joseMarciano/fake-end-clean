@@ -30,4 +30,20 @@ describe('controllerAdapter', () => {
 
     expect(handleSpy).toHaveBeenCalledTimes(1)
   })
+
+  test('Should redirect when statusCode is 302', async () => {
+    const controllerStub = makeControllerStub()
+
+    jest.spyOn(controllerStub, 'handle').mockResolvedValueOnce({
+      body: {},
+      statusCode: 302
+    })
+
+    app.get('/fake-request', controllerAdapter(controllerStub))
+
+    const response = await request(app)
+      .get('/fake-request')
+
+    expect(response.redirect).toBe(true)
+  })
 })
