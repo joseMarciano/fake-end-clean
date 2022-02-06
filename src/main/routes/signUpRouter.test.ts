@@ -1,3 +1,4 @@
+import { compare } from 'bcrypt'
 import { app } from '../config/app'
 import request from 'supertest'
 import env from '../config/env'
@@ -33,7 +34,7 @@ describe('signUpRouter', () => {
       expect(response.body.id).toBeTruthy()
       expect(response.body.email).toBe('marcianojosepaulo@email.com')
       expect(response.body.name).toBe('marcianojosepaulo')
-      expect(response.body.password).toBe('123')
+      expect(await compare('123', response.body.password)).toBe(true)
     })
   })
 })
