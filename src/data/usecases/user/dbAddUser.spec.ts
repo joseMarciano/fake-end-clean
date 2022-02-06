@@ -15,14 +15,14 @@ const makeFakeUser = (): User => ({
   id: 'any_id',
   email: 'any_email@mail.com',
   name: 'any_name',
-  password: 'any_password',
+  password: 'hasher_password',
   isActive: true
 })
 
 const makeHasher = (): Hasher => {
   class HahserStub implements Hasher {
     async hash (input: string): Promise<string> {
-      return await Promise.resolve('hasher_input')
+      return await Promise.resolve('hasher_password')
     }
   }
 
@@ -64,7 +64,10 @@ describe('DbAddUser usecase', () => {
 
     await sut.add(makeFakeUserModel())
 
-    expect(addUserSpy).toHaveBeenCalledWith(makeFakeUserModel())
+    expect(addUserSpy).toHaveBeenCalledWith({
+      ...makeFakeUserModel(),
+      password: 'hasher_password'
+    })
   })
   test('Should throws if AddUserRepository throws', async () => {
     const { sut, addUserRepositoryStub } = makeSut()
@@ -88,8 +91,16 @@ describe('DbAddUser usecase', () => {
 
     const hashSpy = jest.spyOn(hasherStub, 'hash')
 
-    await sut.add(makeFakeUser())
+    await sut.add(makeFakeUserModel())
 
     expect(hashSpy).toHaveBeenCalledWith('any_password')
+  })
+
+  test('Should return a User with hasher password', async () => {
+    const { sut } = makeSut()
+
+    const user = await sut.add(makeFakeUserModel())
+
+    expect(user).toEqual(makeFakeUser())
   })
 })
