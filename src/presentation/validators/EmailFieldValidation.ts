@@ -1,4 +1,5 @@
 import { EmailValidator } from '../../data/protocols/validators/EmailValidator'
+import { InvalidParamError } from '../controllers/errors/InvalidParamError'
 import { Validator } from '../protocols'
 
 export class EmailFieldValidation implements Validator {
@@ -7,7 +8,10 @@ export class EmailFieldValidation implements Validator {
   ) {}
 
   validate (input: any): Error | null {
-    this.emailValidator.validate(input)
+    const emailIsValid = this.emailValidator.validate(input)
+
+    if (!emailIsValid) return new InvalidParamError('email')
+
     return null
   }
 }
