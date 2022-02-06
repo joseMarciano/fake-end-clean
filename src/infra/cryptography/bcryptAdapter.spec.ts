@@ -27,9 +27,15 @@ describe('BcryptAdapter', () => {
     const { sut } = makeSut()
 
     const hashSpy = jest.spyOn(bcrypt, 'hash')
-
     await sut.hash('any_input')
 
     expect(hashSpy).toHaveBeenCalledWith('any_input', SALT)
+  })
+  test('Should return a valid hash when hash succeeds', async () => {
+    const { sut } = makeSut()
+
+    const hasher = await sut.hash('any_input')
+
+    expect(hasher).toBe('hasher_input')
   })
 })
