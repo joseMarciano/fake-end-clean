@@ -37,4 +37,12 @@ describe('EmailValidadorAdapter', () => {
 
     expect(emailIsValid).toBe(false)
   })
+
+  test('Should return true if IsEmail returns false', () => {
+    const { sut } = makeSut()
+
+    const emailIsValid = sut.validate('any_input')
+
+    expect(emailIsValid).toBe(true)
+  })
 })
