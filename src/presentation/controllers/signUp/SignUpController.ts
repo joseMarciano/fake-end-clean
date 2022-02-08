@@ -1,3 +1,4 @@
+import { EmailInUseError } from '../../../domain/usecases/user/validations/EmailInUseError'
 import { AddUser } from '../../../domain/usecases/user/AddUser'
 import { badRequest, ok, serverError } from '../../helper/httpHelper'
 import { Controller, HttpRequest, HttpResponse, Validator } from '../../protocols'
@@ -16,14 +17,17 @@ export class SignUpController implements Controller {
 
       if (validationError) return badRequest(validationError)
 
-      const user = await this.addUser.add({
+      const result = await this.addUser.add({
         email: body.email,
         name: body.name,
         password: body.password,
         isActive: false
       })
+      if (result instanceof EmailInUseError) {
+        return badRequest(result)
+      }
 
-      return ok(user)
+      return ok(result)
     } catch (error) {
       return serverError(error)
     }
