@@ -63,5 +63,10 @@ describe('UserMongoRepository', () => {
       expect(user.password).toBe('any_password')
       expect(user.email).toBe('any_email@mail.com')
     })
+    test('Should return an null on findByEmail fails', async () => {
+      const { sut } = makeSut()
+      const user = await sut.findByEmail('any_email@mail.com')
+      expect(user).toBe(null)
+    })
   })
 })
