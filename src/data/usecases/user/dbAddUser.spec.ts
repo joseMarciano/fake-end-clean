@@ -1,6 +1,7 @@
 import { AddUserRepository } from '../../../data/protocols/AddUserRepository'
 import { FindUserByEmailRepository } from '../../../data/protocols/FindUserByEmailRepository'
 import { User } from '../../../domain/model/User'
+import { EmailInUseError } from '../../../domain/usecases/user/validations/EmailInUseError'
 import { UserModel } from '../../../domain/usecases/user/AddUser'
 import { Hasher } from '../../../data/protocols/cryptography/Hasher'
 import { DbAddUser } from './DbAddUser'
@@ -126,5 +127,14 @@ describe('DbAddUser usecase', () => {
     await sut.add(makeFakeUserModel())
 
     expect(findUserByEmailSpy).toHaveBeenCalledWith('any_email@mail.com')
+  })
+
+  test('Should return EmailInUseError if already exists an User with the same email', async () => {
+    const { sut, findUserByEmailRepositoryStub } = makeSut()
+
+    jest.spyOn(findUserByEmailRepositoryStub, 'findByEmail').mockResolvedValueOnce(makeFakeUser())
+    const error = await sut.add(makeFakeUserModel())
+
+    expect(error).toEqual(new EmailInUseError('any_email@mail.com'))
   })
 })
