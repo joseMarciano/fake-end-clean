@@ -1,7 +1,8 @@
-import { Hasher } from '../../../data/protocols/cryptography/Hasher'
 import { AddUserRepository } from '../../../data/protocols/AddUserRepository'
+import { FindUserByEmailRepository } from '../../../data/protocols/FindUserByEmailRepository'
 import { User } from '../../../domain/model/User'
 import { UserModel } from '../../../domain/usecases/user/AddUser'
+import { Hasher } from '../../../data/protocols/cryptography/Hasher'
 import { DbAddUser } from './DbAddUser'
 
 const makeFakeUserModel = (): UserModel => ({
@@ -39,20 +40,33 @@ const makeAddUserRepository = (): AddUserRepository => {
   return new AddUserRepositoryStub()
 }
 
+const makeFindUserByEmailRepository = (): FindUserByEmailRepository => {
+  class FindUserByEmailRepositoryStub implements FindUserByEmailRepositoryStub {
+    async findByEmail (_email: string): Promise<User> {
+      return await Promise.resolve(null as any)
+    }
+  }
+
+  return new FindUserByEmailRepositoryStub()
+}
+
 interface SutTypes {
   sut: DbAddUser
   addUserRepositoryStub: AddUserRepository
   hasherStub: Hasher
+  findUserByEmailRepositoryStub: FindUserByEmailRepository
 }
 const makeSut = (): SutTypes => {
   const hasherStub = makeHasher()
   const addUserRepositoryStub = makeAddUserRepository()
-  const sut = new DbAddUser(addUserRepositoryStub, hasherStub)
+  const findUserByEmailRepositoryStub = makeFindUserByEmailRepository()
+  const sut = new DbAddUser(addUserRepositoryStub, hasherStub, findUserByEmailRepositoryStub)
 
   return {
     sut,
     addUserRepositoryStub,
-    hasherStub
+    hasherStub,
+    findUserByEmailRepositoryStub
   }
 }
 
@@ -102,5 +116,15 @@ describe('DbAddUser usecase', () => {
     const user = await sut.add(makeFakeUserModel())
 
     expect(user).toEqual(makeFakeUser())
+  })
+
+  test('Should call FindUserByEmailRepository with correct values', async () => {
+    const { sut, findUserByEmailRepositoryStub } = makeSut()
+
+    const findUserByEmailSpy = jest.spyOn(findUserByEmailRepositoryStub, 'findByEmail')
+
+    await sut.add(makeFakeUserModel())
+
+    expect(findUserByEmailSpy).toHaveBeenCalledWith('any_email@mail.com')
   })
 })
