@@ -13,7 +13,9 @@ export class DbAddUser implements AddUser {
   ) {}
 
   async add (user: UserModel): Promise<User | EmailInUseError> {
-    await this.findUserByEmailRepository.findByEmail(user.email)
+    const existsUser = await this.findUserByEmailRepository.findByEmail(user.email)
+
+    if (existsUser) return new EmailInUseError(existsUser.email)
 
     const hasherPassword = await this.hasher.hash(user.password ?? '')
     return await this.addUserRepository.add({
