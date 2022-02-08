@@ -166,4 +166,13 @@ describe('SignUpController', () => {
 
     expect(sendSpy).toHaveBeenCalledWith('any_email@mail.com')
   })
+
+  test('Should return 500 if Notification throws', async () => {
+    const { sut, notificationStub } = makeSut()
+
+    jest.spyOn(notificationStub, 'send').mockImplementationOnce(() => { throw new Error() })
+    const httpResponse = await sut.handle(makeFakeRequest())
+
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
 })
