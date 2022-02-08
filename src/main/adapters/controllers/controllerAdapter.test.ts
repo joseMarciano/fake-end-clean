@@ -1,6 +1,6 @@
 import request from 'supertest'
 import { app } from '../../../main/config/app'
-import { HttpRequest, HttpResponse } from 'src/presentation/protocols'
+import { HttpRequest, HttpResponse } from '../../../presentation/protocols'
 import { Controller } from '../../../presentation/protocols/Controller'
 import { controllerAdapter } from './controllerAdapter'
 
