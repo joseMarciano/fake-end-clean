@@ -2,11 +2,13 @@ import { EmailInUseError } from '../../../domain/usecases/user/validations/Email
 import { AddUser } from '../../../domain/usecases/user/AddUser'
 import { badRequest, ok, serverError } from '../../helper/httpHelper'
 import { Controller, HttpRequest, HttpResponse, Validator } from '../../protocols'
+import { Notification } from '../../../data/notification/Notification'
 
 export class SignUpController implements Controller {
   constructor (
     private readonly addUser: AddUser,
-    private readonly validator: Validator
+    private readonly validator: Validator,
+    private readonly notification: Notification
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -23,9 +25,12 @@ export class SignUpController implements Controller {
         password: body.password,
         isActive: false
       })
+
       if (result instanceof EmailInUseError) {
         return badRequest(result)
       }
+
+      await this.notification.send(result.email)
 
       return ok(result)
     } catch (error) {
