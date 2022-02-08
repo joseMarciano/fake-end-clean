@@ -19,7 +19,7 @@ interface SutTypes {
 
 const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator()
-  const sut = new EmailFieldValidation(emailValidatorStub)
+  const sut = new EmailFieldValidation(emailValidatorStub, 'email')
 
   return {
     sut,
@@ -33,7 +33,7 @@ describe('EmailFieldValidation', () => {
 
     const validateSpy = jest.spyOn(emailValidatorStub, 'validate')
 
-    sut.validate('any_email')
+    sut.validate({ email: 'any_email' })
 
     expect(validateSpy).toHaveBeenCalledWith('any_email')
   })
@@ -42,14 +42,14 @@ describe('EmailFieldValidation', () => {
     const { sut, emailValidatorStub } = makeSut()
 
     jest.spyOn(emailValidatorStub, 'validate').mockReturnValueOnce(false)
-    const error = sut.validate('any_email')
+    const error = sut.validate({ email: 'any_email' })
 
     expect(error).toEqual(new InvalidParamError('email'))
   })
 
   test('Should return null if EmailValidator returns true', () => {
     const { sut } = makeSut()
-    const error = sut.validate('any_email')
+    const error = sut.validate({ email: 'any_email' })
 
     expect(error).toBeNull()
   })
