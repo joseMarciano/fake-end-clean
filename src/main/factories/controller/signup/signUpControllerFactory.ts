@@ -6,6 +6,6 @@ import { makeValidationComposite } from './signUpValidationCompositeFactory'
 
 export const makeSignUpController = (): SignUpController => {
   const userMongoRepository = new UserMongoRespository()
-  const addUser = new DbAddUser(userMongoRepository, makeBcryptAdapter())
+  const addUser = new DbAddUser(userMongoRepository, makeBcryptAdapter(), userMongoRepository)
   return new SignUpController(addUser, makeValidationComposite())
 }
