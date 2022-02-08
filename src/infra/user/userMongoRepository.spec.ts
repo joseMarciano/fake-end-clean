@@ -1,3 +1,4 @@
+import { Collection } from 'mongodb'
 import { UserModel } from '../../domain/usecases/user/AddUser'
 import { MongoHelper } from '../db/mongo/mongoHelper'
 import { UserMongoRespository } from './UserMongoRepository'
@@ -21,6 +22,8 @@ const makeSut = (): SutTypes => {
 }
 
 describe('UserMongoRepository', () => {
+  let userCollection: Collection
+
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
   })
@@ -30,7 +33,7 @@ describe('UserMongoRepository', () => {
   })
 
   beforeEach(async () => {
-    const userCollection = await MongoHelper.getCollection('users')
+    userCollection = await MongoHelper.getCollection('users')
     await userCollection.deleteMany({})
   })
 
@@ -44,6 +47,21 @@ describe('UserMongoRepository', () => {
       expect(user.id).toBeTruthy()
       expect(user.name).toBe('any_name')
       expect(user.password).toBe('any_password')
+    })
+  })
+  describe('INTERFACE FindUserByEmailRepository', () => {
+    test('Should return an User on findByEmail success', async () => {
+      const { sut } = makeSut()
+
+      await userCollection.insertOne(makeFakeUserModel())
+
+      const user = await sut.findByEmail('any_email@mail.com')
+
+      expect(user).toBeTruthy()
+      expect(user.id).toBeTruthy()
+      expect(user.name).toBe('any_name')
+      expect(user.password).toBe('any_password')
+      expect(user.email).toBe('any_email@mail.com')
     })
   })
 })
