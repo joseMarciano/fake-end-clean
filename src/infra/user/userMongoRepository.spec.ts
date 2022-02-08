@@ -34,14 +34,16 @@ describe('UserMongoRepository', () => {
     await userCollection.deleteMany({})
   })
 
-  test('Should return an User on add success', async () => {
-    const { sut } = makeSut()
+  describe('INTERFACE AddUserRepository', () => {
+    test('Should return an User on add success', async () => {
+      const { sut } = makeSut()
 
-    const user = await sut.add(makeFakeUserModel())
+      const user = await sut.add(makeFakeUserModel())
 
-    expect(user).toBeTruthy()
-    expect(user.id).toBeTruthy()
-    expect(user.name).toBe('any_name')
-    expect(user.password).toBe('any_password')
+      expect(user).toBeTruthy()
+      expect(user.id).toBeTruthy()
+      expect(user.name).toBe('any_name')
+      expect(user.password).toBe('any_password')
+    })
   })
 })
