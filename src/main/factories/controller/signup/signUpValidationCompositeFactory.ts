@@ -1,3 +1,5 @@
+import { EmailFieldValidation } from '../../../../presentation/validators/EmailFieldValidation'
+import { EmailValidatorAdapter } from '../../../../infra/validators/EmailValidatorAdapter'
 import { Validator } from '../../../../presentation/protocols'
 import { CompareFieldsValidation } from '../../../../presentation/validators/CompareFieldsValidaton'
 import { RequiredFieldValidation } from '../../../../presentation/validators/RequiredFieldValidation'
@@ -15,5 +17,8 @@ export const makeValidationComposite = (): Validator => {
     .fieldToCompare('passwordConfirmation')
     .build()
 
-  return composite.validator(compareFieldsValidation).build()
+  return composite
+    .validator(compareFieldsValidation)
+    .validator(new EmailFieldValidation(new EmailValidatorAdapter(), 'email'))
+    .build()
 }
