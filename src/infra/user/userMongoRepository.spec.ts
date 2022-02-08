@@ -1,4 +1,4 @@
-import { UserModel } from '../../domain/usecases/AddUser'
+import { UserModel } from '../../domain/usecases/user/AddUser'
 import { MongoHelper } from '../db/mongo/mongoHelper'
 import { UserMongoRespository } from './UserMongoRepository'
 

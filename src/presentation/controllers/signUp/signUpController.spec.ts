@@ -1,6 +1,6 @@
 import { Validator } from '../../../presentation/protocols'
 import { User } from '../../../domain/model/User'
-import { AddUser, UserModel } from '../../../domain/usecases/AddUser'
+import { AddUser, UserModel } from '../../../domain/usecases/user/AddUser'
 import { badRequest, ok, serverError } from '../../helper/httpHelper'
 import { HttpRequest } from '../../protocols'
 import { SignUpController } from './SignUpController'

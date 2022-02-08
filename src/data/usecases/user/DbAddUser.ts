@@ -1,7 +1,7 @@
 import { Hasher } from '../../../data/protocols/cryptography/Hasher'
 import { AddUserRepository } from '../../../data/protocols/AddUserRepository'
 import { User } from '../../../domain/model/User'
-import { AddUser, UserModel } from '../../../domain/usecases/AddUser'
+import { AddUser, UserModel } from '../../../domain/usecases/user/AddUser'
 
 export class DbAddUser implements AddUser {
   constructor (

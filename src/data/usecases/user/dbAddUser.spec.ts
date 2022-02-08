@@ -1,7 +1,7 @@
 import { Hasher } from '../../../data/protocols/cryptography/Hasher'
 import { AddUserRepository } from '../../../data/protocols/AddUserRepository'
 import { User } from '../../../domain/model/User'
-import { UserModel } from '../../../domain/usecases/AddUser'
+import { UserModel } from '../../../domain/usecases/user/AddUser'
 import { DbAddUser } from './DbAddUser'
 
 const makeFakeUserModel = (): UserModel => ({
