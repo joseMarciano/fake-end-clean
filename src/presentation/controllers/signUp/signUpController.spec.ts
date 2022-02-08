@@ -1,6 +1,7 @@
-import { Validator } from '../../../presentation/protocols'
-import { User } from '../../../domain/model/User'
+import { EmailInUseError } from '../../../domain/usecases/user/validations/EmailInUseError'
 import { AddUser, UserModel } from '../../../domain/usecases/user/AddUser'
+import { User } from '../../../domain/model/User'
+import { Validator } from '../../../presentation/protocols'
 import { badRequest, ok, serverError } from '../../helper/httpHelper'
 import { HttpRequest } from '../../protocols'
 import { SignUpController } from './SignUpController'
@@ -133,5 +134,14 @@ describe('SignUpController', () => {
       password: 'any_password',
       isActive: true
     }))
+  })
+
+  test('Should return 400 if AddUser returns EmailInUseError', async () => {
+    const { sut, addUserStub } = makeSut()
+
+    jest.spyOn(addUserStub, 'add').mockResolvedValueOnce(new EmailInUseError('any_email@mail.com'))
+    const httpResponse = await sut.handle(makeFakeRequest())
+
+    expect(httpResponse).toEqual(badRequest(new EmailInUseError('any_email@mail.com')))
   })
 })
