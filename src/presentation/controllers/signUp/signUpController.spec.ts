@@ -5,6 +5,7 @@ import { Validator } from '../../../presentation/protocols'
 import { badRequest, ok, serverError } from '../../helper/httpHelper'
 import { HttpRequest } from '../../protocols'
 import { SignUpController } from './SignUpController'
+import { Notification } from '../../../data/notification/Notification'
 
 const makeFakeRequest = (): HttpRequest => {
   return {
@@ -43,21 +44,33 @@ const makeValidatorStub = (): Validator => {
   return new ValidatorStub()
 }
 
+const makeNotification = (): Notification => {
+  class NotificationStub implements Notification {
+    async send (input: any): Promise<void> {
+      await Promise.resolve({})
+    }
+  }
+
+  return new NotificationStub()
+}
 interface SutTypes {
   sut: SignUpController
   addUserStub: AddUser
   validatorStub: Validator
+  notificationStub: Notification
 }
 
 const makeSut = (): SutTypes => {
   const validatorStub = makeValidatorStub()
   const addUserStub = makeAddUser()
-  const sut = new SignUpController(addUserStub, validatorStub)
+  const notificationStub = makeNotification()
+  const sut = new SignUpController(addUserStub, validatorStub, notificationStub)
 
   return {
     sut,
     addUserStub,
-    validatorStub
+    validatorStub,
+    notificationStub
   }
 }
 
@@ -143,5 +156,14 @@ describe('SignUpController', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
 
     expect(httpResponse).toEqual(badRequest(new EmailInUseError('any_email@mail.com')))
+  })
+
+  test('Should call Notification with correct values', async () => {
+    const { sut, notificationStub } = makeSut()
+
+    const sendSpy = jest.spyOn(notificationStub, 'send')
+    await sut.handle(makeFakeRequest())
+
+    expect(sendSpy).toHaveBeenCalledWith('any_email@mail.com')
   })
 })
