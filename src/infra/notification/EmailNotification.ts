@@ -10,7 +10,7 @@ export class EmailNotification implements Notification {
 
   async send (input: any): Promise<void> {
     await this.transporter.sendMail({
-      from: 'Fake end 👻',
+      from: '"Fake end 👻" <fakendapi@gmail.com>',
       to: input,
       subject: 'Welcome to fake end ✔',
       html: '<a target="_blank" href="http://localhost:8080/active">Click here to activate your account</a>'
