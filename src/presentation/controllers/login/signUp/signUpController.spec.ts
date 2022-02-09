@@ -1,7 +1,7 @@
 import { EmailInUseError } from '../../../../domain/usecases/user/validations/EmailInUseError'
 import { AddUser, UserModel } from '../../../../domain/usecases/user/AddUser'
 import { User } from '../../../../domain/model/User'
-import { badRequest, ok, serverError } from '../../../helper/httpHelper'
+import { badRequest, noContent, serverError } from '../../../helper/httpHelper'
 import { HttpRequest, Validator } from '../../../protocols'
 import { SignUpController } from './SignUpController'
 import { Notification } from '../../../../data/notification/Notification'
@@ -135,17 +135,11 @@ describe('SignUpController', () => {
     expect(httpResponse).toEqual(serverError(new Error()))
   })
 
-  test('Should return 200 if AddUser success', async () => {
+  test('Should return 204 if SignUpController success', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
 
-    expect(httpResponse).toEqual(ok({
-      id: 'any_id',
-      email: 'any_email@mail.com',
-      name: 'any_name',
-      password: 'any_password',
-      isActive: true
-    }))
+    expect(httpResponse).toEqual(noContent())
   })
 
   test('Should return 400 if AddUser returns EmailInUseError', async () => {

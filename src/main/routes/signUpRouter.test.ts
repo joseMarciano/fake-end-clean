@@ -1,4 +1,3 @@
-import { compare } from 'bcrypt'
 import { app } from '../config/app'
 import request from 'supertest'
 import env from '../config/env'
@@ -19,7 +18,7 @@ describe('signUpRouter', () => {
   })
 
   describe('POST /signup', () => {
-    test('Should return an User on signup success', async () => {
+    test('Should return an 204 on signup success', async () => {
       const response = await request(app)
         .post(`${env.defaultPath}/signup`)
         .send({
@@ -29,12 +28,8 @@ describe('signUpRouter', () => {
           passwordConfirmation: '123'
         })
 
-      expect(response.status).toBe(200)
-      expect(response.body).toBeTruthy()
-      expect(response.body.id).toBeTruthy()
-      expect(response.body.email).toBe('marcianojosepaulo@email.com')
-      expect(response.body.name).toBe('marcianojosepaulo')
-      expect(await compare('123', response.body.password)).toBe(true)
+      expect(response.status).toBe(204)
+      expect(response.body).toEqual({})
     })
   })
 })
