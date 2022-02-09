@@ -1,6 +1,6 @@
 import { EmailInUseError } from '../../../../domain/usecases/user/validations/EmailInUseError'
 import { AddUser } from '../../../../domain/usecases/user/AddUser'
-import { badRequest, ok, serverError } from '../../../helper/httpHelper'
+import { badRequest, noContent, serverError } from '../../../helper/httpHelper'
 import { Controller, HttpRequest, HttpResponse, Validator } from '../../../protocols'
 import { Notification } from '../../../../data/notification/Notification'
 
@@ -32,7 +32,7 @@ export class SignUpController implements Controller {
 
       await this.notification.send(result.email)
 
-      return ok(result)
+      return noContent()
     } catch (error) {
       return serverError(error)
     }
