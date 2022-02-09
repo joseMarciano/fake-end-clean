@@ -20,6 +20,13 @@ export const ok = (body: any): HttpResponse => {
     body
   }
 }
+
+export const noContent = (): HttpResponse => {
+  return {
+    statusCode: 204,
+    body: null
+  }
+}
 export const redirect = (to: string): HttpResponse => {
   return {
     statusCode: 302,
