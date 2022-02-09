@@ -1,8 +1,8 @@
-import { EmailInUseError } from '../../../domain/usecases/user/validations/EmailInUseError'
-import { AddUser } from '../../../domain/usecases/user/AddUser'
-import { badRequest, ok, serverError } from '../../helper/httpHelper'
-import { Controller, HttpRequest, HttpResponse, Validator } from '../../protocols'
-import { Notification } from '../../../data/notification/Notification'
+import { EmailInUseError } from '../../../../domain/usecases/user/validations/EmailInUseError'
+import { AddUser } from '../../../../domain/usecases/user/AddUser'
+import { badRequest, ok, serverError } from '../../../helper/httpHelper'
+import { Controller, HttpRequest, HttpResponse, Validator } from '../../../protocols'
+import { Notification } from '../../../../data/notification/Notification'
 
 export class SignUpController implements Controller {
   constructor (

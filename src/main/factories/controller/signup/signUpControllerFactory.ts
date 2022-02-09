@@ -1,7 +1,7 @@
 import { EmailNotification } from '../../../../infra/notification/EmailNotification'
 import { DbAddUser } from '../../../../data/usecases/user/DbAddUser'
 import { UserMongoRespository } from '../../../../infra/user/UserMongoRepository'
-import { SignUpController } from '../../../../presentation/controllers/signUp/SignUpController'
+import { SignUpController } from '../../../../presentation/controllers/login/signUp/SignUpController'
 import { makeBcryptAdapter } from '../../cryptography/bcryptAdapterFactory'
 import { makeValidationComposite } from './signUpValidationCompositeFactory'
 

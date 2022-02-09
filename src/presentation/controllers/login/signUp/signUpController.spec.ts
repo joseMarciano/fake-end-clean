@@ -1,11 +1,10 @@
-import { EmailInUseError } from '../../../domain/usecases/user/validations/EmailInUseError'
-import { AddUser, UserModel } from '../../../domain/usecases/user/AddUser'
-import { User } from '../../../domain/model/User'
-import { Validator } from '../../../presentation/protocols'
-import { badRequest, ok, serverError } from '../../helper/httpHelper'
-import { HttpRequest } from '../../protocols'
+import { EmailInUseError } from '../../../../domain/usecases/user/validations/EmailInUseError'
+import { AddUser, UserModel } from '../../../../domain/usecases/user/AddUser'
+import { User } from '../../../../domain/model/User'
+import { badRequest, ok, serverError } from '../../../helper/httpHelper'
+import { HttpRequest, Validator } from '../../../protocols'
 import { SignUpController } from './SignUpController'
-import { Notification } from '../../../data/notification/Notification'
+import { Notification } from '../../../../data/notification/Notification'
 
 const makeFakeRequest = (): HttpRequest => {
   return {
