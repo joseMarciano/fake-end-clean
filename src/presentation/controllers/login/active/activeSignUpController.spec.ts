@@ -4,6 +4,7 @@ import { ActivateUser } from '../../../../domain/usecases/user/activate/Activate
 import { HttpRequest } from '../../../../presentation/protocols'
 import { ActiveUserController } from './ActiveUserController'
 import { Decrypter } from '../../../../data/protocols/cryptography/Decrypter'
+import { FindUserById } from '../../../../domain/usecases/user/find/FindUserById'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   params: {
@@ -18,6 +19,16 @@ const makeFakeUser = (): User => ({
   name: 'any_name',
   password: 'any_password'
 })
+
+const makeFindUserById = (): FindUserById => {
+  class FindUserByIdStub implements FindUserById {
+    async findById (_id: string): Promise<User> {
+      return await Promise.resolve(makeFakeUser())
+    }
+  }
+
+  return new FindUserByIdStub()
+}
 
 const makeDecrypter = (): Decrypter => {
   class DecrypterStub implements Decrypter {
@@ -45,17 +56,20 @@ interface SutTypes {
   sut: ActiveUserController
   activeUserStub: ActivateUser
   decrypterStub: Decrypter
+  findUserByIdStub: FindUserById
 }
 
 const makeSut = (): SutTypes => {
+  const findUserByIdStub = makeFindUserById()
   const activeUserStub = makeActiveUser()
   const decrypterStub = makeDecrypter()
-  const sut = new ActiveUserController(activeUserStub, decrypterStub)
+  const sut = new ActiveUserController(activeUserStub, decrypterStub, findUserByIdStub)
 
   return {
     sut,
     activeUserStub,
-    decrypterStub
+    decrypterStub,
+    findUserByIdStub
   }
 }
 
@@ -99,5 +113,15 @@ describe('ActiveSignUpController', () => {
     const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+  test('Should call FindUserById with correct values', async () => {
+    const { sut, findUserByIdStub } = makeSut()
+
+    const findUserByIdSpy = jest.spyOn(findUserByIdStub, 'findById')
+    const httpRequest = makeFakeHttpRequest()
+
+    await sut.handle(httpRequest)
+
+    expect(findUserByIdSpy).toHaveBeenCalledWith('any_id')
   })
 })
