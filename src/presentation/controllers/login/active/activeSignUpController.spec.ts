@@ -1,3 +1,4 @@
+import { serverError } from '../../../../presentation/helper/httpHelper'
 import { User } from '../../../../domain/model/User'
 import { ActivateUser } from '../../../../domain/usecases/user/activate/ActivateUser'
 import { HttpRequest } from '../../../../presentation/protocols'
@@ -50,5 +51,19 @@ describe('ActiveSignUpController', () => {
     await sut.handle(httpRequest)
 
     expect(activeSpy).toHaveBeenCalledWith(makeFakeUser())
+  })
+  test('Should return 500 if ActiveUser throws', async () => {
+    const { sut, activeUserStub } = makeSut()
+
+    jest.spyOn(activeUserStub, 'active').mockRejectedValueOnce(new Error())
+    const httpRequest: HttpRequest = {
+      params: {
+        user: 'any_token'
+      }
+    }
+
+    const httpResponse = await sut.handle(httpRequest)
+
+    await expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
