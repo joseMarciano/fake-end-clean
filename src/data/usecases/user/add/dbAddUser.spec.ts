@@ -1,9 +1,9 @@
-import { AddUserRepository } from '../../../data/protocols/AddUserRepository'
-import { FindUserByEmailRepository } from '../../../data/protocols/FindUserByEmailRepository'
-import { User } from '../../../domain/model/User'
-import { EmailInUseError } from '../../../domain/usecases/user/validations/EmailInUseError'
-import { UserModel } from '../../../domain/usecases/user/AddUser'
-import { Hasher } from '../../../data/protocols/cryptography/Hasher'
+import { AddUserRepository } from '../../../../data/protocols/AddUserRepository'
+import { FindUserByEmailRepository } from '../../../../data/protocols/FindUserByEmailRepository'
+import { User } from '../../../../domain/model/User'
+import { EmailInUseError } from '../../../../domain/usecases/user/validations/EmailInUseError'
+import { UserModel } from '../../../../domain/usecases/user/AddUser'
+import { Hasher } from '../../../../data/protocols/cryptography/Hasher'
 import { DbAddUser } from './DbAddUser'
 
 const makeFakeUserModel = (): UserModel => ({

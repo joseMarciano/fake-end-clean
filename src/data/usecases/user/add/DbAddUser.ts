@@ -1,9 +1,9 @@
-import { FindUserByEmailRepository } from '../../../data/protocols/FindUserByEmailRepository'
-import { AddUserRepository } from '../../../data/protocols/AddUserRepository'
-import { Hasher } from '../../../data/protocols/cryptography/Hasher'
-import { User } from '../../../domain/model/User'
-import { AddUser, UserModel } from '../../../domain/usecases/user/AddUser'
-import { EmailInUseError } from '../../../domain/usecases/user/validations/EmailInUseError'
+import { FindUserByEmailRepository } from '../../../protocols/FindUserByEmailRepository'
+import { AddUserRepository } from '../../../protocols/AddUserRepository'
+import { Hasher } from '../../../protocols/cryptography/Hasher'
+import { User } from '../../../../domain/model/User'
+import { AddUser, UserModel } from '../../../../domain/usecases/user/AddUser'
+import { EmailInUseError } from '../../../../domain/usecases/user/validations/EmailInUseError'
 
 export class DbAddUser implements AddUser {
   constructor (
