@@ -1,4 +1,4 @@
-import { serverError } from '../../../../presentation/helper/httpHelper'
+import { noContent, serverError } from '../../../../presentation/helper/httpHelper'
 import { ActivateUser } from '../../../../domain/usecases/user/activate/ActivateUser'
 import { Controller, HttpRequest, HttpResponse } from '../../../../presentation/protocols'
 import { Decrypter } from '../../../../data/protocols/cryptography/Decrypter'
@@ -17,7 +17,7 @@ export class ActiveUserController implements Controller {
       const user = await this.findUserById.findById(id as string)
       await this.activateUser.active(user)
 
-      return await Promise.resolve({ body: null, statusCode: 999 })
+      return noContent()
     } catch (error) {
       return serverError(error)
     }
