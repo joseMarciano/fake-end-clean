@@ -90,4 +90,14 @@ describe('ActiveSignUpController', () => {
 
     expect(decryptSpy).toHaveBeenCalledWith('any_token')
   })
+  test('Should return 500 if Decrypter throws', async () => {
+    const { sut, decrypterStub } = makeSut()
+
+    jest.spyOn(decrypterStub, 'decrypt').mockRejectedValueOnce(new Error())
+    const httpRequest = makeFakeHttpRequest()
+
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
 })
