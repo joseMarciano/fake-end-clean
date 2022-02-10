@@ -3,6 +3,7 @@ import { User } from '../../../../domain/model/User'
 import { ActivateUser } from '../../../../domain/usecases/user/activate/ActivateUser'
 import { HttpRequest } from '../../../../presentation/protocols'
 import { ActiveUserController } from './ActiveUserController'
+import { Decrypter } from '../../../../data/protocols/cryptography/Decrypter'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   params: {
@@ -18,6 +19,18 @@ const makeFakeUser = (): User => ({
   password: 'any_password'
 })
 
+const makeDecrypter = (): Decrypter => {
+  class DecrypterStub implements Decrypter {
+    async decrypt (_input: string): Promise<any> {
+      return {
+        id: 'any_id'
+      }
+    }
+  }
+
+  return new DecrypterStub()
+}
+
 const makeActiveUser = (): ActivateUser => {
   class ActiveUserStub implements ActivateUser {
     async active (_user: User): Promise<void> {
@@ -31,15 +44,18 @@ const makeActiveUser = (): ActivateUser => {
 interface SutTypes {
   sut: ActiveUserController
   activeUserStub: ActivateUser
+  decrypterStub: Decrypter
 }
 
 const makeSut = (): SutTypes => {
   const activeUserStub = makeActiveUser()
-  const sut = new ActiveUserController(activeUserStub)
+  const decrypterStub = makeDecrypter()
+  const sut = new ActiveUserController(activeUserStub, decrypterStub)
 
   return {
     sut,
-    activeUserStub
+    activeUserStub,
+    decrypterStub
   }
 }
 
@@ -62,6 +78,16 @@ describe('ActiveSignUpController', () => {
 
     const httpResponse = await sut.handle(httpRequest)
 
-    await expect(httpResponse).toEqual(serverError(new Error()))
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
+  test('Should call Decrypter with correct values', async () => {
+    const { sut, decrypterStub } = makeSut()
+
+    const decryptSpy = jest.spyOn(decrypterStub, 'decrypt')
+    const httpRequest = makeFakeHttpRequest()
+
+    await sut.handle(httpRequest)
+
+    expect(decryptSpy).toHaveBeenCalledWith('any_token')
   })
 })
