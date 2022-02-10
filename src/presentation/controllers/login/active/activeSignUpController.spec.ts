@@ -4,6 +4,12 @@ import { ActivateUser } from '../../../../domain/usecases/user/activate/Activate
 import { HttpRequest } from '../../../../presentation/protocols'
 import { ActiveUserController } from './ActiveUserController'
 
+const makeFakeHttpRequest = (): HttpRequest => ({
+  params: {
+    user: 'any_token'
+  }
+})
+
 const makeFakeUser = (): User => ({
   id: 'any_id',
   email: 'any_email',
@@ -42,11 +48,7 @@ describe('ActiveSignUpController', () => {
     const { sut, activeUserStub } = makeSut()
 
     const activeSpy = jest.spyOn(activeUserStub, 'active')
-    const httpRequest: HttpRequest = {
-      params: {
-        user: 'any_token'
-      }
-    }
+    const httpRequest = makeFakeHttpRequest()
 
     await sut.handle(httpRequest)
 
@@ -56,11 +58,7 @@ describe('ActiveSignUpController', () => {
     const { sut, activeUserStub } = makeSut()
 
     jest.spyOn(activeUserStub, 'active').mockRejectedValueOnce(new Error())
-    const httpRequest: HttpRequest = {
-      params: {
-        user: 'any_token'
-      }
-    }
+    const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
 
