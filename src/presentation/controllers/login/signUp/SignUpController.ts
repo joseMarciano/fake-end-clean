@@ -1,5 +1,5 @@
 import { EmailInUseError } from '../../../../domain/usecases/user/validations/EmailInUseError'
-import { AddUser } from '../../../../domain/usecases/user/AddUser'
+import { AddUser } from '../../../../domain/usecases/user/add/AddUser'
 import { badRequest, noContent, serverError } from '../../../helper/httpHelper'
 import { Controller, HttpRequest, HttpResponse, Validator } from '../../../protocols'
 import { Notification } from '../../../../data/notification/Notification'

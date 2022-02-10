@@ -2,7 +2,7 @@ import { FindUserByEmailRepository } from '../../../protocols/FindUserByEmailRep
 import { AddUserRepository } from '../../../protocols/AddUserRepository'
 import { Hasher } from '../../../protocols/cryptography/Hasher'
 import { User } from '../../../../domain/model/User'
-import { AddUser, UserModel } from '../../../../domain/usecases/user/AddUser'
+import { AddUser, UserModel } from '../../../../domain/usecases/user/add/AddUser'
 import { EmailInUseError } from '../../../../domain/usecases/user/validations/EmailInUseError'
 
 export class DbAddUser implements AddUser {

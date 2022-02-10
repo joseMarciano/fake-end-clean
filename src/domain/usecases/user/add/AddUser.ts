@@ -1,5 +1,5 @@
-import { User } from '../../model/User'
-import { EmailInUseError } from './validations/EmailInUseError'
+import { User } from '../../../model/User'
+import { EmailInUseError } from '../validations/EmailInUseError'
 
 export interface AddUser {
   add: (user: UserModel) => Promise<User | EmailInUseError>

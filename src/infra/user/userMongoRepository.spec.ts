@@ -1,5 +1,5 @@
 import { Collection } from 'mongodb'
-import { UserModel } from '../../domain/usecases/user/AddUser'
+import { UserModel } from '../../domain/usecases/user/add/AddUser'
 import { MongoHelper } from '../db/mongo/mongoHelper'
 import { UserMongoRespository } from './UserMongoRepository'
 

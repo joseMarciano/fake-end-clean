@@ -1,7 +1,7 @@
 import { FindUserByEmailRepository } from '../../data/protocols/FindUserByEmailRepository'
 import { AddUserRepository } from '../../data/protocols/AddUserRepository'
 import { User } from '../../domain/model/User'
-import { UserModel } from '../../domain/usecases/user/AddUser'
+import { UserModel } from '../../domain/usecases/user/add/AddUser'
 import { MongoHelper } from '../db/mongo/mongoHelper'
 
 export class UserMongoRespository implements AddUserRepository, FindUserByEmailRepository {
