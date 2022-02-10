@@ -124,4 +124,15 @@ describe('ActiveSignUpController', () => {
 
     expect(findUserByIdSpy).toHaveBeenCalledWith('any_id')
   })
+
+  test('Should return 500 if FindUserById throws', async () => {
+    const { sut, findUserByIdStub } = makeSut()
+
+    jest.spyOn(findUserByIdStub, 'findById').mockRejectedValueOnce(new Error())
+    const httpRequest = makeFakeHttpRequest()
+
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
 })
