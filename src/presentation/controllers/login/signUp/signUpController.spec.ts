@@ -157,7 +157,11 @@ describe('SignUpController', () => {
     const sendSpy = jest.spyOn(notificationStub, 'send')
     await sut.handle(makeFakeRequest())
 
-    expect(sendSpy).toHaveBeenCalledWith('any_email@mail.com')
+    expect(sendSpy).toHaveBeenCalledWith({
+      to: 'any_email@mail.com',
+      subject: 'Welcome to fake end ✔',
+      html: '<a target="_blank" href="http://localhost:8080/active">Click here to activate your account</a>'
+    })
   })
 
   test('Should return 500 if Notification throws', async () => {

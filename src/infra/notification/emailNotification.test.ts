@@ -21,7 +21,11 @@ describe('EmailNotification', () => {
 
   test('Should call sendMail with correct values', async () => {
     const { sut } = makeSut()
-    await sut.send('any_email')
+    await sut.send({
+      to: 'any_email',
+      subject: 'any_subject',
+      html: 'any_html'
+    })
     expect(mockMailer.getSentMail()[0].to).toBe('any_email')
   })
 })
