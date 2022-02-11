@@ -5,6 +5,7 @@ import { badRequest, noContent, serverError } from '../../../helper/httpHelper'
 import { HttpRequest, Validator } from '../../../protocols'
 import { SignUpController } from './SignUpController'
 import { Notification } from '../../../../data/notification/Notification'
+import { Authentication, AuthenticationModel } from '../../../../domain/usecases/user/authentication/Authentication'
 
 const makeFakeRequest = (): HttpRequest => {
   return {
@@ -33,6 +34,16 @@ const makeAddUser = (): AddUser => {
   return new AddUserStub()
 }
 
+const makeAuthentication = (): Authentication => {
+  class AuthenticationStub implements Authentication {
+    async auth (_authenticationMode: AuthenticationModel): Promise<string> {
+      return await Promise.resolve('any_token')
+    }
+  }
+
+  return new AuthenticationStub()
+}
+
 const makeValidatorStub = (): Validator => {
   class ValidatorStub implements Validator {
     validate (_input: any): Error | null {
@@ -57,19 +68,22 @@ interface SutTypes {
   addUserStub: AddUser
   validatorStub: Validator
   notificationStub: Notification
+  authenticationStub: Authentication
 }
 
 const makeSut = (): SutTypes => {
+  const authenticationStub = makeAuthentication()
   const validatorStub = makeValidatorStub()
   const addUserStub = makeAddUser()
   const notificationStub = makeNotification()
-  const sut = new SignUpController(addUserStub, validatorStub, notificationStub)
+  const sut = new SignUpController(addUserStub, validatorStub, notificationStub, authenticationStub)
 
   return {
     sut,
     addUserStub,
     validatorStub,
-    notificationStub
+    notificationStub,
+    authenticationStub
   }
 }
 
@@ -171,5 +185,18 @@ describe('SignUpController', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
 
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  test('Should call Authentication with correct values', async () => {
+    const { sut, authenticationStub } = makeSut()
+
+    const authSpy = jest.spyOn(authenticationStub, 'auth')
+    await sut.handle(makeFakeRequest())
+
+    expect(authSpy).toHaveBeenCalledWith({
+      id: 'any_id',
+      email: 'any_email@mail.com',
+      password: 'any_password'
+    })
   })
 })
