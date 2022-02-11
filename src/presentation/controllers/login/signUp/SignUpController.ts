@@ -32,7 +32,7 @@ export class SignUpController implements Controller {
         return badRequest(result)
       }
 
-      await this.authentication.auth({
+      const userAccess = await this.authentication.auth({
         id: result.id,
         email: result.email,
         password: result.password ?? ''
@@ -41,7 +41,7 @@ export class SignUpController implements Controller {
       await this.notification.send({
         to: result.email,
         subject: 'Welcome to fake end ✔',
-        html: '<a target="_blank" href="http://localhost:8080/active">Click here to activate your account</a>'
+        html: `<a target="_blank" href="http://localhost:8080/active?user=${userAccess}>Click here to activate your account</a>`
       })
 
       return noContent()
