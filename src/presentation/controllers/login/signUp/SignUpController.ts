@@ -3,12 +3,14 @@ import { AddUser } from '../../../../domain/usecases/user/add/AddUser'
 import { badRequest, noContent, serverError } from '../../../helper/httpHelper'
 import { Controller, HttpRequest, HttpResponse, Validator } from '../../../protocols'
 import { Notification } from '../../../../data/notification/Notification'
+import { Authentication } from '../../../../domain/usecases/user/authentication/Authentication'
 
 export class SignUpController implements Controller {
   constructor (
     private readonly addUser: AddUser,
     private readonly validator: Validator,
-    private readonly notification: Notification
+    private readonly notification: Notification,
+    private readonly authentication: Authentication
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -29,6 +31,12 @@ export class SignUpController implements Controller {
       if (result instanceof EmailInUseError) {
         return badRequest(result)
       }
+
+      await this.authentication.auth({
+        id: result.id,
+        email: result.email,
+        password: result.password ?? ''
+      })
 
       await this.notification.send({
         to: result.email,
