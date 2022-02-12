@@ -3,7 +3,6 @@ export interface Authentication {
 }
 
 export interface AuthenticationModel {
-  id: string
   email: string
   password: string
 }

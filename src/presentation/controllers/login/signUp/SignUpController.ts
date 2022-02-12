@@ -33,7 +33,6 @@ export class SignUpController implements Controller {
       }
 
       const userAccess = await this.authentication.auth({
-        id: result.id,
         email: result.email,
         password: result.password ?? ''
       })

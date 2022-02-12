@@ -194,7 +194,6 @@ describe('SignUpController', () => {
     await sut.handle(makeFakeRequest())
 
     expect(authSpy).toHaveBeenCalledWith({
-      id: 'any_id',
       email: 'any_email@mail.com',
       password: 'any_password'
     })
