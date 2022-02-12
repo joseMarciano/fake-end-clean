@@ -81,4 +81,13 @@ describe('DbAuthentication', () => {
 
     expect(loadByIdSpy).toHaveBeenCalledWith('any_id')
   })
+
+  test('Should throws if FindUserByIdRepository throws', async () => {
+    const { sut, loadUserByIdRepositoryStub } = makeSut()
+
+    jest.spyOn(loadUserByIdRepositoryStub, 'findById').mockImplementationOnce(() => { throw new Error() })
+    const promise = sut.auth(makeFakeAuthenticationModel())
+
+    await expect(promise).rejects.toThrow()
+  })
 })
