@@ -4,6 +4,7 @@ import { DbAuthentication } from './DbAuthentication'
 import { User } from '../../../../domain/model/User'
 import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindUserByEmailRepository'
 import { HashCompare } from '../../../../data/protocols/cryptography/HashCompare'
+import { UpdateUserAccessTokenRepository, UpdateUserAccessTokenModel } from '../../../../data/protocols/user/UpdateUserAccessTokenRepository'
 
 const makeFakeAuthenticationModel = (): AuthenticationModel => ({
   email: 'any_email',
@@ -17,6 +18,16 @@ const makeFakeUser = (): User => ({
   password: 'hashed_password',
   isActive: false
 })
+
+const makeUpdateUserAccessTokenRepository = (): UpdateUserAccessTokenRepository => {
+  class UpdateUserAccessTokenRepositoryStub implements UpdateUserAccessTokenRepository {
+    async updateAccessToken (_data: UpdateUserAccessTokenModel): Promise<void> {
+      await Promise.resolve(null)
+    }
+  }
+
+  return new UpdateUserAccessTokenRepositoryStub()
+}
 
 const makeHashCompare = (): HashCompare => {
   class HashCompareStub implements HashCompare {
@@ -53,23 +64,37 @@ interface SutTypes {
   encrypterStub: Encrypter
   loadUserByIdRepositoryStub: FindUserByEmailRepository
   hashCompareStub: HashCompare
+  updateUserAccessTokenRepositoryStub: UpdateUserAccessTokenRepository
 }
 
 const makeSut = (): SutTypes => {
+  const updateUserAccessTokenRepositoryStub = makeUpdateUserAccessTokenRepository()
   const hashCompareStub = makeHashCompare()
   const loadUserByIdRepositoryStub = makeFindUserByIdRepository()
   const encrypterStub = makeDecrypter()
-  const sut = new DbAuthentication(encrypterStub, loadUserByIdRepositoryStub, hashCompareStub)
+  const sut = new DbAuthentication(
+    encrypterStub,
+    loadUserByIdRepositoryStub,
+    hashCompareStub,
+    updateUserAccessTokenRepositoryStub
+  )
 
   return {
     sut,
     encrypterStub,
     loadUserByIdRepositoryStub,
-    hashCompareStub
+    hashCompareStub,
+    updateUserAccessTokenRepositoryStub
   }
 }
 
 describe('DbAuthentication', () => {
+  beforeAll(() => {
+    jest
+      .useFakeTimers()
+      .setSystemTime(new Date('2020-01-01'))
+  })
+
   test('Should call Encrypter with correct values', async () => {
     const { sut, encrypterStub } = makeSut()
 
@@ -128,5 +153,18 @@ describe('DbAuthentication', () => {
     const accessToken = await sut.auth(makeFakeAuthenticationModel())
 
     expect(accessToken).toBe('any_access_token')
+  })
+
+  test('Should call UpdateUserAccessTokenRepository with correct values', async () => {
+    const { sut, updateUserAccessTokenRepositoryStub } = makeSut()
+
+    const updateAccessTokenSpy = jest.spyOn(updateUserAccessTokenRepositoryStub, 'updateAccessToken')
+    await sut.auth(makeFakeAuthenticationModel())
+
+    expect(updateAccessTokenSpy).toHaveBeenCalledWith({
+      accessToken: 'any_access_token',
+      userId: 'any_id',
+      createdAt: new Date()
+    })
   })
 })
