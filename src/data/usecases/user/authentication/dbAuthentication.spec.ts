@@ -41,4 +41,12 @@ describe('DbAuthentication', () => {
 
     expect(encryptSpy).toHaveBeenCalledWith(makeFakeAuthenticationModel())
   })
+  test('Should throws if Encrypter throws', async () => {
+    const { sut, encrypterStub } = makeSut()
+
+    jest.spyOn(encrypterStub, 'encrypt').mockImplementationOnce(() => { throw new Error() })
+    const promise = sut.auth(makeFakeAuthenticationModel())
+
+    await expect(promise).rejects.toThrow()
+  })
 })
