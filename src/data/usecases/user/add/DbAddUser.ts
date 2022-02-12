@@ -1,5 +1,5 @@
-import { FindUserByEmailRepository } from '../../../protocols/FindUserByEmailRepository'
-import { AddUserRepository } from '../../../protocols/AddUserRepository'
+import { FindUserByEmailRepository } from '../../../protocols/user/FindUserByEmailRepository'
+import { AddUserRepository } from '../../../protocols/user/AddUserRepository'
 import { Hasher } from '../../../protocols/cryptography/Hasher'
 import { User } from '../../../../domain/model/User'
 import { AddUser, UserModel } from '../../../../domain/usecases/user/add/AddUser'
