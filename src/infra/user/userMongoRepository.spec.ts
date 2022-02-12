@@ -23,6 +23,7 @@ const makeSut = (): SutTypes => {
 
 describe('UserMongoRepository', () => {
   let userCollection: Collection
+  let userAccessTokenCollection: Collection
 
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
@@ -34,7 +35,9 @@ describe('UserMongoRepository', () => {
 
   beforeEach(async () => {
     userCollection = await MongoHelper.getCollection('users')
+    userAccessTokenCollection = await MongoHelper.getCollection('usersAccessToken')
     await userCollection.deleteMany({})
+    await userAccessTokenCollection.deleteMany({})
   })
 
   describe('INTERFACE AddUserRepository', () => {
@@ -67,6 +70,26 @@ describe('UserMongoRepository', () => {
       const { sut } = makeSut()
       const user = await sut.findByEmail('any_email@mail.com')
       expect(user).toBe(null)
+    })
+  })
+
+  describe('INTERFACE UpdateUserAccessTokenRepository', () => {
+    test('Should updateUserAccessToken on UpdateUserAccessTokenRepository succeeds', async () => {
+      const { sut } = makeSut()
+
+      const result = await userCollection.insertOne(makeFakeUserModel())
+
+      await sut.updateAccessToken({
+        accessToken: 'any_token',
+        userId: result.insertedId.toString(),
+        createdAt: new Date()
+      })
+
+      const mongoUserAccessToken =
+      await userAccessTokenCollection.findOne({ userId: result.insertedId.toString() }) as any
+
+      expect(mongoUserAccessToken.userId).toBe(result.insertedId.toString())
+      expect(mongoUserAccessToken.accessToken).toBe('any_token')
     })
   })
 })
