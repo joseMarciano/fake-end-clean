@@ -176,4 +176,13 @@ describe('DbAuthentication', () => {
 
     await expect(promise).rejects.toThrow()
   })
+
+  test('Should return null if FindUserByEmailRepository fails', async () => {
+    const { sut, loadUserByIdRepositoryStub } = makeSut()
+
+    jest.spyOn(loadUserByIdRepositoryStub, 'findByEmail').mockResolvedValueOnce(null as any)
+    const userAccess = await sut.auth(makeFakeAuthenticationModel())
+
+    expect(userAccess).toBeNull()
+  })
 })
