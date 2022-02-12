@@ -3,8 +3,9 @@ import { AddUserRepository } from '../../data/protocols/user/AddUserRepository'
 import { User } from '../../domain/model/User'
 import { UserModel } from '../../domain/usecases/user/add/AddUser'
 import { MongoHelper } from '../db/mongo/mongoHelper'
+import { UpdateUserAccessTokenModel, UpdateUserAccessTokenRepository } from '../../data/protocols/user/UpdateUserAccessTokenRepository'
 
-export class UserMongoRespository implements AddUserRepository, FindUserByEmailRepository {
+export class UserMongoRespository implements AddUserRepository, FindUserByEmailRepository, UpdateUserAccessTokenRepository {
   async add (userModel: UserModel): Promise<User> {
     const collection = await MongoHelper.getCollection('users')
 
@@ -29,5 +30,10 @@ export class UserMongoRespository implements AddUserRepository, FindUserByEmailR
       id: _id,
       ...obj
     }
+  }
+
+  async updateAccessToken (data: UpdateUserAccessTokenModel): Promise<void> {
+    const collection = await MongoHelper.getCollection('usersAccessToken')
+    await collection.insertOne(data)
   }
 }
