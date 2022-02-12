@@ -41,7 +41,7 @@ const makeFindUserByIdRepository = (): FindUserByEmailRepository => {
 const makeDecrypter = (): Encrypter => {
   class EncrypterStub implements Encrypter {
     async encrypt (_input: any): Promise<string> {
-      return await Promise.resolve('')
+      return await Promise.resolve('any_access_token')
     }
   }
 
@@ -120,5 +120,13 @@ describe('DbAuthentication', () => {
     const promise = sut.auth(makeFakeAuthenticationModel())
 
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should return access token if Authentication succeeds', async () => {
+    const { sut } = makeSut()
+
+    const accessToken = await sut.auth(makeFakeAuthenticationModel())
+
+    expect(accessToken).toBe('any_access_token')
   })
 })
