@@ -167,4 +167,13 @@ describe('DbAuthentication', () => {
       createdAt: new Date()
     })
   })
+
+  test('Should throws if UpdateUserAccessTokenRepository throws', async () => {
+    const { sut, updateUserAccessTokenRepositoryStub } = makeSut()
+
+    jest.spyOn(updateUserAccessTokenRepositoryStub, 'updateAccessToken').mockImplementationOnce(() => { throw new Error() })
+    const promise = sut.auth(makeFakeAuthenticationModel())
+
+    await expect(promise).rejects.toThrow()
+  })
 })
