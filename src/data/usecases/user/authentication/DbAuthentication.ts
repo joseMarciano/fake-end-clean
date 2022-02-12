@@ -11,13 +11,15 @@ export class DbAuthentication implements Authentication {
   ) {}
 
   async auth (authenticationModel: AuthenticationModel): Promise<string> {
+    const invalidReturn = null as unknown as string
     const user = await this.findUserByEmailRepository.findByEmail(authenticationModel.email)
 
-    if (user) {
-      await this.hashCompare.compare(authenticationModel.password, user.password as string)
-    }
-    await this.encrypter.encrypt(authenticationModel)
+    if (!user) return invalidReturn
 
-    return await Promise.resolve('')
+    const passwordIsValid = await this.hashCompare.compare(authenticationModel.password, user.password as string)
+
+    if (!passwordIsValid) return invalidReturn
+
+    return await this.encrypter.encrypt(authenticationModel)
   }
 }
