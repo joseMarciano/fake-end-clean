@@ -2,10 +2,9 @@ import { AuthenticationModel } from '../../../../domain/usecases/user/authentica
 import { Encrypter } from '../../../../data/protocols/cryptography/Encrypter'
 import { DbAuthentication } from './DbAuthentication'
 import { User } from '../../../../domain/model/User'
-import { FindUserByIdRepository } from '../../../../data/protocols/user/FindUserByIdRepository'
+import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindUserByEmailRepository'
 
 const makeFakeAuthenticationModel = (): AuthenticationModel => ({
-  id: 'any_id',
   email: 'any_email',
   password: 'any_password'
 })
@@ -18,14 +17,14 @@ const makeFakeUser = (): User => ({
   isActive: false
 })
 
-const makeFindUserByIdRepository = (): FindUserByIdRepository => {
-  class FindUserByIdRepositoryStub implements FindUserByIdRepository {
-    async findById (id: string): Promise<User> {
+const makeFindUserByIdRepository = (): FindUserByEmailRepository => {
+  class FindUserByEmailRepository implements FindUserByEmailRepository {
+    async findByEmail (_email: string): Promise<User> {
       return await Promise.resolve(makeFakeUser())
     }
   }
 
-  return new FindUserByIdRepositoryStub()
+  return new FindUserByEmailRepository()
 }
 
 const makeDecrypter = (): Encrypter => {
@@ -41,7 +40,7 @@ const makeDecrypter = (): Encrypter => {
 interface SutTypes {
   sut: DbAuthentication
   encrypterStub: Encrypter
-  loadUserByIdRepositoryStub: FindUserByIdRepository
+  loadUserByIdRepositoryStub: FindUserByEmailRepository
 }
 
 const makeSut = (): SutTypes => {
@@ -73,19 +72,19 @@ describe('DbAuthentication', () => {
 
     await expect(promise).rejects.toThrow()
   })
-  test('Should call FindUserByIdRepository with correct value', async () => {
+  test('Should call FindUserByEmailRepository with correct value', async () => {
     const { sut, loadUserByIdRepositoryStub } = makeSut()
 
-    const loadByIdSpy = jest.spyOn(loadUserByIdRepositoryStub, 'findById')
+    const loadByIdSpy = jest.spyOn(loadUserByIdRepositoryStub, 'findByEmail')
     await sut.auth(makeFakeAuthenticationModel())
 
-    expect(loadByIdSpy).toHaveBeenCalledWith('any_id')
+    expect(loadByIdSpy).toHaveBeenCalledWith('any_email')
   })
 
-  test('Should throws if FindUserByIdRepository throws', async () => {
+  test('Should throws if FindUserByEmailRepository throws', async () => {
     const { sut, loadUserByIdRepositoryStub } = makeSut()
 
-    jest.spyOn(loadUserByIdRepositoryStub, 'findById').mockImplementationOnce(() => { throw new Error() })
+    jest.spyOn(loadUserByIdRepositoryStub, 'findByEmail').mockImplementationOnce(() => { throw new Error() })
     const promise = sut.auth(makeFakeAuthenticationModel())
 
     await expect(promise).rejects.toThrow()
