@@ -79,7 +79,7 @@ const makeSut = (): SutTypes => {
 }
 
 describe('DbActiveUser', () => {
-  test('Should call Encrypter  with correct value', async () => {
+  test('Should call Decrypter  with correct value', async () => {
     const { sut, decrypterStub } = makeSut()
 
     const decryptSpy = jest.spyOn(decrypterStub, 'decrypt')
@@ -87,6 +87,7 @@ describe('DbActiveUser', () => {
 
     expect(decryptSpy).toHaveBeenCalledWith('any_encrypted_value')
   })
+
   test('Should call FindUserByEmailRepository with correct value', async () => {
     const { sut, findUserByEmailRepositoryStub } = makeSut()
 
@@ -95,6 +96,7 @@ describe('DbActiveUser', () => {
 
     expect(findUserByEmailStub).toHaveBeenCalledWith('any_email')
   })
+
   test('Should call ActiveUserByIdRepository with correct value', async () => {
     const { sut, activeUserByIdRepositoryStub } = makeSut()
 
@@ -113,5 +115,32 @@ describe('DbActiveUser', () => {
       ...makeFakeUser(),
       isActive: true
     })
+  })
+
+  test('Should throws if Decrypter throws', async () => {
+    const { sut, decrypterStub } = makeSut()
+
+    jest.spyOn(decrypterStub, 'decrypt').mockRejectedValueOnce(new Error())
+    const promise = sut.active(makeFakeUserActivateModel())
+
+    await expect(promise).rejects.toThrowError()
+  })
+
+  test('Should throws if FindUserByEmailRepository throws', async () => {
+    const { sut, findUserByEmailRepositoryStub } = makeSut()
+
+    jest.spyOn(findUserByEmailRepositoryStub, 'findByEmail').mockRejectedValueOnce(new Error())
+    const promise = sut.active(makeFakeUserActivateModel())
+
+    await expect(promise).rejects.toThrowError()
+  })
+
+  test('Should throws if ActiveUserByIdRepository throws', async () => {
+    const { sut, activeUserByIdRepositoryStub } = makeSut()
+
+    jest.spyOn(activeUserByIdRepositoryStub, 'activeById').mockRejectedValueOnce(new Error())
+    const promise = sut.active(makeFakeUserActivateModel())
+
+    await expect(promise).rejects.toThrowError()
   })
 })
