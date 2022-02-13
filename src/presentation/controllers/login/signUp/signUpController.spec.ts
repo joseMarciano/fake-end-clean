@@ -174,7 +174,7 @@ describe('SignUpController', () => {
     expect(sendSpy).toHaveBeenCalledWith({
       to: 'any_email@mail.com',
       subject: 'Welcome to fake end ✔',
-      html: '<a target="_blank" href="http://localhost:8080/active?user=any_token>Click here to activate your account</a>'
+      html: '<a target="_blank" href="http://localhost:8080/api/active?user=any_token>Click here to activate your account</a>'
     })
   })
 

@@ -40,7 +40,7 @@ export class SignUpController implements Controller {
       await this.notification.send({
         to: result.email,
         subject: 'Welcome to fake end ✔',
-        html: `<a target="_blank" href="http://localhost:8080/active?user=${userAccess}>Click here to activate your account</a>`
+        html: `<a target="_blank" href="http://localhost:8080/api/active?user=${userAccess}>Click here to activate your account</a>`
       })
 
       return noContent()
