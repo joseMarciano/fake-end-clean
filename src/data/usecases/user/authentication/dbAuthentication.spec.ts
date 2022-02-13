@@ -101,7 +101,11 @@ describe('DbAuthentication', () => {
     const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
     await sut.auth(makeFakeAuthenticationModel())
 
-    expect(encryptSpy).toHaveBeenCalledWith(makeFakeAuthenticationModel())
+    expect(encryptSpy).toHaveBeenCalledWith(
+      {
+        ...makeFakeAuthenticationModel(),
+        password: 'hashed_password'
+      })
   })
   test('Should throws if Encrypter throws', async () => {
     const { sut, encrypterStub } = makeSut()
