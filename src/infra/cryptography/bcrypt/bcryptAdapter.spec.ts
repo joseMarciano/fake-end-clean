@@ -23,27 +23,29 @@ const makeSut = (): SutTypes => {
 }
 
 describe('BcryptAdapter', () => {
-  test('Should call hash with correct values', async () => {
-    const { sut } = makeSut()
+  describe('INTERFACE Hasher', () => {
+    test('Should call hash with correct values', async () => {
+      const { sut } = makeSut()
 
-    const hashSpy = jest.spyOn(bcrypt, 'hash')
-    await sut.hash('any_input')
+      const hashSpy = jest.spyOn(bcrypt, 'hash')
+      await sut.hash('any_input')
 
-    expect(hashSpy).toHaveBeenCalledWith('any_input', SALT)
-  })
-  test('Should return a valid hash when hash succeeds', async () => {
-    const { sut } = makeSut()
+      expect(hashSpy).toHaveBeenCalledWith('any_input', SALT)
+    })
+    test('Should return a valid hash when hash succeeds', async () => {
+      const { sut } = makeSut()
 
-    const hasher = await sut.hash('any_input')
+      const hasher = await sut.hash('any_input')
 
-    expect(hasher).toBe('hasher_input')
-  })
-  test('Should throw if bcrypt throws', async () => {
-    const { sut } = makeSut()
+      expect(hasher).toBe('hasher_input')
+    })
+    test('Should throw if bcrypt throws', async () => {
+      const { sut } = makeSut()
 
-    jest.spyOn(bcrypt, 'hash').mockImplementationOnce(() => { throw new Error() })
-    const promise = sut.hash('any_input')
+      jest.spyOn(bcrypt, 'hash').mockImplementationOnce(() => { throw new Error() })
+      const promise = sut.hash('any_input')
 
-    await expect(promise).rejects.toThrow()
+      await expect(promise).rejects.toThrow()
+    })
   })
 })
