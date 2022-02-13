@@ -1,9 +1,9 @@
-import { EmailFieldValidation } from '../../../../presentation/validators/EmailFieldValidation'
-import { EmailValidatorAdapter } from '../../../../infra/validators/EmailValidatorAdapter'
-import { Validator } from '../../../../presentation/protocols'
-import { CompareFieldsValidation } from '../../../../presentation/validators/CompareFieldsValidaton'
-import { RequiredFieldValidation } from '../../../../presentation/validators/RequiredFieldValidation'
-import { ValidationErrorComposite } from '../../../../presentation/validators/ValidationErrorComposite'
+import { EmailFieldValidation } from '../../../../../presentation/validators/EmailFieldValidation'
+import { EmailValidatorAdapter } from '../../../../../infra/validators/EmailValidatorAdapter'
+import { Validator } from '../../../../../presentation/protocols'
+import { CompareFieldsValidation } from '../../../../../presentation/validators/CompareFieldsValidaton'
+import { RequiredFieldValidation } from '../../../../../presentation/validators/RequiredFieldValidation'
+import { ValidationErrorComposite } from '../../../../../presentation/validators/ValidationErrorComposite'
 
 export const makeValidationComposite = (): Validator => {
   const composite = ValidationErrorComposite.builder()

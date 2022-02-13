@@ -1,9 +1,9 @@
-import { EmailValidatorAdapter } from '../../../../infra/validators/EmailValidatorAdapter'
-import { EmailFieldValidation } from '../../../../presentation/validators/EmailFieldValidation'
-import { Validator } from '../../../../presentation/protocols'
-import { CompareFieldsValidation } from '../../../../presentation/validators/CompareFieldsValidaton'
-import { RequiredFieldValidation } from '../../../../presentation/validators/RequiredFieldValidation'
-import { ValidationErrorComposite } from '../../../../presentation/validators/ValidationErrorComposite'
+import { EmailValidatorAdapter } from '../../../../../infra/validators/EmailValidatorAdapter'
+import { EmailFieldValidation } from '../../../../../presentation/validators/EmailFieldValidation'
+import { Validator } from '../../../../../presentation/protocols'
+import { CompareFieldsValidation } from '../../../../../presentation/validators/CompareFieldsValidaton'
+import { RequiredFieldValidation } from '../../../../../presentation/validators/RequiredFieldValidation'
+import { ValidationErrorComposite } from '../../../../../presentation/validators/ValidationErrorComposite'
 import { makeValidationComposite } from './signUpValidationCompositeFactory'
 
 describe('signUpValidationComposioteFactory', () => {
