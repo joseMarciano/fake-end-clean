@@ -1,10 +1,10 @@
 import { noContent, serverError } from '../../../../presentation/helper/httpHelper'
 import { User } from '../../../../domain/model/User'
-import { ActivateUser } from '../../../../domain/usecases/user/activate/ActivateUser'
+import { ActivateUserByEmail } from '../../../../domain/usecases/user/activate/ActivateUserByEmail'
 import { HttpRequest } from '../../../../presentation/protocols'
 import { ActiveUserController } from './ActiveUserController'
 import { Decrypter } from '../../../../data/protocols/cryptography/Decrypter'
-import { FindUserById } from '../../../../domain/usecases/user/find/FindUserById'
+import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindUserByEmailRepository'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   params: {
@@ -20,21 +20,21 @@ const makeFakeUser = (): User => ({
   password: 'any_password'
 })
 
-const makeFindUserById = (): FindUserById => {
-  class FindUserByIdStub implements FindUserById {
-    async findById (_id: string): Promise<User> {
+const makeFindUserByEmailRepository = (): FindUserByEmailRepository => {
+  class FindUserByEmailRepositoryStub implements FindUserByEmailRepository {
+    async findByEmail (_email: string): Promise<User> {
       return await Promise.resolve(makeFakeUser())
     }
   }
 
-  return new FindUserByIdStub()
+  return new FindUserByEmailRepositoryStub()
 }
 
 const makeDecrypter = (): Decrypter => {
   class DecrypterStub implements Decrypter {
     async decrypt (_input: string): Promise<any> {
       return {
-        id: 'any_id'
+        email: 'any_email'
       }
     }
   }
@@ -42,52 +42,52 @@ const makeDecrypter = (): Decrypter => {
   return new DecrypterStub()
 }
 
-const makeActiveUser = (): ActivateUser => {
-  class ActiveUserStub implements ActivateUser {
-    async active (_user: User): Promise<void> {
+const makeActivateUserByEmail = (): ActivateUserByEmail => {
+  class ActivateUserByEmailStub implements ActivateUserByEmail {
+    async activeByEmail (_email: string): Promise<void> {
       await Promise.resolve(null)
     }
   }
 
-  return new ActiveUserStub()
+  return new ActivateUserByEmailStub()
 }
 
 interface SutTypes {
   sut: ActiveUserController
-  activeUserStub: ActivateUser
+  activeUserByEmailStub: ActivateUserByEmail
   decrypterStub: Decrypter
-  findUserByIdStub: FindUserById
+  findUserByIdStub: FindUserByEmailRepository
 }
 
 const makeSut = (): SutTypes => {
-  const findUserByIdStub = makeFindUserById()
-  const activeUserStub = makeActiveUser()
+  const findUserByIdStub = makeFindUserByEmailRepository()
+  const activeUserByEmailStub = makeActivateUserByEmail()
   const decrypterStub = makeDecrypter()
-  const sut = new ActiveUserController(activeUserStub, decrypterStub, findUserByIdStub)
+  const sut = new ActiveUserController(activeUserByEmailStub, decrypterStub)
 
   return {
     sut,
-    activeUserStub,
+    activeUserByEmailStub,
     decrypterStub,
     findUserByIdStub
   }
 }
 
 describe('ActiveSignUpController', () => {
-  test('Should call ActiveUser with correct values', async () => {
-    const { sut, activeUserStub } = makeSut()
+  test('Should call ActivateUserByEmail with correct values', async () => {
+    const { sut, activeUserByEmailStub } = makeSut()
 
-    const activeSpy = jest.spyOn(activeUserStub, 'active')
+    const activeSpy = jest.spyOn(activeUserByEmailStub, 'activeByEmail')
     const httpRequest = makeFakeHttpRequest()
 
     await sut.handle(httpRequest)
 
-    expect(activeSpy).toHaveBeenCalledWith(makeFakeUser())
+    expect(activeSpy).toHaveBeenCalledWith('any_email')
   })
-  test('Should return 500 if ActiveUser throws', async () => {
-    const { sut, activeUserStub } = makeSut()
+  test('Should return 500 if ActivateUserByEmail throws', async () => {
+    const { sut, activeUserByEmailStub } = makeSut()
 
-    jest.spyOn(activeUserStub, 'active').mockRejectedValueOnce(new Error())
+    jest.spyOn(activeUserByEmailStub, 'activeByEmail').mockRejectedValueOnce(new Error())
     const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
@@ -114,28 +114,7 @@ describe('ActiveSignUpController', () => {
 
     expect(httpResponse).toEqual(serverError(new Error()))
   })
-  test('Should call FindUserById with correct values', async () => {
-    const { sut, findUserByIdStub } = makeSut()
-
-    const findUserByIdSpy = jest.spyOn(findUserByIdStub, 'findById')
-    const httpRequest = makeFakeHttpRequest()
-
-    await sut.handle(httpRequest)
-
-    expect(findUserByIdSpy).toHaveBeenCalledWith('any_id')
-  })
-
-  test('Should return 500 if FindUserById throws', async () => {
-    const { sut, findUserByIdStub } = makeSut()
-
-    jest.spyOn(findUserByIdStub, 'findById').mockRejectedValueOnce(new Error())
-    const httpRequest = makeFakeHttpRequest()
-
-    const httpResponse = await sut.handle(httpRequest)
-
-    expect(httpResponse).toEqual(serverError(new Error()))
-  })
-  test('Should return 204 ActiveUser succeeds', async () => {
+  test('Should return 204 ActivateUserByEmail succeeds', async () => {
     const { sut } = makeSut()
     const httpRequest = makeFakeHttpRequest()
     const httpResponse = await sut.handle(httpRequest)
