@@ -34,7 +34,7 @@ export class SignUpController implements Controller {
 
       const userAccess = await this.authentication.auth({
         email: result.email,
-        password: result.password ?? ''
+        password: body.password ?? ''
       })
 
       await this.notification.send({
