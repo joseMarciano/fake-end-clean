@@ -1,4 +1,4 @@
-import { noContent, serverError } from '../../../../presentation/helper/httpHelper'
+import { ok, serverError } from '../../../../presentation/helper/httpHelper'
 import { Controller, HttpRequest, HttpResponse } from '../../../../presentation/protocols'
 import { Decrypter } from '../../../../data/protocols/cryptography/Decrypter'
 import { ActivateUser } from '../../../../domain/usecases/user/activate/ActivateUser'
@@ -12,9 +12,9 @@ export class ActiveUserController implements Controller {
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const result = await this.decrypter.decrypt(httpRequest.params?.user)
-      await this.activateUser.active(result)
+      const user = await this.activateUser.active(result)
 
-      return noContent()
+      return ok(user)
     } catch (error) {
       return serverError(error)
     }
