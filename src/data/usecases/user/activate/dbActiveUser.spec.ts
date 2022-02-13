@@ -20,7 +20,10 @@ const makeFakeUserActivateModel = (): ActivateUserModel => ({
 const makeActiveUserByIdRepository = (): ActiveUserByIdRepository => {
   class ActiveUserByIdRepositoryStub implements ActiveUserByIdRepository {
     async activeById (_id: string): Promise<User> {
-      return await Promise.resolve(makeFakeUser())
+      return await Promise.resolve({
+        ...makeFakeUser(),
+        isActive: true
+      })
     }
   }
 
@@ -99,5 +102,16 @@ describe('DbActiveUser', () => {
     await sut.active(makeFakeUserActivateModel())
 
     expect(activeByIdSpy).toHaveBeenCalledWith('any_id')
+  })
+
+  test('Should return an User on DbActiveUser succeeds', async () => {
+    const { sut } = makeSut()
+
+    const user = await sut.active(makeFakeUserActivateModel())
+
+    expect(user).toEqual({
+      ...makeFakeUser(),
+      isActive: true
+    })
   })
 })
