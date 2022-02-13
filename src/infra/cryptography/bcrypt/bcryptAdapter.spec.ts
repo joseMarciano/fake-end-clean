@@ -67,5 +67,15 @@ describe('BcryptAdapter', () => {
 
       expect(compare).toBe(true)
     })
+    test('Should return false if compare returns false', async () => {
+      const { sut } = makeSut()
+
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      jest.spyOn(bcrypt, 'compare').mockImplementationOnce(async () => await Promise.resolve(false) as any)
+
+      const compare = await sut.compare('any_input', 'any_hashed_value')
+
+      expect(compare).toBe(false)
+    })
   })
 })
