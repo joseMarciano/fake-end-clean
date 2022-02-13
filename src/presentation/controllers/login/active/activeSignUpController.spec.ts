@@ -3,7 +3,6 @@ import { User } from '../../../../domain/model/User'
 import { ActivateUser, ActivateUserModel } from '../../../../domain/usecases/user/activate/ActivateUser'
 import { HttpRequest } from '../../../../presentation/protocols'
 import { ActiveUserController } from './ActiveUserController'
-import { Decrypter } from '../../../../data/protocols/cryptography/Decrypter'
 import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindUserByEmailRepository'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
@@ -34,18 +33,6 @@ const makeFindUserByEmailRepository = (): FindUserByEmailRepository => {
   return new FindUserByEmailRepositoryStub()
 }
 
-const makeDecrypter = (): Decrypter => {
-  class DecrypterStub implements Decrypter {
-    async decrypt (_input: string): Promise<any> {
-      return {
-        email: 'any_email'
-      }
-    }
-  }
-
-  return new DecrypterStub()
-}
-
 const makeActivateUserByEmail = (): ActivateUser => {
   class ActivateUserByEmailStub implements ActivateUser {
     async active (_data: ActivateUserModel): Promise<User> {
@@ -62,20 +49,17 @@ const makeActivateUserByEmail = (): ActivateUser => {
 interface SutTypes {
   sut: ActiveUserController
   activeUserStub: ActivateUser
-  decrypterStub: Decrypter
   findUserByIdStub: FindUserByEmailRepository
 }
 
 const makeSut = (): SutTypes => {
   const findUserByIdStub = makeFindUserByEmailRepository()
   const activeUserStub = makeActivateUserByEmail()
-  const decrypterStub = makeDecrypter()
-  const sut = new ActiveUserController(activeUserStub, decrypterStub)
+  const sut = new ActiveUserController(activeUserStub)
 
   return {
     sut,
     activeUserStub,
-    decrypterStub,
     findUserByIdStub
   }
 }
