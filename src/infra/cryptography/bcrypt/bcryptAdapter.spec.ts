@@ -42,7 +42,7 @@ describe('BcryptAdapter', () => {
 
       expect(hasher).toBe('hasher_input')
     })
-    test('Should throw if bcrypt throws', async () => {
+    test('Should throw if hash throws', async () => {
       const { sut } = makeSut()
 
       jest.spyOn(bcrypt, 'hash').mockImplementationOnce(() => { throw new Error() })
