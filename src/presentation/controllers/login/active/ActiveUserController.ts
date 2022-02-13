@@ -11,8 +11,7 @@ export class ActiveUserController implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const result = await this.decrypter.decrypt(httpRequest.params?.user)
-      const user = await this.activateUser.active(result)
+      const user = await this.activateUser.active({ encryptedValue: httpRequest.params.user })
 
       return ok(user)
     } catch (error) {

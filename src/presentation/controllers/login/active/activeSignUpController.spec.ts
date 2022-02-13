@@ -13,7 +13,7 @@ const makeFakeHttpRequest = (): HttpRequest => ({
 })
 
 const makeActivateUserModel = (): ActivateUserModel => ({
-  email: 'any_email'
+  encryptedValue: 'any_token'
 })
 
 const makeFakeUser = (): User => ({
@@ -95,26 +95,6 @@ describe('ActiveSignUpController', () => {
     const { sut, activeUserStub } = makeSut()
 
     jest.spyOn(activeUserStub, 'active').mockRejectedValueOnce(new Error())
-    const httpRequest = makeFakeHttpRequest()
-
-    const httpResponse = await sut.handle(httpRequest)
-
-    expect(httpResponse).toEqual(serverError(new Error()))
-  })
-  test('Should call Decrypter with correct values', async () => {
-    const { sut, decrypterStub } = makeSut()
-
-    const decryptSpy = jest.spyOn(decrypterStub, 'decrypt')
-    const httpRequest = makeFakeHttpRequest()
-
-    await sut.handle(httpRequest)
-
-    expect(decryptSpy).toHaveBeenCalledWith('any_token')
-  })
-  test('Should return 500 if Decrypter throws', async () => {
-    const { sut, decrypterStub } = makeSut()
-
-    jest.spyOn(decrypterStub, 'decrypt').mockRejectedValueOnce(new Error())
     const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
