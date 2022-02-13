@@ -1,6 +1,6 @@
 import { noContent, serverError } from '../../../../presentation/helper/httpHelper'
 import { User } from '../../../../domain/model/User'
-import { ActivateUserByEmail } from '../../../../domain/usecases/user/activate/ActivateUserByEmail'
+import { ActivateUser, ActivateUserModel } from '../../../../domain/usecases/user/activate/ActivateUser'
 import { HttpRequest } from '../../../../presentation/protocols'
 import { ActiveUserController } from './ActiveUserController'
 import { Decrypter } from '../../../../data/protocols/cryptography/Decrypter'
@@ -10,6 +10,11 @@ const makeFakeHttpRequest = (): HttpRequest => ({
   params: {
     user: 'any_token'
   }
+})
+
+const makeActivateUserModel = (): ActivateUserModel => ({
+  email: 'any_email',
+  password: 'any_password'
 })
 
 const makeFakeUser = (): User => ({
@@ -34,7 +39,8 @@ const makeDecrypter = (): Decrypter => {
   class DecrypterStub implements Decrypter {
     async decrypt (_input: string): Promise<any> {
       return {
-        email: 'any_email'
+        email: 'any_email',
+        password: 'any_password'
       }
     }
   }
@@ -42,10 +48,10 @@ const makeDecrypter = (): Decrypter => {
   return new DecrypterStub()
 }
 
-const makeActivateUserByEmail = (): ActivateUserByEmail => {
-  class ActivateUserByEmailStub implements ActivateUserByEmail {
-    async activeByEmail (_email: string): Promise<void> {
-      await Promise.resolve(null)
+const makeActivateUserByEmail = (): ActivateUser => {
+  class ActivateUserByEmailStub implements ActivateUser {
+    async active (_data: ActivateUserModel): Promise<User> {
+      return await Promise.resolve(makeFakeUser())
     }
   }
 
@@ -54,40 +60,40 @@ const makeActivateUserByEmail = (): ActivateUserByEmail => {
 
 interface SutTypes {
   sut: ActiveUserController
-  activeUserByEmailStub: ActivateUserByEmail
+  activeUserStub: ActivateUser
   decrypterStub: Decrypter
   findUserByIdStub: FindUserByEmailRepository
 }
 
 const makeSut = (): SutTypes => {
   const findUserByIdStub = makeFindUserByEmailRepository()
-  const activeUserByEmailStub = makeActivateUserByEmail()
+  const activeUserStub = makeActivateUserByEmail()
   const decrypterStub = makeDecrypter()
-  const sut = new ActiveUserController(activeUserByEmailStub, decrypterStub)
+  const sut = new ActiveUserController(activeUserStub, decrypterStub)
 
   return {
     sut,
-    activeUserByEmailStub,
+    activeUserStub,
     decrypterStub,
     findUserByIdStub
   }
 }
 
 describe('ActiveSignUpController', () => {
-  test('Should call ActivateUserByEmail with correct values', async () => {
-    const { sut, activeUserByEmailStub } = makeSut()
+  test('Should call ActivateUser with correct values', async () => {
+    const { sut, activeUserStub } = makeSut()
 
-    const activeSpy = jest.spyOn(activeUserByEmailStub, 'activeByEmail')
+    const activeSpy = jest.spyOn(activeUserStub, 'active')
     const httpRequest = makeFakeHttpRequest()
 
     await sut.handle(httpRequest)
 
-    expect(activeSpy).toHaveBeenCalledWith('any_email')
+    expect(activeSpy).toHaveBeenCalledWith(makeActivateUserModel())
   })
-  test('Should return 500 if ActivateUserByEmail throws', async () => {
-    const { sut, activeUserByEmailStub } = makeSut()
+  test('Should return 500 if ActivateUser throws', async () => {
+    const { sut, activeUserStub } = makeSut()
 
-    jest.spyOn(activeUserByEmailStub, 'activeByEmail').mockRejectedValueOnce(new Error())
+    jest.spyOn(activeUserStub, 'active').mockRejectedValueOnce(new Error())
     const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
@@ -114,7 +120,7 @@ describe('ActiveSignUpController', () => {
 
     expect(httpResponse).toEqual(serverError(new Error()))
   })
-  test('Should return 204 ActivateUserByEmail succeeds', async () => {
+  test('Should return 204 ActivateUser succeeds', async () => {
     const { sut } = makeSut()
     const httpRequest = makeFakeHttpRequest()
     const httpResponse = await sut.handle(httpRequest)
