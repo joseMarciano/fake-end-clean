@@ -1,4 +1,4 @@
-import { noContent, serverError } from '../../../../presentation/helper/httpHelper'
+import { ok, serverError } from '../../../../presentation/helper/httpHelper'
 import { User } from '../../../../domain/model/User'
 import { ActivateUser, ActivateUserModel } from '../../../../domain/usecases/user/activate/ActivateUser'
 import { HttpRequest } from '../../../../presentation/protocols'
@@ -51,7 +51,10 @@ const makeDecrypter = (): Decrypter => {
 const makeActivateUserByEmail = (): ActivateUser => {
   class ActivateUserByEmailStub implements ActivateUser {
     async active (_data: ActivateUserModel): Promise<User> {
-      return await Promise.resolve(makeFakeUser())
+      return await Promise.resolve({
+        ...makeFakeUser(),
+        isActive: true
+      })
     }
   }
 
@@ -120,11 +123,15 @@ describe('ActiveSignUpController', () => {
 
     expect(httpResponse).toEqual(serverError(new Error()))
   })
-  test('Should return 204 ActivateUser succeeds', async () => {
+  test('Should return 200 ActivateUser succeeds', async () => {
     const { sut } = makeSut()
     const httpRequest = makeFakeHttpRequest()
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(noContent())
+    const userActive: User = {
+      ...makeFakeUser(),
+      isActive: true
+    }
+    expect(httpResponse).toEqual(ok(userActive))
   })
 })
