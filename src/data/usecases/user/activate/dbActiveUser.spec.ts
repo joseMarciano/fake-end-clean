@@ -3,6 +3,7 @@ import { ActivateUserModel } from '../../../../domain/usecases/user/activate/Act
 import { DbActiveUser } from './DbActiveUser'
 import { Decrypter } from '../../../../data/protocols/cryptography/Decrypter'
 import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindUserByEmailRepository'
+import { ActiveUserByIdRepository } from 'src/data/protocols/user/ActiveUserByIdRepository'
 
 const makeFakeUser = (): User => ({
   id: 'any_id',
@@ -15,6 +16,16 @@ const makeFakeUser = (): User => ({
 const makeFakeUserActivateModel = (): ActivateUserModel => ({
   encryptedValue: 'any_encrypted_value'
 })
+
+const makeActiveUserByIdRepository = (): ActiveUserByIdRepository => {
+  class ActiveUserByIdRepositoryStub implements ActiveUserByIdRepository {
+    async activeById (_id: string): Promise<User> {
+      return await Promise.resolve(makeFakeUser())
+    }
+  }
+
+  return new ActiveUserByIdRepositoryStub()
+}
 
 const makeFindUserByEmailRepository = (): FindUserByEmailRepository => {
   class FindUserByEmailRepositoryStub implements FindUserByEmailRepository {
@@ -43,20 +54,24 @@ interface SutTypes {
   sut: DbActiveUser
   decrypterStub: Decrypter
   findUserByEmailRepositoryStub: FindUserByEmailRepository
+  activeUserByIdRepositoryStub: ActiveUserByIdRepository
 }
 const makeSut = (): SutTypes => {
+  const activeUserByIdRepositoryStub = makeActiveUserByIdRepository()
   const decrypterStub = makeDecrypter()
   const findUserByEmailRepositoryStub = makeFindUserByEmailRepository()
 
   const sut = new DbActiveUser(
     decrypterStub,
-    findUserByEmailRepositoryStub
+    findUserByEmailRepositoryStub,
+    activeUserByIdRepositoryStub
   )
 
   return {
     sut,
     decrypterStub,
-    findUserByEmailRepositoryStub
+    findUserByEmailRepositoryStub,
+    activeUserByIdRepositoryStub
   }
 }
 
@@ -76,5 +91,13 @@ describe('DbActiveUser', () => {
     await sut.active(makeFakeUserActivateModel())
 
     expect(findUserByEmailStub).toHaveBeenCalledWith('any_email')
+  })
+  test('Should call ActiveUserByIdRepository with correct value', async () => {
+    const { sut, activeUserByIdRepositoryStub } = makeSut()
+
+    const activeByIdSpy = jest.spyOn(activeUserByIdRepositoryStub, 'activeById')
+    await sut.active(makeFakeUserActivateModel())
+
+    expect(activeByIdSpy).toHaveBeenCalledWith('any_id')
   })
 })
