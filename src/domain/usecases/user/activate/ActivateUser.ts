@@ -1,9 +1,9 @@
 import { User } from '../../../../domain/model/User'
 
 export interface ActivateUser {
-  active: (userModel: ActivateUserModel) => Promise<User>
+  active: (userActivateModel: ActivateUserModel) => Promise<User>
 }
 
 export interface ActivateUserModel {
-  email: string
+  encryptedValue: string
 }
