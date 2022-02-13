@@ -60,5 +60,12 @@ describe('BcryptAdapter', () => {
 
       expect(comapreSpy).toHaveBeenCalledWith('any_input', 'any_hashed_value')
     })
+    test('Should return  true if compare returns true', async () => {
+      const { sut } = makeSut()
+
+      const compare = await sut.compare('any_input', 'any_hashed_value')
+
+      expect(compare).toBe(true)
+    })
   })
 })
