@@ -6,5 +6,4 @@ export interface ActivateUser {
 
 export interface ActivateUserModel {
   email: string
-  password: string
 }

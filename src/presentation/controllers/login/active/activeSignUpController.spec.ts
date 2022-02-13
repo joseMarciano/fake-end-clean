@@ -13,8 +13,7 @@ const makeFakeHttpRequest = (): HttpRequest => ({
 })
 
 const makeActivateUserModel = (): ActivateUserModel => ({
-  email: 'any_email',
-  password: 'any_password'
+  email: 'any_email'
 })
 
 const makeFakeUser = (): User => ({
@@ -39,8 +38,7 @@ const makeDecrypter = (): Decrypter => {
   class DecrypterStub implements Decrypter {
     async decrypt (_input: string): Promise<any> {
       return {
-        email: 'any_email',
-        password: 'any_password'
+        email: 'any_email'
       }
     }
   }
