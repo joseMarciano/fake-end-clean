@@ -4,7 +4,7 @@ import env from './config/env'
 import { app } from './config/app'
 
 MongoHelper.connect(env.mongoUrl)
-  .then(MongoHelper.createCustomCollections)
+  .then(async () => await MongoHelper.createCustomCollections())
   .then(startServer)
   .catch(console.error)
 
