@@ -92,4 +92,23 @@ describe('UserMongoRepository', () => {
       expect(mongoUserAccessToken.accessToken).toBe('any_token')
     })
   })
+
+  describe('INTERFACE ActiveUserByIdRepository', () => {
+    test('Should active user on success', async () => {
+      const { sut } = makeSut()
+
+      await userCollection.insertOne(makeFakeUserModel())
+
+      const user = await userCollection.findOne({}) as any
+
+      expect(user.isActive).toBe(false)
+
+      await sut.activeById(user._id.toString())
+
+      const userUpdated = await userCollection.findOne({}) as any
+
+      expect(userUpdated._id).toEqual(user._id)
+      expect(userUpdated.isActive).toBe(true)
+    })
+  })
 })
