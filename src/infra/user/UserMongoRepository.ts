@@ -4,8 +4,17 @@ import { User } from '../../domain/model/User'
 import { UserModel } from '../../domain/usecases/user/add/AddUser'
 import { MongoHelper } from '../db/mongo/mongoHelper'
 import { UpdateUserAccessTokenModel, UpdateUserAccessTokenRepository } from '../../data/protocols/user/UpdateUserAccessTokenRepository'
+import { ActiveUserByIdRepository } from 'src/data/protocols/user/ActiveUserByIdRepository'
+import { ObjectId } from 'mongodb'
 
-export class UserMongoRespository implements AddUserRepository, FindUserByEmailRepository, UpdateUserAccessTokenRepository {
+interface BasicRepository
+  extends
+  AddUserRepository,
+  FindUserByEmailRepository,
+  UpdateUserAccessTokenRepository,
+  ActiveUserByIdRepository
+{}
+export class UserMongoRespository implements BasicRepository {
   async add (userModel: UserModel): Promise<User> {
     const collection = await MongoHelper.getCollection('users')
 
@@ -35,5 +44,18 @@ export class UserMongoRespository implements AddUserRepository, FindUserByEmailR
   async updateAccessToken (data: UpdateUserAccessTokenModel): Promise<void> {
     const collection = await MongoHelper.getCollection('usersAccessToken')
     await collection.insertOne(data)
+  }
+
+  async activeById (id: string): Promise<User> {
+    const collection = await MongoHelper.getCollection('users')
+
+    await collection.findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          isActive: true
+        }
+      })
+    return null as unknown as User
   }
 }
