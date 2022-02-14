@@ -1,7 +1,7 @@
 import { ok, serverError } from '../../../../presentation/helper/httpHelper'
 import { User } from '../../../../domain/model/User'
 import { ActivateUser, ActivateUserModel } from '../../../../domain/usecases/user/activate/ActivateUser'
-import { HttpRequest } from '../../../../presentation/protocols'
+import { HttpRequest, Validator } from '../../../../presentation/protocols'
 import { ActiveUserController } from './ActiveUserController'
 import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindUserByEmailRepository'
 
@@ -22,6 +22,16 @@ const makeFakeUser = (): User => ({
   name: 'any_name',
   password: 'any_password'
 })
+
+const makeHttpValidator = (): Validator => {
+  class ValidatorStub implements Validator {
+    validate (input: any): Error | null {
+      return null
+    }
+  }
+
+  return new ValidatorStub()
+}
 
 const makeFindUserByEmailRepository = (): FindUserByEmailRepository => {
   class FindUserByEmailRepositoryStub implements FindUserByEmailRepository {
@@ -50,17 +60,20 @@ interface SutTypes {
   sut: ActiveUserController
   activeUserStub: ActivateUser
   findUserByIdStub: FindUserByEmailRepository
+  validatorStub: Validator
 }
 
 const makeSut = (): SutTypes => {
+  const validatorStub = makeHttpValidator()
   const findUserByIdStub = makeFindUserByEmailRepository()
   const activeUserStub = makeActivateUserByEmail()
-  const sut = new ActiveUserController(activeUserStub)
+  const sut = new ActiveUserController(activeUserStub, validatorStub)
 
   return {
     sut,
     activeUserStub,
-    findUserByIdStub
+    findUserByIdStub,
+    validatorStub
   }
 }
 
@@ -74,6 +87,15 @@ describe('ActiveSignUpController', () => {
     await sut.handle(httpRequest)
 
     expect(activeSpy).toHaveBeenCalledWith(makeActivateUserModel())
+  })
+  test('Should call Validator with correct values', async () => {
+    const { sut, validatorStub } = makeSut()
+
+    const validatorSpy = jest.spyOn(validatorStub, 'validate')
+    const httpRequest = makeFakeHttpRequest()
+    await sut.handle(httpRequest)
+
+    expect(validatorSpy).toHaveBeenCalledWith(makeFakeHttpRequest())
   })
   test('Should return 500 if ActivateUser throws', async () => {
     const { sut, activeUserStub } = makeSut()
