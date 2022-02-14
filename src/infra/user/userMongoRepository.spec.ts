@@ -79,8 +79,8 @@ describe('UserMongoRepository', () => {
 
       const result = await userCollection.insertOne(makeFakeUserModel())
 
-      await sut.updateRefreshToken({
-        accessToken: 'any_token',
+      await sut.addRefreshToken({
+        refreshToken: 'any_token',
         userId: result.insertedId.toString(),
         createdAt: new Date()
       })
@@ -89,7 +89,7 @@ describe('UserMongoRepository', () => {
       await userAccessTokenCollection.findOne({ userId: result.insertedId.toString() }) as any
 
       expect(mongoUserAccessToken.userId).toBe(result.insertedId.toString())
-      expect(mongoUserAccessToken.accessToken).toBe('any_token')
+      expect(mongoUserAccessToken.refreshToken).toBe('any_token')
     })
   })
 
