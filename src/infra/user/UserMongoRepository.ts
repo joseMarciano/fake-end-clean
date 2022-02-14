@@ -3,7 +3,7 @@ import { AddUserRepository } from '../../data/protocols/user/AddUserRepository'
 import { User } from '../../domain/model/User'
 import { UserModel } from '../../domain/usecases/user/add/AddUser'
 import { MongoHelper } from '../db/mongo/mongoHelper'
-import { UpdateUserAccessTokenModel, UpdateUserAccessTokenRepository } from '../../data/protocols/user/UpdateUserAccessTokenRepository'
+import { UpdateUserRefreshTokenModel, UpdateUserRefreshTokenRepository } from '../../data/protocols/user/UpdateUserRefreshTokenRepository'
 import { ActiveUserByIdRepository } from 'src/data/protocols/user/ActiveUserByIdRepository'
 import { ObjectId } from 'mongodb'
 
@@ -11,7 +11,7 @@ interface BasicRepository
   extends
   AddUserRepository,
   FindUserByEmailRepository,
-  UpdateUserAccessTokenRepository,
+  UpdateUserRefreshTokenRepository,
   ActiveUserByIdRepository
 {}
 export class UserMongoRespository implements BasicRepository {
@@ -41,7 +41,7 @@ export class UserMongoRespository implements BasicRepository {
     }
   }
 
-  async updateAccessToken (data: UpdateUserAccessTokenModel): Promise<void> {
+  async updateRefreshToken (data: UpdateUserRefreshTokenModel): Promise<void> {
     const collection = await MongoHelper.getCollection('usersAccessToken')
     await collection.insertOne(data)
   }

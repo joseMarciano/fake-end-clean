@@ -4,7 +4,7 @@ import { DbAuthentication } from './DbAuthentication'
 import { User } from '../../../../domain/model/User'
 import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindUserByEmailRepository'
 import { HashCompare } from '../../../../data/protocols/cryptography/HashCompare'
-import { UpdateUserAccessTokenRepository, UpdateUserAccessTokenModel } from '../../../../data/protocols/user/UpdateUserAccessTokenRepository'
+import { UpdateUserRefreshTokenModel, UpdateUserRefreshTokenRepository } from '../../../../data/protocols/user/UpdateUserRefreshTokenRepository'
 
 const makeFakeAuthenticationModel = (): AuthenticationModel => ({
   email: 'any_email',
@@ -19,14 +19,14 @@ const makeFakeUser = (): User => ({
   isActive: false
 })
 
-const makeUpdateUserAccessTokenRepository = (): UpdateUserAccessTokenRepository => {
-  class UpdateUserAccessTokenRepositoryStub implements UpdateUserAccessTokenRepository {
-    async updateAccessToken (_data: UpdateUserAccessTokenModel): Promise<void> {
+const makeUpdateUserRefreshTokenRepository = (): UpdateUserRefreshTokenRepository => {
+  class UpdateUserRefreshTokenRepositoryStub implements UpdateUserRefreshTokenRepository {
+    async updateRefreshToken (_data: UpdateUserRefreshTokenModel): Promise<void> {
       await Promise.resolve(null)
     }
   }
 
-  return new UpdateUserAccessTokenRepositoryStub()
+  return new UpdateUserRefreshTokenRepositoryStub()
 }
 
 const makeHashCompare = (): HashCompare => {
@@ -64,11 +64,11 @@ interface SutTypes {
   encrypterStub: Encrypter
   loadUserByIdRepositoryStub: FindUserByEmailRepository
   hashCompareStub: HashCompare
-  updateUserAccessTokenRepositoryStub: UpdateUserAccessTokenRepository
+  updateUserRefreshTokenRepositoryStub: UpdateUserRefreshTokenRepository
 }
 
 const makeSut = (): SutTypes => {
-  const updateUserAccessTokenRepositoryStub = makeUpdateUserAccessTokenRepository()
+  const updateUserRefreshTokenRepositoryStub = makeUpdateUserRefreshTokenRepository()
   const hashCompareStub = makeHashCompare()
   const loadUserByIdRepositoryStub = makeFindUserByIdRepository()
   const encrypterStub = makeDecrypter()
@@ -76,7 +76,7 @@ const makeSut = (): SutTypes => {
     encrypterStub,
     loadUserByIdRepositoryStub,
     hashCompareStub,
-    updateUserAccessTokenRepositoryStub
+    updateUserRefreshTokenRepositoryStub
   )
 
   return {
@@ -84,7 +84,7 @@ const makeSut = (): SutTypes => {
     encrypterStub,
     loadUserByIdRepositoryStub,
     hashCompareStub,
-    updateUserAccessTokenRepositoryStub
+    updateUserRefreshTokenRepositoryStub
   }
 }
 
@@ -159,23 +159,23 @@ describe('DbAuthentication', () => {
     expect(accessToken).toBe('any_access_token')
   })
 
-  test('Should call UpdateUserAccessTokenRepository with correct values', async () => {
-    const { sut, updateUserAccessTokenRepositoryStub } = makeSut()
+  test('Should call UpdateUserRefreshTokenRepository with correct values', async () => {
+    const { sut, updateUserRefreshTokenRepositoryStub } = makeSut()
 
-    const updateAccessTokenSpy = jest.spyOn(updateUserAccessTokenRepositoryStub, 'updateAccessToken')
+    const updateRefreshTokenSpy = jest.spyOn(updateUserRefreshTokenRepositoryStub, 'updateRefreshToken')
     await sut.auth(makeFakeAuthenticationModel())
 
-    expect(updateAccessTokenSpy).toHaveBeenCalledWith({
+    expect(updateRefreshTokenSpy).toHaveBeenCalledWith({
       accessToken: 'any_access_token',
       userId: 'any_id',
       createdAt: new Date()
     })
   })
 
-  test('Should throws if UpdateUserAccessTokenRepository throws', async () => {
-    const { sut, updateUserAccessTokenRepositoryStub } = makeSut()
+  test('Should throws if UpdateUserRefreshTokenRepository throws', async () => {
+    const { sut, updateUserRefreshTokenRepositoryStub } = makeSut()
 
-    jest.spyOn(updateUserAccessTokenRepositoryStub, 'updateAccessToken').mockImplementationOnce(() => { throw new Error() })
+    jest.spyOn(updateUserRefreshTokenRepositoryStub, 'updateRefreshToken').mockImplementationOnce(() => { throw new Error() })
     const promise = sut.auth(makeFakeAuthenticationModel())
 
     await expect(promise).rejects.toThrow()

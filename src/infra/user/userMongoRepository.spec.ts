@@ -79,7 +79,7 @@ describe('UserMongoRepository', () => {
 
       const result = await userCollection.insertOne(makeFakeUserModel())
 
-      await sut.updateAccessToken({
+      await sut.updateRefreshToken({
         accessToken: 'any_token',
         userId: result.insertedId.toString(),
         createdAt: new Date()

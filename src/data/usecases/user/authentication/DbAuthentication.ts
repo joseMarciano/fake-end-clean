@@ -2,14 +2,14 @@ import { Encrypter } from '../../../../data/protocols/cryptography/Encrypter'
 import { Authentication, AuthenticationModel } from '../../../../domain/usecases/user/authentication/Authentication'
 import { FindUserByEmailRepository } from 'src/data/protocols/user/FindUserByEmailRepository'
 import { HashCompare } from '../../../../data/protocols/cryptography/HashCompare'
-import { UpdateUserAccessTokenRepository } from '../../../../data/protocols/user/UpdateUserAccessTokenRepository'
+import { UpdateUserRefreshTokenRepository } from '../../../protocols/user/UpdateUserRefreshTokenRepository'
 
 export class DbAuthentication implements Authentication {
   constructor (
     private readonly encrypter: Encrypter,
     private readonly findUserByEmailRepository: FindUserByEmailRepository,
     private readonly hashCompare: HashCompare,
-    private readonly updateUserAccessTokenRepository: UpdateUserAccessTokenRepository
+    private readonly updateUserRefreshTokenRepository: UpdateUserRefreshTokenRepository
   ) {}
 
   async auth (authenticationModel: AuthenticationModel): Promise<string> {
@@ -26,7 +26,7 @@ export class DbAuthentication implements Authentication {
       password: user.password
     })
 
-    await this.updateUserAccessTokenRepository.updateAccessToken({
+    await this.updateUserRefreshTokenRepository.updateRefreshToken({
       accessToken,
       userId: user.id,
       createdAt: new Date()
