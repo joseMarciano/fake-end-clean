@@ -4,6 +4,9 @@ import { JwtAdapter } from './JwtAdapter'
 jest.mock('jsonwebtoken', () => ({
   sign (): string {
     return 'any_encrypter'
+  },
+  decode (): any {
+    return 'any_decoded'
   }
 }))
 
@@ -33,6 +36,17 @@ describe('JwtAdapter', () => {
       const promise = sut.encrypt('any_value')
 
       await expect(promise).rejects.toThrow()
+    })
+  })
+
+  describe('INTERFACE Decrypter', () => {
+    test('Should call decode with correct values', async () => {
+      const sut = makeSut()
+
+      const decryptSpy = jest.spyOn(jwt, 'decode')
+      await sut.decrypt('any_value')
+
+      expect(decryptSpy).toHaveBeenCalledWith('any_value')
     })
   })
 })
