@@ -1,4 +1,4 @@
-import { ok, serverError } from '../../../../presentation/helper/httpHelper'
+import { badRequest, ok, serverError } from '../../../../presentation/helper/httpHelper'
 import { User } from '../../../../domain/model/User'
 import { ActivateUser, ActivateUserModel } from '../../../../domain/usecases/user/activate/ActivateUser'
 import { HttpRequest, Validator } from '../../../../presentation/protocols'
@@ -116,6 +116,16 @@ describe('ActiveSignUpController', () => {
     const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+  test('Should return 400 if Validate return an Error', async () => {
+    const { sut, validatorStub } = makeSut()
+
+    jest.spyOn(validatorStub, 'validate').mockReturnValueOnce(new Error())
+    const httpRequest = makeFakeHttpRequest()
+
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse).toEqual(badRequest(new Error()))
   })
   test('Should return 200 ActivateUser succeeds', async () => {
     const { sut } = makeSut()
