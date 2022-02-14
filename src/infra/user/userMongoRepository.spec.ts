@@ -110,5 +110,19 @@ describe('UserMongoRepository', () => {
       expect(userUpdated._id).toEqual(user._id)
       expect(userUpdated.isActive).toBe(true)
     })
+    test('Should return an user on active success', async () => {
+      const { sut } = makeSut()
+
+      await userCollection.insertOne(makeFakeUserModel())
+
+      const user = await userCollection.findOne({}) as any
+
+      expect(user.isActive).toBe(false)
+
+      const userUpdated = await sut.activeById(user._id.toString())
+
+      expect(userUpdated.id).toEqual(user._id.toString())
+      expect(userUpdated.isActive).toBe(true)
+    })
   })
 })
