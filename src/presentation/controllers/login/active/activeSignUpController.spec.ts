@@ -107,6 +107,16 @@ describe('ActiveSignUpController', () => {
 
     expect(httpResponse).toEqual(serverError(new Error()))
   })
+  test('Should return 500 if Validate throws', async () => {
+    const { sut, validatorStub } = makeSut()
+
+    jest.spyOn(validatorStub, 'validate').mockImplementationOnce(() => { throw new Error() })
+    const httpRequest = makeFakeHttpRequest()
+
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
   test('Should return 200 ActivateUser succeeds', async () => {
     const { sut } = makeSut()
     const httpRequest = makeFakeHttpRequest()
