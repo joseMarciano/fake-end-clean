@@ -47,15 +47,20 @@ export class UserMongoRespository implements BasicRepository {
   }
 
   async activeById (id: string): Promise<User> {
+    const mongoId = new ObjectId(id)
     const collection = await MongoHelper.getCollection('users')
 
-    await collection.findOneAndUpdate(
-      { _id: new ObjectId(id) },
-      {
-        $set: {
-          isActive: true
-        }
-      })
-    return null as unknown as User
+    await collection.updateOne({ _id: mongoId }, {
+      $set: {
+        isActive: true
+      }
+    })
+
+    const { _id, ...obj } = await collection.findOne({ _id: mongoId }) as any
+
+    return {
+      id: _id.toString(),
+      ...obj
+    }
   }
 }
