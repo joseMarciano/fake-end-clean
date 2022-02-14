@@ -10,7 +10,7 @@ export class ActiveUserController implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const error = this.validator.validate(httpRequest)
+      const error = this.validator.validate(httpRequest.params)
 
       if (error) return badRequest(error)
 
