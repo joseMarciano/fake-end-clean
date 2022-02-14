@@ -19,17 +19,17 @@ export const MongoHelper = {
   async createCustomCollections (): Promise<void> {
     const db = this.client.db()
 
-    await createUsersAccessToken(db)
+    await createUserRefreshTokenCollection(db)
   }
 }
 
-async function createUsersAccessToken (db: Db): Promise<void> {
-  const existsCollectionByName = await existsCollection(db, 'usersAccessToken')
+async function createUserRefreshTokenCollection (db: Db): Promise<void> {
+  const existsCollectionByName = await existsCollection(db, 'userRefreshToken')
   if (existsCollectionByName) return
-  const userAccessTokenCollection = await db.createCollection('usersAccessToken')
+  const userAccessTokenCollection = await db.createCollection('userRefreshToken')
   await userAccessTokenCollection.createIndex(
     { createdAt: 1 },
-    { expireAfterSeconds: 60 * 60 } // 1 hour
+    { expireAfterSeconds: 60 * 60 * 48 } // 1 hour
   )
 }
 

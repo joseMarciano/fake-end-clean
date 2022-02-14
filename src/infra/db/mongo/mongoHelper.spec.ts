@@ -47,12 +47,12 @@ describe('mongoHelper', () => {
     collection = await MongoHelper.getCollection('any')
     expect(collection).toBeTruthy()
   })
-  test('Should create usersAccessToken collection', async () => {
+  test('Should create userRefreshToken collection', async () => {
     await MongoHelper.connect(MONGO_URL)
     const db = MongoHelper.client.db()
 
     await MongoHelper.createCustomCollections()
-    const userAccessTokenCollectionInfo = await getCollectionByName(db, 'usersAccessToken')
+    const userAccessTokenCollectionInfo = await getCollectionByName(db, 'userRefreshToken')
 
     expect(userAccessTokenCollectionInfo).toBeTruthy()
 
