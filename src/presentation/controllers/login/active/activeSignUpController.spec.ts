@@ -95,7 +95,7 @@ describe('ActiveSignUpController', () => {
     const httpRequest = makeFakeHttpRequest()
     await sut.handle(httpRequest)
 
-    expect(validatorSpy).toHaveBeenCalledWith(makeFakeHttpRequest())
+    expect(validatorSpy).toHaveBeenCalledWith({ user: 'any_token' })
   })
   test('Should return 500 if ActivateUser throws', async () => {
     const { sut, activeUserStub } = makeSut()
