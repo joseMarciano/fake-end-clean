@@ -10,6 +10,7 @@ export const makeDbAuthentication = (): DbAuthentication => {
   return new DbAuthentication(
     jwtAdapter,
     userRepository,
-    bcryptAdapter
+    bcryptAdapter,
+    userRepository
   )
 }
