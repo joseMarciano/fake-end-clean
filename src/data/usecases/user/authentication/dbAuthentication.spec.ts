@@ -4,6 +4,7 @@ import { DbAuthentication } from './DbAuthentication'
 import { User } from '../../../../domain/model/User'
 import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindUserByEmailRepository'
 import { HashCompare } from '../../../../data/protocols/cryptography/HashCompare'
+import { AddUserAccessRepository, AddUserAccessTokenModel } from '../../../../data/protocols/user/AddUserAccessRepository'
 
 const makeFakeAuthenticationModel = (): AuthenticationModel => ({
   email: 'any_email',
@@ -17,6 +18,16 @@ const makeFakeUser = (): User => ({
   password: 'hashed_password',
   isActive: false
 })
+
+const makeAddUserAccessRepository = (): AddUserAccessRepository => {
+  class AddUserAccessRepositoryStub implements AddUserAccessRepository {
+    async addUserAccess (_addUserAccessModel: AddUserAccessTokenModel): Promise<void> {
+      await Promise.resolve(null)
+    }
+  }
+
+  return new AddUserAccessRepositoryStub()
+}
 
 const makeHashCompare = (): HashCompare => {
   class HashCompareStub implements HashCompare {
@@ -53,23 +64,27 @@ interface SutTypes {
   encrypterStub: Encrypter
   loadUserByIdRepositoryStub: FindUserByEmailRepository
   hashCompareStub: HashCompare
+  addUserAccessRepositoryStub: AddUserAccessRepository
 }
 
 const makeSut = (): SutTypes => {
+  const addUserAccessRepositoryStub = makeAddUserAccessRepository()
   const hashCompareStub = makeHashCompare()
   const loadUserByIdRepositoryStub = makeFindUserByIdRepository()
   const encrypterStub = makeDecrypter()
   const sut = new DbAuthentication(
     encrypterStub,
     loadUserByIdRepositoryStub,
-    hashCompareStub
+    hashCompareStub,
+    addUserAccessRepositoryStub
   )
 
   return {
     sut,
     encrypterStub,
     loadUserByIdRepositoryStub,
-    hashCompareStub
+    hashCompareStub,
+    addUserAccessRepositoryStub
   }
 }
 
@@ -160,5 +175,18 @@ describe('DbAuthentication', () => {
     const userAccess = await sut.auth(makeFakeAuthenticationModel())
 
     expect(userAccess).toBeNull()
+  })
+
+  test('Should call AddUserAccessRepository with correct value', async () => {
+    const { sut, addUserAccessRepositoryStub } = makeSut()
+
+    const addUserAccessSpy = jest.spyOn(addUserAccessRepositoryStub, 'addUserAccess')
+
+    await sut.auth(makeFakeAuthenticationModel())
+
+    expect(addUserAccessSpy).toHaveBeenCalledWith({
+      accessToken: 'any_access_token',
+      userId: 'any_id'
+    })
   })
 })
