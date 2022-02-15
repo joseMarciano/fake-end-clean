@@ -5,3 +5,9 @@ export interface User {
   isActive: boolean
   password?: string
 }
+
+export interface UserAccessToken {
+  accessToken: string
+  userId: string
+  createdAt: Date
+}
