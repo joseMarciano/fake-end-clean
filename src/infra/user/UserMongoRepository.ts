@@ -70,7 +70,10 @@ export class UserMongoRespository implements BasicRepository {
 
   async addUserAccess (data: AddUserAccessTokenModel): Promise<void> {
     const collection = await MongoHelper.getCollection('usersAccessToken')
-    await collection.insertOne(data)
+    await collection.insertOne({
+      ...data,
+      createdAt: new Date()
+    })
   }
 
   async findUserAccess (userId: string, accessToken: string): Promise<UserAccessToken> {
