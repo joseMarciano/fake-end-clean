@@ -6,13 +6,15 @@ import { MongoHelper } from '../db/mongo/mongoHelper'
 import { AddUserRefreshTokenModel, AddUserRefreshTokenRepository } from '../../data/protocols/user/AddUserRefreshTokenRepository'
 import { ActiveUserByIdRepository } from 'src/data/protocols/user/ActiveUserByIdRepository'
 import { ObjectId } from 'mongodb'
+import { AddUserAccessRepository, AddUserAccessTokenModel } from '../../data/protocols/user/AddUserAccessRepository'
 
 interface BasicRepository
   extends
   AddUserRepository,
   FindUserByEmailRepository,
   AddUserRefreshTokenRepository,
-  ActiveUserByIdRepository
+  ActiveUserByIdRepository,
+  AddUserAccessRepository
 {}
 export class UserMongoRespository implements BasicRepository {
   async add (userModel: UserModel): Promise<User> {
@@ -62,5 +64,10 @@ export class UserMongoRespository implements BasicRepository {
       id: _id.toString(),
       ...obj
     }
+  }
+
+  async addUserAccess (data: AddUserAccessTokenModel): Promise<void> {
+    const collection = await MongoHelper.getCollection('usersAccessToken')
+    await collection.insertOne(data)
   }
 }
