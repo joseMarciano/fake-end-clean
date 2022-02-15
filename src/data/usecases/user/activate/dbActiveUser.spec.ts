@@ -126,6 +126,15 @@ describe('DbActiveUser', () => {
     await expect(promise).rejects.toThrowError()
   })
 
+  test('Should return null if Decrypter returns null', async () => {
+    const { sut, decrypterStub } = makeSut()
+
+    jest.spyOn(decrypterStub, 'decrypt').mockResolvedValue(null)
+    const user = await sut.active(makeFakeUserActivateModel())
+
+    expect(user).toBeNull()
+  })
+
   test('Should throws if FindUserByEmailRepository throws', async () => {
     const { sut, findUserByEmailRepositoryStub } = makeSut()
 
