@@ -12,8 +12,11 @@ export class DbActiveUser implements ActivateUser {
   ) {}
 
   async active (userActivateModel: ActivateUserModel): Promise<User> {
-    const { email } = await this.decrypter.decrypt(userActivateModel.encryptedValue)
-    const { id } = await this.findUserByEmailRepository.findByEmail(email)
+    const decrypt = await this.decrypter.decrypt(userActivateModel.encryptedValue)
+
+    if (!decrypt) return null as any
+
+    const { id } = await this.findUserByEmailRepository.findByEmail(decrypt.email)
     return await this.activeUserByIdRepository.activeById(id)
   }
 }
