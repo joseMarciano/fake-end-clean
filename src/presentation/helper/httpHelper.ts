@@ -35,6 +35,12 @@ export const redirect = (to: string): HttpResponse => {
     }
   }
 }
+export const forbiden = (error: Error): HttpResponse => {
+  return {
+    statusCode: 403,
+    body: getDefaultErrorStructure(error)
+  }
+}
 
 function getDefaultErrorStructure (error: Error): any {
   return {

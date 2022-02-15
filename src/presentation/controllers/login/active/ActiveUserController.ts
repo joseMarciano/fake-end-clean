@@ -1,6 +1,7 @@
-import { badRequest, ok, serverError } from '../../../../presentation/helper/httpHelper'
+import { badRequest, forbiden, ok, serverError } from '../../../../presentation/helper/httpHelper'
 import { Controller, HttpRequest, HttpResponse, Validator } from '../../../../presentation/protocols'
 import { ActivateUser } from '../../../../domain/usecases/user/activate/ActivateUser'
+import { ActivateUserError } from '../../../../domain/usecases/user/validations/ActivateUserError'
 
 export class ActiveUserController implements Controller {
   constructor (
@@ -14,9 +15,13 @@ export class ActiveUserController implements Controller {
 
       if (error) return badRequest(error)
 
-      const user = await this.activateUser.active({ encryptedValue: httpRequest.params.user })
+      const result = await this.activateUser.active({ encryptedValue: httpRequest.params.user })
 
-      return ok(user)
+      if (result instanceof ActivateUserError) {
+        return forbiden(result)
+      }
+
+      return ok(result)
     } catch (error) {
       return serverError(error)
     }
