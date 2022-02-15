@@ -1,12 +1,13 @@
 import { FindUserByEmailRepository } from '../../data/protocols/user/FindUserByEmailRepository'
 import { AddUserRepository } from '../../data/protocols/user/AddUserRepository'
-import { User } from '../../domain/model/User'
+import { User, UserAccessToken } from '../../domain/model/User'
 import { UserModel } from '../../domain/usecases/user/add/AddUser'
 import { MongoHelper } from '../db/mongo/mongoHelper'
 import { AddUserRefreshTokenModel, AddUserRefreshTokenRepository } from '../../data/protocols/user/AddUserRefreshTokenRepository'
 import { ActiveUserByIdRepository } from '../../data/protocols/user/ActiveUserByIdRepository'
 import { ObjectId } from 'mongodb'
 import { AddUserAccessRepository, AddUserAccessTokenModel } from '../../data/protocols/user/AddUserAccessRepository'
+import { FindUserAccessRepository } from 'src/data/protocols/user/FindUserAccessRepository'
 
 interface BasicRepository
   extends
@@ -14,7 +15,8 @@ interface BasicRepository
   FindUserByEmailRepository,
   AddUserRefreshTokenRepository,
   ActiveUserByIdRepository,
-  AddUserAccessRepository
+  AddUserAccessRepository,
+  FindUserAccessRepository
 {}
 export class UserMongoRespository implements BasicRepository {
   async add (userModel: UserModel): Promise<User> {
@@ -69,5 +71,22 @@ export class UserMongoRespository implements BasicRepository {
   async addUserAccess (data: AddUserAccessTokenModel): Promise<void> {
     const collection = await MongoHelper.getCollection('usersAccessToken')
     await collection.insertOne(data)
+  }
+
+  async findUserAccess (userId: string, accessToken: string): Promise<UserAccessToken> {
+    const collection = await MongoHelper.getCollection('usersAccessToken')
+    const userAccessToken = await collection.findOne({
+      userId,
+      accessToken
+    }) as any
+
+    if (!userAccessToken) return null as any
+
+    const { _id, ...obj } = userAccessToken
+
+    return {
+      id: _id,
+      ...obj
+    }
   }
 }
