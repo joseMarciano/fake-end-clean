@@ -154,6 +154,14 @@ describe('DbActiveUser', () => {
 
     expect(error).toEqual(new ActivateUserError('Error on decrypt'))
   })
+  test('Should return ActivateUserError if FindByEmailRepository fails', async () => {
+    const { sut, findUserByEmailRepositoryStub } = makeSut()
+
+    jest.spyOn(findUserByEmailRepositoryStub, 'findByEmail').mockResolvedValue(null as any)
+    const error = await sut.active(makeFakeUserActivateModel())
+
+    expect(error).toEqual(new ActivateUserError('User with email any_email not found'))
+  })
 
   test('Should throws if FindUserByEmailRepository throws', async () => {
     const { sut, findUserByEmailRepositoryStub } = makeSut()
