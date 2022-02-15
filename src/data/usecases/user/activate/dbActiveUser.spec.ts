@@ -1,9 +1,10 @@
-import { User } from '../../../../domain/model/User'
+import { User, UserAccessToken } from '../../../../domain/model/User'
 import { ActivateUserModel } from '../../../../domain/usecases/user/activate/ActivateUser'
 import { DbActiveUser } from './DbActiveUser'
 import { Decrypter } from '../../../../data/protocols/cryptography/Decrypter'
 import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindUserByEmailRepository'
-import { ActiveUserByIdRepository } from 'src/data/protocols/user/ActiveUserByIdRepository'
+import { ActiveUserByIdRepository } from '../../../../data/protocols/user/ActiveUserByIdRepository'
+import { FindUserAccessRepository } from '../../../../data/protocols/user/FindUserAccessRepository'
 
 const makeFakeUser = (): User => ({
   id: 'any_id',
@@ -16,6 +17,20 @@ const makeFakeUser = (): User => ({
 const makeFakeUserActivateModel = (): ActivateUserModel => ({
   encryptedValue: 'any_encrypted_value'
 })
+
+const makeFindUserAccessRepositoryStub = (): FindUserAccessRepository => {
+  class FindUserAccessRepositoryStub implements FindUserAccessRepository {
+    async findUserAccess (_userId: string, _accessToken: string): Promise<UserAccessToken> {
+      return {
+        accessToken: 'any_token',
+        userId: 'any_id',
+        createdAt: new Date()
+      }
+    }
+  }
+
+  return new FindUserAccessRepositoryStub()
+}
 
 const makeActiveUserByIdRepository = (): ActiveUserByIdRepository => {
   class ActiveUserByIdRepositoryStub implements ActiveUserByIdRepository {
@@ -58,8 +73,10 @@ interface SutTypes {
   decrypterStub: Decrypter
   findUserByEmailRepositoryStub: FindUserByEmailRepository
   activeUserByIdRepositoryStub: ActiveUserByIdRepository
+  findUserAccessTokenRepositoryStub: FindUserAccessRepository
 }
 const makeSut = (): SutTypes => {
+  const findUserAccessTokenRepositoryStub = makeFindUserAccessRepositoryStub()
   const activeUserByIdRepositoryStub = makeActiveUserByIdRepository()
   const decrypterStub = makeDecrypter()
   const findUserByEmailRepositoryStub = makeFindUserByEmailRepository()
@@ -67,14 +84,16 @@ const makeSut = (): SutTypes => {
   const sut = new DbActiveUser(
     decrypterStub,
     findUserByEmailRepositoryStub,
-    activeUserByIdRepositoryStub
+    activeUserByIdRepositoryStub,
+    findUserAccessTokenRepositoryStub
   )
 
   return {
     sut,
     decrypterStub,
     findUserByEmailRepositoryStub,
-    activeUserByIdRepositoryStub
+    activeUserByIdRepositoryStub,
+    findUserAccessTokenRepositoryStub
   }
 }
 
@@ -151,5 +170,14 @@ describe('DbActiveUser', () => {
     const promise = sut.active(makeFakeUserActivateModel())
 
     await expect(promise).rejects.toThrowError()
+  })
+
+  test('Should call FindUserAccessRepository with correct value', async () => {
+    const { sut, findUserAccessTokenRepositoryStub } = makeSut()
+
+    const findUserAccessSpy = jest.spyOn(findUserAccessTokenRepositoryStub, 'findUserAccess')
+    await sut.active(makeFakeUserActivateModel())
+
+    expect(findUserAccessSpy).toHaveBeenCalledWith('any_id', 'any_encrypted_value')
   })
 })
