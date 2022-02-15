@@ -23,6 +23,7 @@ const makeFindUserAccessRepositoryStub = (): FindUserAccessRepository => {
   class FindUserAccessRepositoryStub implements FindUserAccessRepository {
     async findUserAccess (_userId: string, _accessToken: string): Promise<UserAccessToken> {
       return {
+        id: 'any_id',
         accessToken: 'any_token',
         userId: 'any_id',
         createdAt: new Date()
