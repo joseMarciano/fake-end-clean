@@ -143,4 +143,25 @@ describe('UserMongoRepository', () => {
       expect(userAccessToken.userId).toBe('any_id')
     })
   })
+  describe('INTERFACE FindUserAccessRepository', () => {
+    test('Should findUserAccess on success', async () => {
+      await userAccessTokenCollection.insertOne({
+        accessToken: 'any_access_token',
+        userId: 'any_id',
+        createdAt: new Date()
+      })
+
+      const { sut } = makeSut()
+
+      await sut.findUserAccess(
+        'any_id',
+        'any_access_token'
+      )
+
+      const userAccessToken = await userAccessTokenCollection.findOne() as any
+
+      expect(userAccessToken.accessToken).toBe('any_access_token')
+      expect(userAccessToken.userId).toBe('any_id')
+    })
+  })
 })
