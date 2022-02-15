@@ -154,6 +154,16 @@ describe('DbActiveUser', () => {
 
     expect(error).toEqual(new ActivateUserError('Error on decrypt'))
   })
+
+  test('Should return ActivateUserError if FindUserAccessRepository fails', async () => {
+    const { sut, findUserAccessTokenRepositoryStub } = makeSut()
+
+    jest.spyOn(findUserAccessTokenRepositoryStub, 'findUserAccess').mockResolvedValue(null as any)
+    const error = await sut.active(makeFakeUserActivateModel())
+
+    expect(error).toEqual(new ActivateUserError('Invalid access token'))
+  })
+
   test('Should return ActivateUserError if FindByEmailRepository fails', async () => {
     const { sut, findUserByEmailRepositoryStub } = makeSut()
 
