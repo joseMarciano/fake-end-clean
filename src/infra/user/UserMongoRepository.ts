@@ -4,7 +4,7 @@ import { User } from '../../domain/model/User'
 import { UserModel } from '../../domain/usecases/user/add/AddUser'
 import { MongoHelper } from '../db/mongo/mongoHelper'
 import { AddUserRefreshTokenModel, AddUserRefreshTokenRepository } from '../../data/protocols/user/AddUserRefreshTokenRepository'
-import { ActiveUserByIdRepository } from 'src/data/protocols/user/ActiveUserByIdRepository'
+import { ActiveUserByIdRepository } from '../../data/protocols/user/ActiveUserByIdRepository'
 import { ObjectId } from 'mongodb'
 import { AddUserAccessRepository, AddUserAccessTokenModel } from '../../data/protocols/user/AddUserAccessRepository'
 

@@ -1,6 +1,6 @@
 import { Encrypter } from '../../../../data/protocols/cryptography/Encrypter'
 import { Authentication, AuthenticationModel } from '../../../../domain/usecases/user/authentication/Authentication'
-import { FindUserByEmailRepository } from 'src/data/protocols/user/FindUserByEmailRepository'
+import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindUserByEmailRepository'
 import { HashCompare } from '../../../../data/protocols/cryptography/HashCompare'
 import { AddUserAccessRepository } from '../../../../data/protocols/user/AddUserAccessRepository'
 
