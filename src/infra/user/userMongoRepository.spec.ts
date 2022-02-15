@@ -73,8 +73,8 @@ describe('UserMongoRepository', () => {
     })
   })
 
-  describe('INTERFACE UpdateUserAccessTokenRepository', () => {
-    test('Should updateUserAccessToken on UpdateUserAccessTokenRepository succeeds', async () => {
+  describe('INTERFACE AddUserRefreshTokenRepository', () => {
+    test('Should updateUserAccessToken on AddUserRefreshTokenRepository succeeds', async () => {
       const { sut } = makeSut()
 
       const result = await userCollection.insertOne(makeFakeUserModel())
