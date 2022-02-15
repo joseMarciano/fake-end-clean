@@ -1,9 +1,10 @@
-import { badRequest, ok, serverError } from '../../../../presentation/helper/httpHelper'
+import { badRequest, forbiden, ok, serverError } from '../../../../presentation/helper/httpHelper'
 import { User } from '../../../../domain/model/User'
 import { ActivateUser, ActivateUserModel } from '../../../../domain/usecases/user/activate/ActivateUser'
 import { HttpRequest, Validator } from '../../../../presentation/protocols'
 import { ActiveUserController } from './ActiveUserController'
 import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindUserByEmailRepository'
+import { ActivateUserError } from '../../../../domain/usecases/user/validations/ActivateUserError'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   params: {
@@ -137,5 +138,16 @@ describe('ActiveSignUpController', () => {
       isActive: true
     }
     expect(httpResponse).toEqual(ok(userActive))
+  })
+
+  test('Should return 403 if ActivateUser return an ActivateUserError', async () => {
+    const { sut, activeUserStub } = makeSut()
+
+    jest.spyOn(activeUserStub, 'active').mockResolvedValueOnce(new ActivateUserError())
+    const httpRequest = makeFakeHttpRequest()
+
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse).toEqual(forbiden(new ActivateUserError()))
   })
 })
