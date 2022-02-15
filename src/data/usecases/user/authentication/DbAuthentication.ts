@@ -2,12 +2,14 @@ import { Encrypter } from '../../../../data/protocols/cryptography/Encrypter'
 import { Authentication, AuthenticationModel } from '../../../../domain/usecases/user/authentication/Authentication'
 import { FindUserByEmailRepository } from 'src/data/protocols/user/FindUserByEmailRepository'
 import { HashCompare } from '../../../../data/protocols/cryptography/HashCompare'
+import { AddUserAccessRepository } from '../../../../data/protocols/user/AddUserAccessRepository'
 
 export class DbAuthentication implements Authentication {
   constructor (
     private readonly encrypter: Encrypter,
     private readonly findUserByEmailRepository: FindUserByEmailRepository,
-    private readonly hashCompare: HashCompare
+    private readonly hashCompare: HashCompare,
+    private readonly addUserAccessRepository: AddUserAccessRepository
   ) {}
 
   async auth (authenticationModel: AuthenticationModel): Promise<string> {
@@ -22,6 +24,11 @@ export class DbAuthentication implements Authentication {
     const accessToken = await this.encrypter.encrypt({
       email: user.email,
       password: user.password
+    })
+
+    await this.addUserAccessRepository.addUserAccess({
+      accessToken,
+      userId: user.id
     })
 
     return accessToken
