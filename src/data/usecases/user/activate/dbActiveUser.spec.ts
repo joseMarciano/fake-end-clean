@@ -5,6 +5,7 @@ import { Decrypter } from '../../../../data/protocols/cryptography/Decrypter'
 import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindUserByEmailRepository'
 import { ActiveUserByIdRepository } from '../../../../data/protocols/user/ActiveUserByIdRepository'
 import { FindUserAccessRepository } from '../../../../data/protocols/user/FindUserAccessRepository'
+import { ActivateUserError } from '../../../../domain/usecases/user/validations/ActivateUserError'
 
 const makeFakeUser = (): User => ({
   id: 'any_id',
@@ -145,13 +146,13 @@ describe('DbActiveUser', () => {
     await expect(promise).rejects.toThrowError()
   })
 
-  test('Should return null if Decrypter returns null', async () => {
+  test('Should return ActivateUserError if Decrypter fails', async () => {
     const { sut, decrypterStub } = makeSut()
 
     jest.spyOn(decrypterStub, 'decrypt').mockResolvedValue(null)
-    const user = await sut.active(makeFakeUserActivateModel())
+    const error = await sut.active(makeFakeUserActivateModel())
 
-    expect(user).toBeNull()
+    expect(error).toEqual(new ActivateUserError('Error on decrypt'))
   })
 
   test('Should throws if FindUserByEmailRepository throws', async () => {
