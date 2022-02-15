@@ -19,17 +19,28 @@ export const MongoHelper = {
   async createCustomCollections (): Promise<void> {
     const db = this.client.db()
 
-    await createUserRefreshTokenCollection(db)
+    await createUsersAccessTokenCollection(db)
+    await createUsersRefreshTokenCollection(db)
   }
 }
 
-async function createUserRefreshTokenCollection (db: Db): Promise<void> {
-  const existsCollectionByName = await existsCollection(db, 'userRefreshToken')
+async function createUsersRefreshTokenCollection (db: Db): Promise<void> {
+  const existsCollectionByName = await existsCollection(db, 'usersRefreshToken')
   if (existsCollectionByName) return
-  const userAccessTokenCollection = await db.createCollection('userRefreshToken')
+  const userAccessTokenCollection = await db.createCollection('usersRefreshToken')
   await userAccessTokenCollection.createIndex(
     { createdAt: 1 },
-    { expireAfterSeconds: 60 * 60 * 48 } // 1 hour
+    { expireAfterSeconds: 60 * 60 * 24 * 7 } // 7 days
+  )
+}
+
+async function createUsersAccessTokenCollection (db: Db): Promise<void> {
+  const existsCollectionByName = await existsCollection(db, 'usersAccessToken')
+  if (existsCollectionByName) return
+  const userAccessTokenCollection = await db.createCollection('usersAccessToken')
+  await userAccessTokenCollection.createIndex(
+    { createdAt: 1 },
+    { expireAfterSeconds: (60 * 60) / 2 } // 30 minutes
   )
 }
 
