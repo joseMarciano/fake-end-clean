@@ -7,7 +7,7 @@ import { AddUserRefreshTokenModel, AddUserRefreshTokenRepository } from '../../d
 import { ActiveUserByIdRepository } from '../../data/protocols/user/ActiveUserByIdRepository'
 import { ObjectId } from 'mongodb'
 import { AddUserAccessRepository, AddUserAccessTokenModel } from '../../data/protocols/user/AddUserAccessRepository'
-import { FindUserAccessRepository } from 'src/data/protocols/user/FindUserAccessRepository'
+import { FindUserAccessRepository } from '../../data/protocols/user/FindUserAccessRepository'
 
 interface BasicRepository
   extends
