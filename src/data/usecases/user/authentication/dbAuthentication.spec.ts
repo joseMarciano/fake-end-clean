@@ -189,4 +189,13 @@ describe('DbAuthentication', () => {
       userId: 'any_id'
     })
   })
+
+  test('Should throws if AddUserAccessRepository throws', async () => {
+    const { sut, addUserAccessRepositoryStub } = makeSut()
+
+    jest.spyOn(addUserAccessRepositoryStub, 'addUserAccess').mockImplementationOnce(() => { throw new Error() })
+    const promise = sut.auth(makeFakeAuthenticationModel())
+
+    await expect(promise).rejects.toThrow()
+  })
 })
