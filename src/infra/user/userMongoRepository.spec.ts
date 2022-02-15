@@ -125,4 +125,22 @@ describe('UserMongoRepository', () => {
       expect(userUpdated.isActive).toBe(true)
     })
   })
+
+  describe('INTERFACE AddUserAccessRepository', () => {
+    test('Should add a userAccessToken in on success', async () => {
+      const userAccessTokenCollection = await MongoHelper.getCollection('usersAccessToken')
+
+      const { sut } = makeSut()
+
+      await sut.addUserAccess({
+        accessToken: 'any_access_token',
+        userId: 'any_id'
+      })
+
+      const userAccessToken = await userAccessTokenCollection.findOne() as any
+
+      expect(userAccessToken.accessToken).toBe('any_access_token')
+      expect(userAccessToken.userId).toBe('any_id')
+    })
+  })
 })
