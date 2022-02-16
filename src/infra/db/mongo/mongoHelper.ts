@@ -47,5 +47,6 @@ async function createUsersAccessTokenCollection (db: Db): Promise<void> {
 async function existsCollection (db: Db, collectionName: string): Promise<boolean> {
   const collections = db.listCollections()
   const arrayCollections = await collections.toArray()
-  return arrayCollections.includes((collection: CollectionInfo) => collection.name === collectionName)
+  const existsCollection = !!arrayCollections.find((collection: CollectionInfo) => collection.name === collectionName)
+  return existsCollection
 }
