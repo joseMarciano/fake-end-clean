@@ -27,7 +27,7 @@ export class UserMongoRespository implements BasicRepository {
     const { _id, ...obj } = await collection.findOne({ _id: userId }) as any
 
     return {
-      id: _id,
+      id: _id.toString(),
       ...obj
     }
   }
@@ -40,7 +40,7 @@ export class UserMongoRespository implements BasicRepository {
     const { _id, ...obj } = userDocument
 
     return {
-      id: _id,
+      id: _id.toString(),
       ...obj
     }
   }
@@ -88,7 +88,7 @@ export class UserMongoRespository implements BasicRepository {
     const { _id, ...obj } = userAccessToken
 
     return {
-      id: _id,
+      id: _id.toString(),
       ...obj
     }
   }
