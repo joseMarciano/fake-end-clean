@@ -2,6 +2,9 @@ import { app } from '../config/app'
 import request from 'supertest'
 import env from '../config/env'
 import { MongoHelper } from '../../infra/db/mongo/mongoHelper'
+import { JwtAdapter } from '../../infra/cryptography/jwt/JwtAdapter'
+
+const jwtAdapter = new JwtAdapter('secret')
 
 describe('signUpRouter', () => {
   beforeAll(async () => {
@@ -18,6 +21,7 @@ describe('signUpRouter', () => {
   })
 
   describe('POST /signup', () => {
+    // TODO: ADD VALIDATION TESTS LIKE 400 RETURNS
     test('Should return an 204 on signup success', async () => {
       const response = await request(app)
         .post(`${env.defaultPath}/signup`)
@@ -30,6 +34,48 @@ describe('signUpRouter', () => {
 
       expect(response.status).toBe(204)
       expect(response.body).toEqual({})
+    })
+  })
+
+  describe('GET /active', () => {
+    // TODO: ADD VALIDATION TESTS LIKE 403 RETURNS/ 302 RETURNS
+    const makeFakeUserParam = async (): Promise<string> => {
+      return await jwtAdapter.encrypt({
+        email: 'any_email@mail.com',
+        password: '123456789'
+      })
+    }
+
+    const insertFakeUser = async (): Promise<string> => {
+      const userCollection = await MongoHelper.getCollection('users')
+      const result = await userCollection.insertOne({
+        name: 'Josefh',
+        email: 'any_email@mail.com',
+        password: '123456789'
+      })
+
+      return result.insertedId.toString()
+    }
+
+    const insertFakeUserAccessToken = async (userId: string, accessToken: string): Promise<void> => {
+      const userAccessTokenCollection = await MongoHelper.getCollection('usersAccessToken')
+      await userAccessTokenCollection.insertOne({
+        userId,
+        accessToken,
+        createdAt: new Date()
+      })
+    }
+
+    test('Should return an 200 on active success', async () => {
+      const userId = await insertFakeUser()
+      const accessToken = await makeFakeUserParam()
+      await insertFakeUserAccessToken(userId, accessToken)
+
+      const response = await request(app)
+        .get(`${env.defaultPath}/active`)
+        .query({ user: accessToken })
+        .send()
+      expect(response.status).toBe(200)
     })
   })
 })
