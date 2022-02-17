@@ -1,4 +1,4 @@
-import { MissingParamError } from '../controllers/errors/MissingParamError'
+import { MissingParamError } from '../errors/MissingParamError'
 import { Validator } from '../protocols'
 
 export class RequiredFieldValidation implements Validator {
