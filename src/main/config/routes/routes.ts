@@ -1,6 +1,5 @@
 import { Express, Router } from 'express'
 import signUpRoute from '../../routes/signUpRoute'
-import env from '../env'
 
 export const setRoutes = (app: Express): void => {
   const router = Router()
@@ -8,5 +7,5 @@ export const setRoutes = (app: Express): void => {
   signUpRoute(router)
 
   app
-    .use(env.defaultPath, router)
+    .use(process.env.DEFAULT_PATH as string, router)
 }

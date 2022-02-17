@@ -1,14 +1,14 @@
 import { app } from '../config/app'
 import request from 'supertest'
-import env from '../config/env'
 import { MongoHelper } from '../../infra/db/mongo/mongoHelper'
 import { JwtAdapter } from '../../infra/cryptography/jwt/JwtAdapter'
 
+const defaultPath = process.env.DEFAULT_PATH as string
 const jwtAdapter = new JwtAdapter('secret')
 
 describe('signUpRouter', () => {
   beforeAll(async () => {
-    await MongoHelper.connect(env.mongoUrl)
+    await MongoHelper.connect(process.env.MONGO_URL as string)
   })
 
   afterAll(async () => {
@@ -24,7 +24,7 @@ describe('signUpRouter', () => {
     // TODO: ADD VALIDATION TESTS LIKE 400 RETURNS
     test('Should return an 204 on signup success', async () => {
       const response = await request(app)
-        .post(`${env.defaultPath}/signup`)
+        .post(`${defaultPath}/signup`)
         .send({
           email: 'marcianojosepaulo@email.com',
           name: 'marcianojosepaulo',
@@ -72,7 +72,7 @@ describe('signUpRouter', () => {
       await insertFakeUserAccessToken(userId, accessToken)
 
       const response = await request(app)
-        .get(`${env.defaultPath}/active`)
+        .get(`${defaultPath}/active`)
         .query({ user: accessToken })
         .send()
       expect(response.status).toBe(200)

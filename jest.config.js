@@ -10,5 +10,6 @@ module.exports = {
     '^.+\\.ts$': 'ts-jest'
   },
   preset: '@shelf/jest-mongodb',
-  testTimeout: 10000
+  testTimeout: 10000,
+  setupFiles: ['dotenv/config']
 }

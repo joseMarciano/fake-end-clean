@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
+import 'dotenv/config'
 import { MongoHelper } from '../infra/db/mongo/mongoHelper'
-import env from './config/env'
 import { app } from './config/app'
 
-MongoHelper.connect(env.mongoUrl)
+MongoHelper.connect(process.env.MONGO_URL as string)
   .then(async () => await MongoHelper.createCustomCollections())
   .then(startServer)
   .catch(console.error)
 
 function startServer (): void {
-  app.listen(env.port, () => console.log(`Server is running at ${env.port}`))
+  app.listen(process.env.PORT, () => console.log(`Server is running at ${process.env.PORT as string}`))
 }

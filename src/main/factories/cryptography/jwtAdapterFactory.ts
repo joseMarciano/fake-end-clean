@@ -1,6 +1,5 @@
 import { JwtAdapter } from '../../../infra/cryptography/jwt/JwtAdapter'
-import env from '../../config/env'
 
 export const makeJwtAdapter = (): JwtAdapter => {
-  return new JwtAdapter(env.jwtSecretKey)
+  return new JwtAdapter(process.env.JWT_SECRET_KEY as string)
 }
