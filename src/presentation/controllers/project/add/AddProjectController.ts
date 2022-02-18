@@ -1,3 +1,4 @@
+import { ok } from '../../../../presentation/helper/httpHelper'
 import { AddProject } from '../../../../domain/usecases/project/add/AddProject'
 import { Controller, HttpRequest, HttpResponse } from '../../../../presentation/protocols'
 
@@ -12,8 +13,8 @@ export class AddProjectController implements Controller {
       ...httpRequest.params
     }
 
-    await this.addProject.add(userModel)
+    const project = await this.addProject.add(userModel)
 
-    return await Promise.resolve(null as unknown as HttpResponse)
+    return ok(project)
   }
 }
