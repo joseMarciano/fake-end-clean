@@ -96,7 +96,6 @@ describe('AddProjectController', () => {
     const validateSpy = jest.spyOn(validatorStub, 'validate')
     await sut.handle(makeFakeHttpRequest())
 
-    expect(validateSpy).toHaveBeenCalledWith(makeFakeHttpRequest().body)
-    expect(validateSpy).toHaveBeenCalledWith(makeFakeHttpRequest().params.userId)
+    expect(validateSpy).toHaveBeenCalledWith(makeFakeHttpRequest())
   })
 })
