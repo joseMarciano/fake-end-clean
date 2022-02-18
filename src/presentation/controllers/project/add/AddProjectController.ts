@@ -1,4 +1,4 @@
-import { ok, serverError } from '../../../../presentation/helper/httpHelper'
+import { badRequest, ok, serverError } from '../../../../presentation/helper/httpHelper'
 import { AddProject } from '../../../../domain/usecases/project/add/AddProject'
 import { Controller, HttpRequest, HttpResponse, Validator } from '../../../../presentation/protocols'
 
@@ -10,8 +10,9 @@ export class AddProjectController implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      this.validator.validate(httpRequest.body)
-      this.validator.validate(httpRequest.params.userId)
+      const error = this.validator.validate(httpRequest)
+
+      if (error) return badRequest(error)
 
       const userModel = {
         ...httpRequest.body,
