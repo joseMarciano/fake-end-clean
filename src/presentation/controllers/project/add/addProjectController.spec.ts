@@ -1,7 +1,7 @@
 import { AddProject, AddProjectModel } from '../../../../domain/usecases/project/add/AddProject'
 import { ok, serverError } from '../../../../presentation/helper/httpHelper'
 import { Project } from '../../../../domain/model/Project'
-import { HttpRequest } from '../../../../presentation/protocols'
+import { HttpRequest, Validator } from '../../../../presentation/protocols'
 import { AddProjectController } from './AddProjectController'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
@@ -32,18 +32,31 @@ const makeAddProject = (): AddProject => {
   return new AddProjectStub()
 }
 
+const makeValidator = (): Validator => {
+  class ValidatorStub implements Validator {
+    validate (input: any): Error | null {
+      return null
+    }
+  }
+
+  return new ValidatorStub()
+}
+
 interface SutTypes {
   sut: AddProjectController
   addProjectStub: AddProject
+  validatorStub: Validator
 }
 
 const makeSut = (): SutTypes => {
+  const validatorStub = makeValidator()
   const addProjectStub = makeAddProject()
-  const sut = new AddProjectController(addProjectStub)
+  const sut = new AddProjectController(addProjectStub, validatorStub)
 
   return {
     sut,
-    addProjectStub
+    addProjectStub,
+    validatorStub
   }
 }
 
@@ -75,5 +88,15 @@ describe('AddProjectController', () => {
     const response = await sut.handle(makeFakeHttpRequest())
 
     expect(response).toEqual(serverError(new Error()))
+  })
+
+  test('Should call Validator with correct values', async () => {
+    const { sut, validatorStub } = makeSut()
+
+    const validateSpy = jest.spyOn(validatorStub, 'validate')
+    await sut.handle(makeFakeHttpRequest())
+
+    expect(validateSpy).toHaveBeenCalledWith(makeFakeHttpRequest().body)
+    expect(validateSpy).toHaveBeenCalledWith(makeFakeHttpRequest().params.userId)
   })
 })
