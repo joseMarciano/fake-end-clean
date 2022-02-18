@@ -1,4 +1,4 @@
-import { ok } from '../../../../presentation/helper/httpHelper'
+import { ok, serverError } from '../../../../presentation/helper/httpHelper'
 import { AddProject } from '../../../../domain/usecases/project/add/AddProject'
 import { Controller, HttpRequest, HttpResponse } from '../../../../presentation/protocols'
 
@@ -8,13 +8,17 @@ export class AddProjectController implements Controller {
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    const userModel = {
-      ...httpRequest.body,
-      ...httpRequest.params
+    try {
+      const userModel = {
+        ...httpRequest.body,
+        ...httpRequest.params
+      }
+
+      const project = await this.addProject.add(userModel)
+
+      return ok(project)
+    } catch (error) {
+      return serverError(error)
     }
-
-    const project = await this.addProject.add(userModel)
-
-    return ok(project)
   }
 }
