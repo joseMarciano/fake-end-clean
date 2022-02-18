@@ -1,5 +1,5 @@
 import { AddProject, AddProjectModel } from '../../../../domain/usecases/project/add/AddProject'
-import { ok, serverError } from '../../../../presentation/helper/httpHelper'
+import { badRequest, ok, serverError } from '../../../../presentation/helper/httpHelper'
 import { Project } from '../../../../domain/model/Project'
 import { HttpRequest, Validator } from '../../../../presentation/protocols'
 import { AddProjectController } from './AddProjectController'
@@ -97,5 +97,14 @@ describe('AddProjectController', () => {
     await sut.handle(makeFakeHttpRequest())
 
     expect(validateSpy).toHaveBeenCalledWith(makeFakeHttpRequest())
+  })
+
+  test('Should return 400 if Validator returns an Error', async () => {
+    const { sut, validatorStub } = makeSut()
+
+    jest.spyOn(validatorStub, 'validate').mockReturnValueOnce(new Error())
+    const response = await sut.handle(makeFakeHttpRequest())
+
+    expect(response).toEqual(badRequest(new Error()))
   })
 })
