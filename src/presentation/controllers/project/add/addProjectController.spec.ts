@@ -1,5 +1,5 @@
 import { AddProject, AddProjectModel } from '../../../../domain/usecases/project/add/AddProject'
-import { ok } from '../../../../presentation/helper/httpHelper'
+import { ok, serverError } from '../../../../presentation/helper/httpHelper'
 import { Project } from '../../../../domain/model/Project'
 import { HttpRequest } from '../../../../presentation/protocols'
 import { AddProjectController } from './AddProjectController'
@@ -59,11 +59,21 @@ describe('AddProjectController', () => {
       ...makeFakeHttpRequest().params
     })
   })
+
   test('Should return an 200 on AddProject success', async () => {
     const { sut } = makeSut()
 
     const response = await sut.handle(makeFakeHttpRequest())
 
     expect(response).toEqual(ok(makeFakeProject()))
+  })
+
+  test('Should return 500 on AddProject fails', async () => {
+    const { sut, addProjectStub } = makeSut()
+
+    jest.spyOn(addProjectStub, 'add').mockImplementationOnce(() => { throw new Error() })
+    const response = await sut.handle(makeFakeHttpRequest())
+
+    expect(response).toEqual(serverError(new Error()))
   })
 })
