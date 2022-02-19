@@ -1,11 +1,12 @@
 <div  style="display:flex; flex-direction: column;align-items: center">
-<img style="" src="https://img.icons8.com/external-wanicon-lineal-color-wanicon/280/000000/external-warning-construction-wanicon-lineal-color-wanicon.png"/>
-<i>Updating readme as soon as possible &#9786;</i>
-<h2 style="margin:0">WIP</h2> 
+<h2 style="margin:0">WIP</h2>
+<img style="" src="https://img.icons8.com/external-wanicon-lineal-color-wanicon/100/000000/external-warning-construction-wanicon-lineal-color-wanicon.png"/>
+<i>Updating readme as soon as possible &#9786;</i> 
 </div>
 
+</br>
+
 <div style="display:flex; align-items: center">
-    <img src="https://img.icons8.com/color/48/000000/fraud.png"/>
     <h1>Fake-end API</h1>
 </div>
 
