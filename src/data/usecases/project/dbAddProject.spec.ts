@@ -2,6 +2,7 @@ import { User } from '../../../domain/model/User'
 import { FindUserByIdRepository } from '../../../data/protocols/user/FindUserByIdRepository'
 import { DbAddProject } from './DbAddProject'
 import { AddProjectModel } from '../../../domain/usecases/project/add/AddProject'
+import { UserNotFoundError } from '../../../domain/usecases/user/validations/UserNotFoundError'
 
 const makeFakeUser = (): User => ({
   id: 'any_id',
@@ -58,5 +59,14 @@ describe('DbAddProject', () => {
     const promise = sut.add(makeFakeProjectModel())
 
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should return UserNotFoundError if FindUserByIdRepository fails', async () => {
+    const { sut, findUserByIdRepositoryStub } = makeSut()
+
+    jest.spyOn(findUserByIdRepositoryStub, 'findById').mockResolvedValueOnce(null as any)
+    const error = await sut.add(makeFakeProjectModel())
+
+    expect(error).toEqual(new UserNotFoundError('User any_userId not found'))
   })
 })
