@@ -46,9 +46,17 @@ describe('DbAddProject', () => {
     const { sut, findUserByIdRepositoryStub } = makeSut()
 
     const findByIdSpy = jest.spyOn(findUserByIdRepositoryStub, 'findById')
-
     await sut.add(makeFakeProjectModel())
 
     expect(findByIdSpy).toHaveBeenCalledWith('any_userId')
+  })
+
+  test('Should throws if FindUserByIdRepository throws', async () => {
+    const { sut, findUserByIdRepositoryStub } = makeSut()
+
+    jest.spyOn(findUserByIdRepositoryStub, 'findById').mockImplementationOnce(() => { throw new Error() })
+    const promise = sut.add(makeFakeProjectModel())
+
+    await expect(promise).rejects.toThrow()
   })
 })
