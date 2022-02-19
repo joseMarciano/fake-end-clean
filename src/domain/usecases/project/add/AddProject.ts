@@ -6,7 +6,6 @@ export interface AddProject {
 }
 
 export interface AddProjectModel {
-  id: string
   title: string
   description: string
   userId: string
