@@ -3,6 +3,8 @@ import { FindUserByIdRepository } from '../../../data/protocols/user/FindUserByI
 import { DbAddProject } from './DbAddProject'
 import { AddProjectModel } from '../../../domain/usecases/project/add/AddProject'
 import { UserNotFoundError } from '../../../domain/usecases/user/validations/UserNotFoundError'
+import { Project } from '../../../domain/model/Project'
+import { AddProjectRepository } from '../../../data/protocols/project/AddProjectRepository'
 
 const makeFakeUser = (): User => ({
   id: 'any_id',
@@ -18,6 +20,23 @@ const makeFakeProjectModel = (): AddProjectModel => ({
   userId: 'any_userId'
 })
 
+const makeFakeProject = (): Project => ({
+  id: 'any_id',
+  secretKey: 'any_secretKey',
+  description: 'any_description',
+  title: 'any_title',
+  user: 'any_userId'
+})
+
+const makeAddProjectRepository = (): AddProjectRepository => {
+  class AddProjectRepositoryStub implements AddProjectRepository {
+    async addProject (_projectModel: AddProjectModel): Promise<Project> {
+      return await Promise.resolve(makeFakeProject())
+    }
+  }
+  return new AddProjectRepositoryStub()
+}
+
 const makeFindUserByIdStub = (): FindUserByIdRepository => {
   class FindUserByIdRepositoryStub implements FindUserByIdRepository {
     async findById (_id: string): Promise<User> {
@@ -31,14 +50,17 @@ const makeFindUserByIdStub = (): FindUserByIdRepository => {
 interface SutTypes {
   sut: DbAddProject
   findUserByIdRepositoryStub: FindUserByIdRepository
+  addProjectRepositoryStub: AddProjectRepository
 }
 const makeSut = (): SutTypes => {
+  const addProjectRepositoryStub = makeAddProjectRepository()
   const findUserByIdRepositoryStub = makeFindUserByIdStub()
-  const sut = new DbAddProject(findUserByIdRepositoryStub)
+  const sut = new DbAddProject(findUserByIdRepositoryStub, addProjectRepositoryStub)
 
   return {
     sut,
-    findUserByIdRepositoryStub
+    findUserByIdRepositoryStub,
+    addProjectRepositoryStub
   }
 }
 
@@ -68,5 +90,14 @@ describe('DbAddProject', () => {
     const error = await sut.add(makeFakeProjectModel())
 
     expect(error).toEqual(new UserNotFoundError('User any_userId not found'))
+  })
+
+  test('Should call AddProjectRepository with correct values', async () => {
+    const { sut, addProjectRepositoryStub } = makeSut()
+
+    const addProjectStub = jest.spyOn(addProjectRepositoryStub, 'addProject')
+    await sut.add(makeFakeProjectModel())
+
+    expect(addProjectStub).toHaveBeenCalledWith(makeFakeProjectModel())
   })
 })
