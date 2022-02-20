@@ -1,5 +1,5 @@
 import { Validator } from '../protocols'
-import { ParamsValidaton } from './RequestParamsValidation'
+import { RequestParamValidation } from './RequestParamsValidation'
 
 const makeValidator = (): Validator => {
   class ValidatorStub implements Validator {
@@ -12,20 +12,20 @@ const makeValidator = (): Validator => {
 }
 
 interface SutTypes {
-  sut: ParamsValidaton
+  sut: RequestParamValidation
   validationStub: Validator
 }
 
 const makeSut = (): SutTypes => {
   const validationStub = makeValidator()
-  const sut = new ParamsValidaton(validationStub)
+  const sut = new RequestParamValidation(validationStub)
   return {
     sut,
     validationStub
   }
 }
 
-describe('ParamsValidaton', () => {
+describe('RequestParamValidation', () => {
   test('Should call Validator with correct values', () => {
     const { sut, validationStub } = makeSut()
 
