@@ -17,12 +17,15 @@ export class DbAddProject implements AddProject {
 
     if (!user) return new UserNotFoundError(`User ${projectModel.userId} not found`)
 
-    await this.encrypter.encrypt({
+    const secretKey = await this.encrypter.encrypt({
       ...projectModel,
       createdAt: new Date()
     })
 
-    await this.addProjectRepository.addProject(projectModel)
+    await this.addProjectRepository.addProject({
+      ...projectModel,
+      secretKey
+    })
 
     return await Promise.resolve(null as unknown as Project)
   }
