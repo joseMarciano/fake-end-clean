@@ -1,12 +1,12 @@
-import { app } from '../config/app'
+import { app } from '../../config/app'
 import request from 'supertest'
-import { MongoHelper } from '../../infra/db/mongo/mongoHelper'
-import { JwtAdapter } from '../../infra/cryptography/jwt/JwtAdapter'
+import { MongoHelper } from '../../../infra/db/mongo/mongoHelper'
+import { JwtAdapter } from '../../../infra/cryptography/jwt/JwtAdapter'
 
 const defaultPath = process.env.DEFAULT_PATH as string
 const jwtAdapter = new JwtAdapter('secret')
 
-describe('signUpRouter', () => {
+describe('loginRouter', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
   })

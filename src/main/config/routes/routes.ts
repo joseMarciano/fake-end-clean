@@ -1,5 +1,5 @@
 import { Express, Router } from 'express'
-import signUpRoute from '../../routes/signUpRoute'
+import signUpRoute from '../../routes/login/loginRoute'
 
 export const setRoutes = (app: Express): void => {
   const router = Router()
