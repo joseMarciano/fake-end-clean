@@ -22,11 +22,9 @@ export class DbAddProject implements AddProject {
       createdAt: new Date()
     })
 
-    await this.addProjectRepository.addProject({
+    return await this.addProjectRepository.addProject({
       ...projectModel,
       secretKey
     })
-
-    return await Promise.resolve(null as unknown as Project)
   }
 }
