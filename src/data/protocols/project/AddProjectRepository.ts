@@ -4,7 +4,7 @@ export interface AddProjectRepository {
   addProject: (projectModel: AddProjectModel) => Promise<Project>
 }
 
-interface AddProjectModel {
+export interface AddProjectModel {
   title: string
   description: string
   userId: string
