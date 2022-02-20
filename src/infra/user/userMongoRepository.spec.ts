@@ -186,5 +186,15 @@ describe('UserMongoRepository', () => {
 
       expect(user.id).toBe(result.insertedId.toString())
     })
+
+    test('Should return null on findById fails', async () => {
+      const result = await userCollection.insertOne(makeFakeUserModel())
+      await userCollection.deleteMany({})
+
+      const { sut } = makeSut()
+      const user = await sut.findById(result.insertedId.toString())
+
+      expect(user).toBeNull()
+    })
   })
 })
