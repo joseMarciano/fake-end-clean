@@ -1,5 +1,5 @@
 import { Validator } from '../protocols'
-import { ParamsValidaton } from './ParamsValidation'
+import { ParamsValidaton } from './RequestParamsValidation'
 
 const makeValidator = (): Validator => {
   class ValidatorStub implements Validator {
