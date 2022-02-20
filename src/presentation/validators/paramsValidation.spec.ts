@@ -57,4 +57,17 @@ describe('ParamsValidaton', () => {
 
     expect(error).toEqual(new Error())
   })
+
+  test('Should return null if Validator return null', () => {
+    const { sut } = makeSut()
+
+    const error = sut.validate({
+      params: {
+        field: 'any_field',
+        otherField: 'any_field'
+      }
+    })
+
+    expect(error).toBeNull()
+  })
 })
