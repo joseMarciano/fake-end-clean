@@ -8,9 +8,11 @@ import { ActiveUserByIdRepository } from '../../data/protocols/user/ActiveUserBy
 import { ObjectId } from 'mongodb'
 import { AddUserAccessRepository, AddUserAccessTokenModel } from '../../data/protocols/user/AddUserAccessRepository'
 import { FindUserAccessRepository } from '../../data/protocols/user/FindUserAccessRepository'
+import { FindUserByIdRepository } from '../../data/protocols/user/FindUserByIdRepository'
 
 interface BasicRepository
   extends
+  FindUserByIdRepository,
   AddUserRepository,
   FindUserByEmailRepository,
   AddUserRefreshTokenRepository,
@@ -61,6 +63,19 @@ export class UserMongoRespository implements BasicRepository {
     })
 
     const { _id, ...obj } = await collection.findOne({ _id: mongoId }) as any
+
+    return {
+      id: _id.toString(),
+      ...obj
+    }
+  }
+
+  async findById (id: string): Promise<User> {
+    const collection = await MongoHelper.getCollection('users')
+    const result = await collection.findOne({ _id: new ObjectId(id) }) as any
+
+    if (!result) return null as any
+    const { _id, ...obj } = result
 
     return {
       id: _id.toString(),
