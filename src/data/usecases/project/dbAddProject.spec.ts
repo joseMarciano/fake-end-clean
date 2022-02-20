@@ -5,6 +5,7 @@ import { AddProjectModel } from '../../../domain/usecases/project/add/AddProject
 import { UserNotFoundError } from '../../../domain/usecases/user/validations/UserNotFoundError'
 import { Project } from '../../../domain/model/Project'
 import { AddProjectRepository } from '../../../data/protocols/project/AddProjectRepository'
+import { Encrypter } from 'src/data/protocols/cryptography/Encrypter'
 
 const makeFakeUser = (): User => ({
   id: 'any_id',
@@ -27,6 +28,16 @@ const makeFakeProject = (): Project => ({
   title: 'any_title',
   user: 'any_userId'
 })
+
+const makeEncrypter = (): Encrypter => {
+  class EncrypterStub implements Encrypter {
+    async encrypt (_input: any): Promise<string> {
+      return await Promise.resolve('any_encrypted')
+    }
+  }
+
+  return new EncrypterStub()
+}
 
 const makeAddProjectRepository = (): AddProjectRepository => {
   class AddProjectRepositoryStub implements AddProjectRepository {
@@ -51,20 +62,29 @@ interface SutTypes {
   sut: DbAddProject
   findUserByIdRepositoryStub: FindUserByIdRepository
   addProjectRepositoryStub: AddProjectRepository
+  encrypterStub: Encrypter
 }
 const makeSut = (): SutTypes => {
+  const encrypterStub = makeEncrypter()
   const addProjectRepositoryStub = makeAddProjectRepository()
   const findUserByIdRepositoryStub = makeFindUserByIdStub()
-  const sut = new DbAddProject(findUserByIdRepositoryStub, addProjectRepositoryStub)
+  const sut = new DbAddProject(findUserByIdRepositoryStub, addProjectRepositoryStub, encrypterStub)
 
   return {
     sut,
     findUserByIdRepositoryStub,
-    addProjectRepositoryStub
+    addProjectRepositoryStub,
+    encrypterStub
   }
 }
 
 describe('DbAddProject', () => {
+  beforeAll(() => {
+    jest
+      .useFakeTimers()
+      .setSystemTime(new Date())
+  })
+
   test('Should call findUserByIdRepository with correct value', async () => {
     const { sut, findUserByIdRepositoryStub } = makeSut()
 
@@ -108,5 +128,17 @@ describe('DbAddProject', () => {
     const promise = sut.add(makeFakeProjectModel())
 
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call Encrypter with correct value', async () => {
+    const { sut, encrypterStub } = makeSut()
+
+    const encrypSpy = jest.spyOn(encrypterStub, 'encrypt')
+    await sut.add(makeFakeProjectModel())
+
+    expect(encrypSpy).toHaveBeenCalledWith({
+      ...makeFakeProjectModel(),
+      createdAt: new Date()
+    })
   })
 })
