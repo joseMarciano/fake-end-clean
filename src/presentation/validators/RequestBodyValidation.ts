@@ -1,6 +1,6 @@
 import { Validator } from '../protocols'
 
-export class BodyValidation implements Validator {
+export class RequestBodyValidation implements Validator {
   constructor (
     private readonly validator: Validator
   ) {}

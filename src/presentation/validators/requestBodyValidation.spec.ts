@@ -1,5 +1,5 @@
 import { Validator } from '../protocols'
-import { BodyValidation } from './BodyValidation'
+import { RequestBodyValidation } from './RequestBodyValidation'
 
 const makeValidator = (): Validator => {
   class ValidatorStub implements Validator {
@@ -12,20 +12,20 @@ const makeValidator = (): Validator => {
 }
 
 interface SutTypes {
-  sut: BodyValidation
+  sut: RequestBodyValidation
   validationStub: Validator
 }
 
 const makeSut = (): SutTypes => {
   const validationStub = makeValidator()
-  const sut = new BodyValidation(validationStub)
+  const sut = new RequestBodyValidation(validationStub)
   return {
     sut,
     validationStub
   }
 }
 
-describe('BodyValidation', () => {
+describe('RequestBodyValidation', () => {
   test('Should call validator with correct values', () => {
     const { sut, validationStub } = makeSut()
 
