@@ -6,7 +6,6 @@ export class BodyValidation implements Validator {
   ) {}
 
   validate (input: any): Error | null {
-    this.validator.validate(input.body)
-    return null
+    return this.validator.validate(input.body)
   }
 }
