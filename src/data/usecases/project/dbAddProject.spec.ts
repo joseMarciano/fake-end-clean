@@ -153,4 +153,12 @@ describe('DbAddProject', () => {
 
     await expect(promise).rejects.toThrow()
   })
+
+  test('Should return an Project on DbAddProject succeeds', async () => {
+    const { sut } = makeSut()
+
+    const project = await sut.add(makeFakeProjectModel())
+
+    expect(project).toEqual(makeFakeProject())
+  })
 })
