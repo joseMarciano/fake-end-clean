@@ -177,4 +177,14 @@ describe('UserMongoRepository', () => {
       expect(userAccessToken).toBeNull()
     })
   })
+  describe('INTERFACE FindUserByIdRepository', () => {
+    test('Should findUserById on success', async () => {
+      const result = await userCollection.insertOne(makeFakeUserModel())
+      const { sut } = makeSut()
+
+      const user = await sut.findById(result.insertedId.toString())
+
+      expect(user.id).toBe(result.insertedId.toString())
+    })
+  })
 })
