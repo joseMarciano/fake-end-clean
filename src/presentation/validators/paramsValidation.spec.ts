@@ -43,4 +43,18 @@ describe('ParamsValidaton', () => {
       otherField: 'any_field'
     })
   })
+  test('Should return an Error if Validator return an Error', () => {
+    const { sut, validationStub } = makeSut()
+
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error())
+
+    const error = sut.validate({
+      params: {
+        field: 'any_field',
+        otherField: 'any_field'
+      }
+    })
+
+    expect(error).toEqual(new Error())
+  })
 })
