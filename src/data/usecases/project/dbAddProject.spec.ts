@@ -118,7 +118,10 @@ describe('DbAddProject', () => {
     const addProjectStub = jest.spyOn(addProjectRepositoryStub, 'addProject')
     await sut.add(makeFakeProjectModel())
 
-    expect(addProjectStub).toHaveBeenCalledWith(makeFakeProjectModel())
+    expect(addProjectStub).toHaveBeenCalledWith({
+      ...makeFakeProjectModel(),
+      secretKey: 'any_encrypted'
+    })
   })
 
   test('Should throws if AddProjectRepository throws', async () => {
