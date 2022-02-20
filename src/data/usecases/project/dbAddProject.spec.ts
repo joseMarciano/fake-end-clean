@@ -141,4 +141,13 @@ describe('DbAddProject', () => {
       createdAt: new Date()
     })
   })
+
+  test('Should throws if Encrypter throws', async () => {
+    const { sut, encrypterStub } = makeSut()
+
+    jest.spyOn(encrypterStub, 'encrypt').mockImplementationOnce(() => { throw new Error() })
+    const promise = sut.add(makeFakeProjectModel())
+
+    await expect(promise).rejects.toThrow()
+  })
 })
