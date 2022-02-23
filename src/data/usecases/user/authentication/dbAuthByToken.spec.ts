@@ -1,5 +1,25 @@
+import { FindUserByEmailRepository } from 'src/data/protocols/user/FindUserByEmailRepository'
+import { User } from 'src/domain/model/User'
 import { Decrypter } from '../../../../data/protocols/cryptography/Decrypter'
 import { DbAuthByToken } from './DbAuthByToken'
+
+const makeFakeUser = (): User => ({
+  id: 'any_id',
+  email: 'any_email',
+  isActive: true,
+  name: 'any_name',
+  password: 'any_password'
+})
+
+const makeFindUserByEmail = (): FindUserByEmailRepository => {
+  class FindUserByEmailRepositoryStub implements FindUserByEmailRepository {
+    async findByEmail (email: string): Promise<User> {
+      return makeFakeUser()
+    }
+  }
+
+  return new FindUserByEmailRepositoryStub()
+}
 
 const makeDecrypter = (): Decrypter => {
   class DecrypterStub implements Decrypter {
@@ -17,14 +37,17 @@ const makeDecrypter = (): Decrypter => {
 interface SutTypes {
   sut: DbAuthByToken
   decrypterStub: Decrypter
+  findUserByEmailStub: FindUserByEmailRepository
 }
 const makeSut = (): SutTypes => {
+  const findUserByEmailStub = makeFindUserByEmail()
   const decrypterStub = makeDecrypter()
-  const sut = new DbAuthByToken(decrypterStub)
+  const sut = new DbAuthByToken(decrypterStub, findUserByEmailStub)
 
   return {
     sut,
-    decrypterStub
+    decrypterStub,
+    findUserByEmailStub
   }
 }
 
@@ -54,5 +77,14 @@ describe('DbAuthByToken', () => {
     const result = await sut.authByToken('any_token')
 
     expect(result).toBe(false)
+  })
+
+  test('Should call FindUserByEmailRepository with correct value', async () => {
+    const { sut, findUserByEmailStub } = makeSut()
+
+    const findUserByEmailSpy = jest.spyOn(findUserByEmailStub, 'findByEmail')
+    await sut.authByToken('any_token')
+
+    expect(findUserByEmailSpy).toHaveBeenCalledWith('any_email')
   })
 })
