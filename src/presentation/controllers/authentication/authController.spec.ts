@@ -1,3 +1,4 @@
+import { serverError } from '../../../presentation/helper/httpHelper'
 import { AuthByToken } from '../../../domain/usecases/user/authentication/AuthByToken'
 import { HttpRequest } from '../../../presentation/protocols'
 import { AuthController } from './AuthController'
@@ -40,5 +41,14 @@ describe('Authentication', () => {
     await sut.handle(makeFakeHttpRequest())
 
     expect(authByTokenSpy).toHaveBeenCalledWith('any_token')
+  })
+
+  test('Should return 500 if AuthByToken throws', async () => {
+    const { sut, authByTokenStub } = makeSut()
+
+    jest.spyOn(authByTokenStub, 'authByToken').mockImplementationOnce(() => { throw new Error() })
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
