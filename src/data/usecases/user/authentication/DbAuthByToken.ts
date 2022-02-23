@@ -14,7 +14,10 @@ export class DbAuthByToken implements AuthByToken {
 
     if (!decrypted) return isAuthenticated
 
-    await this.findUserByEmailRespository.findByEmail(decrypted.email)
+    const user = await this.findUserByEmailRespository.findByEmail(decrypted.email)
+
+    if (!user) return isAuthenticated
+
     return await Promise.resolve(null as any)
   }
 }
