@@ -1,4 +1,4 @@
-import { serverError, unauthorized } from '../../../presentation/helper/httpHelper'
+import { noContent, serverError, unauthorized } from '../../../presentation/helper/httpHelper'
 import { AuthByToken } from '../../../domain/usecases/user/authentication/AuthByToken'
 import { Controller, HttpRequest, HttpResponse } from '../../../presentation/protocols'
 
@@ -13,7 +13,7 @@ export class AuthController implements Controller {
 
       if (!isAuthenticated) return unauthorized()
 
-      return await Promise.resolve(null as any)
+      return noContent()
     } catch (error) {
       return serverError(error)
     }
