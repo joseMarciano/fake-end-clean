@@ -87,4 +87,13 @@ describe('DbAuthByToken', () => {
 
     expect(findUserByEmailSpy).toHaveBeenCalledWith('any_email')
   })
+
+  test('Should throw if FindUserByEmailRepository throws', async () => {
+    const { sut, findUserByEmailStub } = makeSut()
+
+    jest.spyOn(findUserByEmailStub, 'findByEmail').mockImplementationOnce(() => { throw new Error() })
+    const promise = sut.authByToken('any_token')
+
+    await expect(promise).rejects.toThrow()
+  })
 })
