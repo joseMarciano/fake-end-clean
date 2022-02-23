@@ -144,4 +144,10 @@ describe('DbAuthByToken', () => {
 
     expect(result).toBe(false)
   })
+
+  test('Should return true if FindUserAccessRepository returns a UserAccessToken', async () => {
+    const { sut } = makeSut()
+    const result = await sut.authByToken('any_token')
+    expect(result).toBe(true)
+  })
 })
