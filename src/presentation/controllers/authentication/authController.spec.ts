@@ -1,4 +1,4 @@
-import { serverError } from '../../../presentation/helper/httpHelper'
+import { serverError, unauthorized } from '../../../presentation/helper/httpHelper'
 import { AuthByToken } from '../../../domain/usecases/user/authentication/AuthByToken'
 import { HttpRequest } from '../../../presentation/protocols'
 import { AuthController } from './AuthController'
@@ -50,5 +50,14 @@ describe('Authentication', () => {
     const httpResponse = await sut.handle(makeFakeHttpRequest())
 
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  test('Should return 401 if AuthByToken retuns false', async () => {
+    const { sut, authByTokenStub } = makeSut()
+
+    jest.spyOn(authByTokenStub, 'authByToken').mockResolvedValueOnce(false)
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+
+    expect(httpResponse).toEqual(unauthorized())
   })
 })
