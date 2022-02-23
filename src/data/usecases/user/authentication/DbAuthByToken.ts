@@ -7,7 +7,6 @@ export class DbAuthByToken implements AuthByToken {
   ) {}
 
   async authByToken (token: string): Promise<boolean> {
-    await this.decrypter.decrypt(token)
-    return await Promise.resolve(true)
+    return !!await this.decrypter.decrypt(token)
   }
 }
