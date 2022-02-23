@@ -42,6 +42,13 @@ export const forbiden = (error: Error): HttpResponse => {
   }
 }
 
+export const unauthorized = (): HttpResponse => {
+  return {
+    statusCode: 403,
+    body: null
+  }
+}
+
 function getDefaultErrorStructure (error: Error): any {
   return {
     message: error.message,

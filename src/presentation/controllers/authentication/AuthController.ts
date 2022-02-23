@@ -1,4 +1,4 @@
-import { serverError } from '../../../presentation/helper/httpHelper'
+import { serverError, unauthorized } from '../../../presentation/helper/httpHelper'
 import { AuthByToken } from '../../../domain/usecases/user/authentication/AuthByToken'
 import { Controller, HttpRequest, HttpResponse } from '../../../presentation/protocols'
 
@@ -9,7 +9,9 @@ export class AuthController implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      await this.auth.authByToken(httpRequest.headers['user-access'])
+      const isAuthenticated = await this.auth.authByToken(httpRequest.headers['user-access'])
+
+      if (!isAuthenticated) return unauthorized()
 
       return await Promise.resolve(null as any)
     } catch (error) {
