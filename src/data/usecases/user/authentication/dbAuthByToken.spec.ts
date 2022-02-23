@@ -96,4 +96,13 @@ describe('DbAuthByToken', () => {
 
     await expect(promise).rejects.toThrow()
   })
+
+  test('Should return false if FindUserByEmailRepository returns null', async () => {
+    const { sut, findUserByEmailStub } = makeSut()
+
+    jest.spyOn(findUserByEmailStub, 'findByEmail').mockResolvedValueOnce(null as any)
+    const result = await sut.authByToken('any_token')
+
+    expect(result).toBe(false)
+  })
 })
