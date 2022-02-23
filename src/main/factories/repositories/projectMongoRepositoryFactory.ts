@@ -1,3 +1,3 @@
-import { ProjectMongoRepository } from 'src/infra/project/ProjectMongoRepository'
+import { ProjectMongoRepository } from '../../../infra/project/ProjectMongoRepository'
 
 export const makeProjectMongoRepository = (): ProjectMongoRepository => (new ProjectMongoRepository())
