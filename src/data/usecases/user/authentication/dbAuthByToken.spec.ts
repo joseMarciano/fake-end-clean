@@ -135,4 +135,13 @@ describe('DbAuthByToken', () => {
 
     expect(findUserAccessRepositoryStubSpy).toHaveBeenCalledWith('any_id', 'any_token')
   })
+
+  test('Should return false if FindUserAccessRepository returns null', async () => {
+    const { sut, findUserAccessRepositoryStub } = makeSut()
+
+    jest.spyOn(findUserAccessRepositoryStub, 'findUserAccess').mockResolvedValueOnce(null as any)
+    const result = await sut.authByToken('any_token')
+
+    expect(result).toBe(false)
+  })
 })
