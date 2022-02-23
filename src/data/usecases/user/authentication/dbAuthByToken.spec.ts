@@ -37,4 +37,13 @@ describe('DbAuthByToken', () => {
 
     expect(decryptSpy).toHaveBeenCalledWith('any_token')
   })
+
+  test('Should throw if Decrypter throws', async () => {
+    const { sut, decrypterStub } = makeSut()
+
+    jest.spyOn(decrypterStub, 'decrypt').mockImplementationOnce(() => { throw new Error() })
+    const promise = sut.authByToken('any_token')
+
+    await expect(promise).rejects.toThrow()
+  })
 })
