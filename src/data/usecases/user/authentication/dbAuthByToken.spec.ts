@@ -46,4 +46,13 @@ describe('DbAuthByToken', () => {
 
     await expect(promise).rejects.toThrow()
   })
+
+  test('Should return false if Decrypter returns null', async () => {
+    const { sut, decrypterStub } = makeSut()
+
+    jest.spyOn(decrypterStub, 'decrypt').mockResolvedValueOnce(null)
+    const result = await sut.authByToken('any_token')
+
+    expect(result).toBe(false)
+  })
 })
