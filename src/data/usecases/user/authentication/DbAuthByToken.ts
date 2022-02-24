@@ -13,6 +13,7 @@ export class DbAuthByToken implements AuthByToken {
   async authByToken (token: string): Promise<boolean> {
     let isAuthenticated = false
 
+    token = token.replace(/^Bearer/, '')?.trim()
     const decrypted = await this.decrypter.decrypt(token)
     if (!decrypted) return isAuthenticated
 
