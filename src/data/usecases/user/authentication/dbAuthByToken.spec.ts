@@ -99,6 +99,18 @@ describe('DbAuthByToken', () => {
     expect(result).toBe(false)
   })
 
+  test('Should return false if User is not active', async () => {
+    const { sut, findUserByEmailStub } = makeSut()
+
+    jest.spyOn(findUserByEmailStub, 'findByEmail').mockResolvedValueOnce({
+      ...makeFakeUser(),
+      isActive: false
+    })
+    const result = await sut.authByToken('any_token')
+
+    expect(result).toBe(false)
+  })
+
   test('Should call FindUserByEmailRepository with correct value', async () => {
     const { sut, findUserByEmailStub } = makeSut()
 
