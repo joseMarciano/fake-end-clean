@@ -9,7 +9,7 @@ export class AuthController implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const isAuthenticated = await this.auth.authByToken(httpRequest.headers['user-access'])
+      const isAuthenticated = await this.auth.authByToken(httpRequest.headers?.authorization)
 
       if (!isAuthenticated) return unauthorized()
 

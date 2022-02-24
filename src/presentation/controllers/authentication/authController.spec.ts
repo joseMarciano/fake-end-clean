@@ -5,7 +5,7 @@ import { AuthController } from './AuthController'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   headers: {
-    'user-access': 'any_token'
+    authorization: 'any_token'
   }
 })
 
