@@ -1,3 +1,3 @@
-import { UserContext } from './UserContext'
+import { GetUserContext, SetUserContext } from './UserContext'
 
-export interface ApplicationContext extends UserContext {}
+export interface ApplicationContext extends GetUserContext, SetUserContext {}

@@ -1,6 +1,9 @@
 import { User } from '../../../domain/model/User'
 
-export interface UserContext {
-  setUser: (user: User) => Promise<void>
+export interface GetUserContext {
   getUser: () => Promise<User>
+}
+
+export interface SetUserContext {
+  setUser: (user: User) => Promise<void>
 }
