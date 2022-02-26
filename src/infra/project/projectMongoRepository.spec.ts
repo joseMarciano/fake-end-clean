@@ -1,4 +1,6 @@
 import { Collection } from 'mongodb'
+import { User } from '../../domain/model/User'
+import { GetUserContext } from '../../data/protocols/application/UserContext'
 import { AddProjectModel } from '../../data/protocols/project/AddProjectRepository'
 import { MongoHelper } from '../db/mongo/mongoHelper'
 import { ProjectMongoRepository } from './ProjectMongoRepository'
@@ -10,8 +12,25 @@ const makeFakeProjectModel = (): AddProjectModel => ({
   secretKey: 'any_secretKey'
 })
 
+const createApplicationContextStub = (): GetUserContext => {
+  class ApplicationContextStub implements GetUserContext {
+    async getUser (): Promise<User> {
+      return {
+        id: 'any_id',
+        email: 'any_email',
+        isActive: true,
+        name: 'any_name',
+        password: 'any_password'
+      }
+    }
+  }
+
+  return new ApplicationContextStub()
+}
+
 const makeSut = (): ProjectMongoRepository => {
-  return new ProjectMongoRepository()
+  const applicationContextStub = createApplicationContextStub()
+  return new ProjectMongoRepository(applicationContextStub)
 }
 
 describe('ProjectMongoRepository', () => {
