@@ -1,9 +1,12 @@
+import { GetUserContext } from '../../data/protocols/application/UserContext'
 import { AddProjectRepository } from '../../data/protocols/project/AddProjectRepository'
 import { Project } from '../../domain/model/Project'
-import { AddProjectModel } from 'src/domain/usecases/project/add/AddProject'
+import { AddProjectModel } from '../../domain/usecases/project/add/AddProject'
 import { MongoHelper } from '../db/mongo/mongoHelper'
 
 export class ProjectMongoRepository implements AddProjectRepository {
+  constructor (private readonly applicationContext: GetUserContext) {}
+
   async addProject (projectModel: AddProjectModel): Promise<Project> {
     const collection = await MongoHelper.getCollection('projects')
 
