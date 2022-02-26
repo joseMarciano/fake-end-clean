@@ -11,6 +11,6 @@ export const mapFreeRouters = (): Router => {
 
 export const mapAuthRouters = (): Router => {
   return Router()
-    .all('/auth', middlewaresAdapter(makeAuthControllerFactory()))
+    .all('*', middlewaresAdapter(makeAuthControllerFactory()))
     .use('/project', projectRoute)
 }
