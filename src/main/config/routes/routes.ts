@@ -6,7 +6,7 @@ export const setRoutes = (app: Express): void => {
 
   router
     .use(mapFreeRouters())
-    .use(mapAuthRouters())
+    .use('/auth', mapAuthRouters())
 
   app
     .use(process.env.DEFAULT_PATH as string, router)
