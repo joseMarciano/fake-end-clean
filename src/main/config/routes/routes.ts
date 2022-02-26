@@ -1,12 +1,12 @@
 import { Express, Router } from 'express'
-import projectRoute from '../../../main/routes/project/projectRoute'
-import loginRoute from '../../routes/login/loginRoute'
+import { mapAuthRouters, mapFreeRouters } from './routerHelper'
 
 export const setRoutes = (app: Express): void => {
   const router = Router()
 
-  loginRoute(router)
-  projectRoute(router)
+  router
+    .use(mapFreeRouters())
+    .use(mapAuthRouters())
 
   app
     .use(process.env.DEFAULT_PATH as string, router)
