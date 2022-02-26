@@ -1,8 +1,8 @@
-import { Request, RequestHandler, Response } from 'express'
+import { Request, Response } from 'express'
 import { Controller } from '../../../presentation/protocols'
 import { HttpRequest } from '../../../presentation/protocols/Http'
 
-export const controllerAdapter = (controller: Controller): RequestHandler => {
+export const controllerAdapter = (controller: Controller): any => {
   return async (req: Request, res: Response) => {
     const httpRequest: HttpRequest = {
       body: req.body,
