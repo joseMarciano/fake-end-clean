@@ -2,6 +2,7 @@ import { noContent, serverError, unauthorized } from '../../../presentation/help
 import { AuthByToken } from '../../../domain/usecases/user/authentication/AuthByToken'
 import { HttpRequest } from '../../../presentation/protocols'
 import { AuthController } from './AuthController'
+import { User } from 'src/domain/model/User'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   headers: {
@@ -9,10 +10,18 @@ const makeFakeHttpRequest = (): HttpRequest => ({
   }
 })
 
+const makeFakeUser = (): User => ({
+  id: 'any_id',
+  email: 'any_email',
+  isActive: false,
+  name: 'any_name',
+  password: 'any_password'
+})
+
 const makeAuthByToken = (): AuthByToken => {
   class AuthByTokenStub implements AuthByToken {
-    async authByToken (_token: string): Promise<boolean> {
-      return await Promise.resolve(true)
+    async authByToken (_token: string): Promise<User> {
+      return await Promise.resolve(makeFakeUser())
     }
   }
 
@@ -52,19 +61,18 @@ describe('Authentication', () => {
     expect(httpResponse).toEqual(serverError(new Error()))
   })
 
-  test('Should return 401 if AuthByToken retuns false', async () => {
+  test('Should return 401 if AuthByToken retuns null', async () => {
     const { sut, authByTokenStub } = makeSut()
 
-    jest.spyOn(authByTokenStub, 'authByToken').mockResolvedValueOnce(false)
+    jest.spyOn(authByTokenStub, 'authByToken').mockResolvedValueOnce(null)
     const httpResponse = await sut.handle(makeFakeHttpRequest())
 
     expect(httpResponse).toEqual(unauthorized())
   })
 
-  test('Should return 204 if AuthByToken retuns true', async () => {
-    const { sut, authByTokenStub } = makeSut()
+  test('Should return 204 if AuthByToken retuns User', async () => {
+    const { sut } = makeSut()
 
-    jest.spyOn(authByTokenStub, 'authByToken').mockResolvedValueOnce(true)
     const httpResponse = await sut.handle(makeFakeHttpRequest())
 
     expect(httpResponse).toEqual(noContent())
