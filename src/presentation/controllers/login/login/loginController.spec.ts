@@ -1,4 +1,4 @@
-import { badRequest, serverError } from '../../../../presentation/helper/httpHelper'
+import { badRequest, ok, serverError } from '../../../../presentation/helper/httpHelper'
 import { LoginUser, LoginUserModel, AccessToken } from '../../../../domain/usecases/user/authentication/LoginUser'
 import { HttpRequest, Validator } from '../../../../presentation/protocols'
 import { LoginController } from './LoginController'
@@ -105,5 +105,16 @@ describe('LoginController', () => {
     const httpResponse = await sut.handle(makeFakeHttpRequest())
 
     expect(httpResponse).toEqual(badRequest(new LoginUserError('any_message')))
+  })
+
+  test('Should return AccessToken LoginController succeeds', async () => {
+    const { sut } = makeSut()
+
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+
+    expect(httpResponse).toEqual(ok({
+      accessToken: 'any_accessToken',
+      refreshToken: 'any_refreshToken'
+    }))
   })
 })
