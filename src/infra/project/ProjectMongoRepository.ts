@@ -8,13 +8,13 @@ export class ProjectMongoRepository implements AddProjectRepository {
   constructor (private readonly applicationContext: GetUserContext) {}
 
   async addProject (projectModel: AddProjectModel): Promise<Project> {
+    const user = await this.applicationContext.getUser()
+
     const collection = await MongoHelper.getCollection('projects')
 
-    const { userId, ...others } = projectModel
-
     const result = await collection.insertOne({
-      user: userId,
-      ...others
+      user: user.id,
+      ...projectModel
     })
 
     const { _id, ...obj } = await collection.findOne({ _id: result.insertedId }) as any
