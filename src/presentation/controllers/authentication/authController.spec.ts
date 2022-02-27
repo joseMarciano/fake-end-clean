@@ -2,7 +2,8 @@ import { noContent, serverError, unauthorized } from '../../../presentation/help
 import { AuthByToken } from '../../../domain/usecases/user/authentication/AuthByToken'
 import { HttpRequest } from '../../../presentation/protocols'
 import { AuthController } from './AuthController'
-import { User } from 'src/domain/model/User'
+import { User } from '../../../domain/model/User'
+import { SetUserContext } from '../../../data/protocols/application/UserContext'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   headers: {
@@ -28,17 +29,30 @@ const makeAuthByToken = (): AuthByToken => {
   return new AuthByTokenStub()
 }
 
+const makeSetUserContext = (): SetUserContext => {
+  class SetUserContextStub implements SetUserContext {
+    async setUser (_user: User): Promise<void> {
+      await Promise.resolve(_user)
+    }
+  }
+
+  return new SetUserContextStub()
+}
+
 interface SutTypes {
   sut: AuthController
   authByTokenStub: AuthByToken
+  setUserContextStub: SetUserContext
 }
 const makeSut = (): SutTypes => {
+  const setUserContextStub = makeSetUserContext()
   const authByTokenStub = makeAuthByToken()
-  const sut = new AuthController(authByTokenStub)
+  const sut = new AuthController(authByTokenStub, setUserContextStub)
 
   return {
     sut,
-    authByTokenStub
+    authByTokenStub,
+    setUserContextStub
   }
 }
 
@@ -76,5 +90,15 @@ describe('Authentication', () => {
     const httpResponse = await sut.handle(makeFakeHttpRequest())
 
     expect(httpResponse).toEqual(noContent())
+  })
+
+  test('Should call SetUserContext with correct values', async () => {
+    const { sut, setUserContextStub } = makeSut()
+
+    const setUserSpy = jest.spyOn(setUserContextStub, 'setUser')
+
+    await sut.handle(makeFakeHttpRequest())
+
+    expect(setUserSpy).toHaveBeenCalledWith(makeFakeUser())
   })
 })
