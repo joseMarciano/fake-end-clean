@@ -2,6 +2,7 @@ import { FindUserAccessRepository } from '../../../../data/protocols/user/FindUs
 import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindUserByEmailRepository'
 import { Decrypter } from '../../../../data/protocols/cryptography/Decrypter'
 import { AuthByToken } from '../../../../domain/usecases/user/authentication/AuthByToken'
+import { User } from 'src/domain/model/User'
 
 export class DbAuthByToken implements AuthByToken {
   constructor (
@@ -10,18 +11,18 @@ export class DbAuthByToken implements AuthByToken {
     private readonly findUserAccessRepository: FindUserAccessRepository
   ) {}
 
-  async authByToken (token: string): Promise<boolean> {
-    let isAuthenticated = false
-
+  async authByToken (token: string): Promise<User | null> {
     token = token.replace(/^Bearer/, '')?.trim()
     const decrypted = await this.decrypter.decrypt(token)
-    if (!decrypted) return isAuthenticated
+    if (!decrypted) return null
 
     const user = await this.findUserByEmailRespository.findByEmail(decrypted.email)
-    if (!user || !user.isActive) return isAuthenticated
+    if (!user || !user.isActive) return null
 
-    isAuthenticated = !!await this.findUserAccessRepository.findUserAccess(user.id, token)
+    const userAccess = !!await this.findUserAccessRepository.findUserAccess(user.id, token)
 
-    return isAuthenticated
+    if (!userAccess) return null
+
+    return user
   }
 }
