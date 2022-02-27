@@ -1,3 +1,4 @@
+import { serverError } from '../../../../presentation/helper/httpHelper'
 import { LoginUser, LoginUserModel, AccessToken } from '../../../../domain/usecases/user/authentication/LoginUser'
 import { HttpRequest, Validator } from '../../../../presentation/protocols'
 import { LoginController } from './LoginController'
@@ -67,5 +68,14 @@ describe('LoginController', () => {
     await sut.handle(makeFakeHttpRequest())
 
     expect(validatorSpy).toHaveBeenCalledWith(makeFakeHttpRequest())
+  })
+
+  test('Should return 500 if LoginUser throws', async () => {
+    const { sut, dbLoginUserStub } = makeSut()
+
+    jest.spyOn(dbLoginUserStub, 'login').mockImplementationOnce(() => { throw new Error() })
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
