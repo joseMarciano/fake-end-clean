@@ -8,7 +8,6 @@ import { ProjectMongoRepository } from './ProjectMongoRepository'
 const makeFakeProjectModel = (): AddProjectModel => ({
   description: 'any_description',
   title: 'any_title',
-  userId: 'any_userId',
   secretKey: 'any_secretKey'
 })
 
@@ -57,7 +56,6 @@ describe('ProjectMongoRepository', () => {
       expect(project.description).toBe(fakeProjectModel.description)
       expect(project.secretKey).toBe(fakeProjectModel.secretKey)
       expect(project.title).toBe(fakeProjectModel.title)
-      expect(project.user).toBe(fakeProjectModel.userId)
     })
   })
 })
