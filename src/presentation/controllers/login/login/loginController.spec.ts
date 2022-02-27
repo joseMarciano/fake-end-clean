@@ -1,4 +1,4 @@
-import { serverError } from '../../../../presentation/helper/httpHelper'
+import { badRequest, serverError } from '../../../../presentation/helper/httpHelper'
 import { LoginUser, LoginUserModel, AccessToken } from '../../../../domain/usecases/user/authentication/LoginUser'
 import { HttpRequest, Validator } from '../../../../presentation/protocols'
 import { LoginController } from './LoginController'
@@ -86,5 +86,14 @@ describe('LoginController', () => {
     const httpResponse = await sut.handle(makeFakeHttpRequest())
 
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  test('Should return 400 if Validator retuns an Error', async () => {
+    const { sut, validatorStub } = makeSut()
+
+    jest.spyOn(validatorStub, 'validate').mockReturnValueOnce(new Error())
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+
+    expect(httpResponse).toEqual(badRequest(new Error()))
   })
 })
