@@ -21,8 +21,6 @@ export class AddProjectController implements Controller {
 
       const result = await this.addProject.add(userModel)
 
-      if (result instanceof Error) return badRequest(result)
-
       return ok(result)
     } catch (error) {
       return serverError(error)
