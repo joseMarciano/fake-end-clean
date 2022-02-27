@@ -1,3 +1,6 @@
 import { ProjectMongoRepository } from '../../../infra/project/ProjectMongoRepository'
+import { applicationContext } from '../application/applicationContextFactory'
 
-export const makeProjectMongoRepository = (): ProjectMongoRepository => (new ProjectMongoRepository())
+export const makeProjectMongoRepository = (): ProjectMongoRepository => {
+  return new ProjectMongoRepository(applicationContext)
+}
