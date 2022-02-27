@@ -3,7 +3,6 @@ import { badRequest, ok, serverError } from '../../../../presentation/helper/htt
 import { Project } from '../../../../domain/model/Project'
 import { HttpRequest, Validator } from '../../../../presentation/protocols'
 import { AddProjectController } from './AddProjectController'
-import { UserNotFoundError } from '../../../../domain/usecases/user/validations/UserNotFoundError'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   body: {
@@ -89,15 +88,6 @@ describe('AddProjectController', () => {
     const response = await sut.handle(makeFakeHttpRequest())
 
     expect(response).toEqual(serverError(new Error()))
-  })
-
-  test('Should return 400 on AddProject returns UserNotFoundError', async () => {
-    const { sut, addProjectStub } = makeSut()
-
-    jest.spyOn(addProjectStub, 'add').mockResolvedValueOnce(new UserNotFoundError())
-    const response = await sut.handle(makeFakeHttpRequest())
-
-    expect(response).toEqual(badRequest(new UserNotFoundError()))
   })
 
   test('Should call Validator with correct values', async () => {
