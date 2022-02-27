@@ -1,4 +1,4 @@
-import { badRequest, serverError } from '../../../../presentation/helper/httpHelper'
+import { badRequest, ok, serverError } from '../../../../presentation/helper/httpHelper'
 import { LoginUser } from '../../../../domain/usecases/user/authentication/LoginUser'
 import { Controller, HttpRequest, HttpResponse, Validator } from '../../../../presentation/protocols'
 
@@ -20,7 +20,7 @@ export class LoginController implements Controller {
         return badRequest(result)
       }
 
-      return null as any
+      return ok(result)
     } catch (error) {
       return serverError(error)
     }
