@@ -66,5 +66,15 @@ describe('ProjectMongoRepository', () => {
       expect(project.secretKey).toBe(fakeProjectModel.secretKey)
       expect(project.title).toBe(fakeProjectModel.title)
     })
+    test('Should throws if GetUserContext throws', async () => {
+      const { sut, applicationContextStub } = makeSut()
+
+      jest.spyOn(applicationContextStub, 'getUser').mockImplementationOnce(() => { throw new Error() })
+
+      const fakeProjectModel = makeFakeProjectModel()
+      const promise = sut.addProject(fakeProjectModel)
+
+      await expect(promise).rejects.toThrow()
+    })
   })
 })
