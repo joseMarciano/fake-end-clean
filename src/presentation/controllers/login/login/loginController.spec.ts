@@ -78,4 +78,13 @@ describe('LoginController', () => {
 
     expect(httpResponse).toEqual(serverError(new Error()))
   })
+
+  test('Should return 500 if Validator throws', async () => {
+    const { sut, validatorStub } = makeSut()
+
+    jest.spyOn(validatorStub, 'validate').mockImplementationOnce(() => { throw new Error() })
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
 })
