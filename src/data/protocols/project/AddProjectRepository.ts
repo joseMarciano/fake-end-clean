@@ -7,6 +7,5 @@ export interface AddProjectRepository {
 export interface AddProjectModel {
   title: string
   description: string
-  userId: string
   secretKey: string
 }
