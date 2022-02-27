@@ -14,7 +14,12 @@ export class LoginController implements Controller {
 
       if (isValid) return badRequest(isValid)
 
-      await this.dbLoginUser.login(httpRequest.body)
+      const result = await this.dbLoginUser.login(httpRequest.body)
+
+      if (result instanceof Error) {
+        return badRequest(result)
+      }
+
       return null as any
     } catch (error) {
       return serverError(error)
