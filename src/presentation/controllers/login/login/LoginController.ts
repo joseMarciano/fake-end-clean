@@ -1,3 +1,4 @@
+import { serverError } from '../../../../presentation/helper/httpHelper'
 import { LoginUser } from '../../../../domain/usecases/user/authentication/LoginUser'
 import { Controller, HttpRequest, HttpResponse, Validator } from '../../../../presentation/protocols'
 
@@ -8,8 +9,12 @@ export class LoginController implements Controller {
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    this.validator.validate(httpRequest)
-    await this.dbLoginUser.login(httpRequest.body)
-    return null as any
+    try {
+      this.validator.validate(httpRequest)
+      await this.dbLoginUser.login(httpRequest.body)
+      return null as any
+    } catch (error) {
+      return serverError(error)
+    }
   }
 }
