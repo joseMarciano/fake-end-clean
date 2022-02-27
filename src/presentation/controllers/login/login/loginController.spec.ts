@@ -2,6 +2,7 @@ import { badRequest, serverError } from '../../../../presentation/helper/httpHel
 import { LoginUser, LoginUserModel, AccessToken } from '../../../../domain/usecases/user/authentication/LoginUser'
 import { HttpRequest, Validator } from '../../../../presentation/protocols'
 import { LoginController } from './LoginController'
+import { LoginUserError } from '../../../../domain/usecases/user/validations/LoginUserError'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   body: {
@@ -95,5 +96,14 @@ describe('LoginController', () => {
     const httpResponse = await sut.handle(makeFakeHttpRequest())
 
     expect(httpResponse).toEqual(badRequest(new Error()))
+  })
+
+  test('Should return 400 if LoginUser retuns an LoginUserError', async () => {
+    const { sut, dbLoginUserStub } = makeSut()
+
+    jest.spyOn(dbLoginUserStub, 'login').mockResolvedValueOnce(new LoginUserError('any_message'))
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+
+    expect(httpResponse).toEqual(badRequest(new LoginUserError('any_message')))
   })
 })
