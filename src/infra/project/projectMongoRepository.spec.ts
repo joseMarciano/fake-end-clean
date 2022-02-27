@@ -27,9 +27,18 @@ const createApplicationContextStub = (): GetUserContext => {
   return new ApplicationContextStub()
 }
 
-const makeSut = (): ProjectMongoRepository => {
+interface SutTypes {
+  sut: ProjectMongoRepository
+  applicationContextStub: GetUserContext
+}
+
+const makeSut = (): SutTypes => {
   const applicationContextStub = createApplicationContextStub()
-  return new ProjectMongoRepository(applicationContextStub)
+  const sut = new ProjectMongoRepository(applicationContextStub)
+  return {
+    applicationContextStub,
+    sut
+  }
 }
 
 describe('ProjectMongoRepository', () => {
@@ -48,7 +57,7 @@ describe('ProjectMongoRepository', () => {
 
   describe('INTERFACE AddProjectRepository', () => {
     test('Should add a Project', async () => {
-      const sut = makeSut()
+      const { sut } = makeSut()
       const fakeProjectModel = makeFakeProjectModel()
       const project = await sut.addProject(fakeProjectModel)
 
