@@ -116,6 +116,15 @@ describe('DbLoginUser', () => {
     expect(result).toEqual(new LoginUserError('Email or password are incorrects'))
   })
 
+  test('Should throws if HashCompare throws', async () => {
+    const { sut, hashCompareStub } = makeSut()
+
+    jest.spyOn(hashCompareStub, 'compare').mockRejectedValueOnce(new Error())
+    const promise = sut.login(makeFakeLoginUserModel())
+
+    await expect(promise).rejects.toThrowError()
+  })
+
   test('Should call RandomStringGenerator', async () => {
     const { sut, randomStringGeneratorStub } = makeSut()
 
