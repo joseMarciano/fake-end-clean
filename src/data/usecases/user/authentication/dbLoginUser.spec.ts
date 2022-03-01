@@ -50,4 +50,13 @@ describe('DbLoginUser', () => {
 
     expect(findUserByEmailStub).toHaveBeenCalledWith('any_email')
   })
+
+  test('Should throws if FindUserByEmailRepository throws', async () => {
+    const { sut, findUserByEmailRepositoryStub } = makeSut()
+
+    jest.spyOn(findUserByEmailRepositoryStub, 'findByEmail').mockRejectedValueOnce(new Error())
+    const promise = sut.login(makeFakeLoginUserModel())
+
+    await expect(promise).rejects.toThrowError()
+  })
 })
