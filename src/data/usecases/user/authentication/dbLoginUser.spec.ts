@@ -7,6 +7,7 @@ import { HashCompare } from '../../../../data/protocols/cryptography/HashCompare
 import { RandomStringGenerator } from '../../../../data/protocols/cryptography/RandomStringGenerator'
 import { AddUserRefreshTokenModel, AddUserRefreshTokenRepository } from '../../../../data/protocols/user/AddUserRefreshTokenRepository'
 import { Encrypter } from '../../../../data/protocols/cryptography/Encrypter'
+import { AddUserAccessRepository, AddUserAccessTokenModel } from '../../../../data/protocols/user/AddUserAccessRepository'
 
 const makeFakeUser = (): User => ({
   id: 'any_id',
@@ -61,6 +62,16 @@ const makeAddUserRefreshTokenRepository = (): AddUserRefreshTokenRepository => {
   return new AddUserRefreshTokenRepositoryStub()
 }
 
+const makeAddUserAccessRepository = (): AddUserAccessRepository => {
+  class AddUserAccessRepositoryStub implements AddUserAccessRepository {
+    async addUserAccess (_data: AddUserAccessTokenModel): Promise<void> {
+      await Promise.resolve(null)
+    }
+  }
+
+  return new AddUserAccessRepositoryStub()
+}
+
 const makeEncrypterStub = (): Encrypter => {
   class EncrypterStub implements Encrypter {
     async encrypt (_input: any): Promise<string> {
@@ -78,15 +89,24 @@ interface SutTypes {
   randomStringGeneratorStub: RandomStringGenerator
   addRefreshTokenRespotoryStub: AddUserRefreshTokenRepository
   encrypterStub: Encrypter
+  addUserAccessRepositoryStub: AddUserAccessRepository
 }
 
 const makeSut = (): SutTypes => {
+  const addUserAccessRepositoryStub = makeAddUserAccessRepository()
   const encrypterStub = makeEncrypterStub()
   const addRefreshTokenRespotoryStub = makeAddUserRefreshTokenRepository()
   const randomStringGeneratorStub = makeRandomStringGenerator()
   const hashCompareStub = makeHashCompare()
   const findUserByEmailRepositoryStub = makeFindUserByEmailRepository()
-  const sut = new DbLoginUser(findUserByEmailRepositoryStub, hashCompareStub, randomStringGeneratorStub, addRefreshTokenRespotoryStub, encrypterStub)
+  const sut = new DbLoginUser(
+    findUserByEmailRepositoryStub,
+    hashCompareStub,
+    randomStringGeneratorStub,
+    addRefreshTokenRespotoryStub,
+    encrypterStub,
+    addUserAccessRepositoryStub
+  )
 
   return {
     sut,
@@ -94,7 +114,8 @@ const makeSut = (): SutTypes => {
     hashCompareStub,
     randomStringGeneratorStub,
     addRefreshTokenRespotoryStub,
-    encrypterStub
+    encrypterStub,
+    addUserAccessRepositoryStub
   }
 }
 
@@ -220,5 +241,17 @@ describe('DbLoginUser', () => {
     const promise = sut.login(makeFakeLoginUserModel())
 
     await expect(promise).rejects.toThrowError()
+  })
+
+  test('Should call AddUserAccessRepository with correct values', async () => {
+    const { sut, addUserAccessRepositoryStub } = makeSut()
+
+    const addRefreshTokenRepositorySpy = jest.spyOn(addUserAccessRepositoryStub, 'addUserAccess')
+    await sut.login(makeFakeLoginUserModel())
+
+    expect(addRefreshTokenRepositorySpy).toHaveBeenCalledWith({
+      userId: 'any_id',
+      accessToken: 'any_encrypted_value'
+    })
   })
 })
