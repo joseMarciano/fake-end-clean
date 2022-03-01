@@ -40,6 +40,9 @@ export class DbLoginUser implements LoginUser {
       accessToken
     })
 
-    return null as any
+    return {
+      accessToken,
+      refreshToken
+    }
   }
 }
