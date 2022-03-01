@@ -78,4 +78,27 @@ describe('loginRouter', () => {
       expect(response.status).toBe(200)
     })
   })
+
+  describe('POST /login', () => {
+    const insertFakeUser = async (): Promise<string> => {
+      const userCollection = await MongoHelper.getCollection('users')
+      const result = await userCollection.insertOne({
+        name: 'Josefh',
+        email: 'any_email@mail.com',
+        password: '$2a$12$HALpxOxdmI6cBGPu7LIoO.lAw0Lqy.rpGWoCl5FM9GZzXowG7n.9S'
+      })
+
+      return result.insertedId.toString()
+    }
+
+    test('Should return an 200 on login success', async () => {
+      await insertFakeUser()
+
+      const response = await request(app)
+        .post(`${defaultPath}/login`)
+        .send({ email: 'any_email@mail.com', password: '123456789' })
+
+      expect(response.status).toBe(200)
+    })
+  })
 })
