@@ -2,7 +2,9 @@ import { app } from '../../config/app'
 import request from 'supertest'
 import { MongoHelper } from '../../../infra/db/mongo/mongoHelper'
 import { JwtAdapter } from '../../../infra/cryptography/jwt/JwtAdapter'
+import { Collection, ObjectId } from 'mongodb'
 
+let userCollection: Collection
 const defaultPath = process.env.DEFAULT_PATH as string
 const jwtAdapter = new JwtAdapter('secret')
 
@@ -16,7 +18,7 @@ describe('loginRouter', () => {
   })
 
   beforeEach(async () => {
-    const userCollection = await MongoHelper.getCollection('users')
+    userCollection = await MongoHelper.getCollection('users')
     await userCollection.deleteMany({})
   })
 
@@ -80,6 +82,7 @@ describe('loginRouter', () => {
   })
 
   describe('POST /login', () => {
+    let insertedId: string
     const insertFakeUser = async (): Promise<string> => {
       const userCollection = await MongoHelper.getCollection('users')
       const result = await userCollection.insertOne({
@@ -91,9 +94,15 @@ describe('loginRouter', () => {
       return result.insertedId.toString()
     }
 
-    test('Should return an 200 on login success', async () => {
-      await insertFakeUser()
+    beforeEach(async () => {
+      insertedId = await insertFakeUser()
+    })
 
+    afterEach(async () => {
+      await userCollection.deleteOne({ _id: new ObjectId(insertedId) })
+    })
+
+    test('Should return an 200 on login success', async () => {
       const response = await request(app)
         .post(`${defaultPath}/login`)
         .send({ email: 'any_email@mail.com', password: '123456789' })
