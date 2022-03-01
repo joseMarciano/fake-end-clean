@@ -92,4 +92,13 @@ describe('DbLoginUser', () => {
 
     expect(hashSpy).toHaveBeenCalledWith('any_password', 'hashed_password')
   })
+
+  test('Should return LoginUserError if HashCompare returns false', async () => {
+    const { sut, hashCompareStub } = makeSut()
+
+    jest.spyOn(hashCompareStub, 'compare').mockResolvedValueOnce(false)
+    const result = await sut.login(makeFakeLoginUserModel())
+
+    expect(result).toEqual(new LoginUserError('Email or password are incorrects'))
+  })
 })
