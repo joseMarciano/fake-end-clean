@@ -254,4 +254,13 @@ describe('DbLoginUser', () => {
       accessToken: 'any_encrypted_value'
     })
   })
+
+  test('Should throws if AddUserAccessRepository throws', async () => {
+    const { sut, addUserAccessRepositoryStub } = makeSut()
+
+    jest.spyOn(addUserAccessRepositoryStub, 'addUserAccess').mockRejectedValueOnce(new Error())
+    const promise = sut.login(makeFakeLoginUserModel())
+
+    await expect(promise).rejects.toThrowError()
+  })
 })
