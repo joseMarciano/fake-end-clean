@@ -5,6 +5,7 @@ import { HashCompare } from '../../../../data/protocols/cryptography/HashCompare
 import { RandomStringGenerator } from '../../../../data/protocols/cryptography/RandomStringGenerator'
 import { AddUserRefreshTokenRepository } from '../../../../data/protocols/user/AddUserRefreshTokenRepository'
 import { Encrypter } from '../../../../data/protocols/cryptography/Encrypter'
+import { AddUserAccessRepository } from '../../../../data/protocols/user/AddUserAccessRepository'
 
 export class DbLoginUser implements LoginUser {
   constructor (
@@ -12,7 +13,8 @@ export class DbLoginUser implements LoginUser {
     private readonly hasherCompare: HashCompare,
     private readonly randomStringGenerator: RandomStringGenerator,
     private readonly addRefreshTokenRepository: AddUserRefreshTokenRepository,
-    private readonly encrypter: Encrypter
+    private readonly encrypter: Encrypter,
+    private readonly addUserAccessRepository: AddUserAccessRepository
   ) {}
 
   async login (userLoginModel: LoginUserModel): Promise<AccessToken | LoginUserError> {
@@ -28,9 +30,14 @@ export class DbLoginUser implements LoginUser {
       userId: user.id
     })
 
-    await this.encrypter.encrypt({
+    const accessToken = await this.encrypter.encrypt({
       id: user.id,
       email: user.email
+    })
+
+    await this.addUserAccessRepository.addUserAccess({
+      userId: user.id,
+      accessToken
     })
 
     return null as any
