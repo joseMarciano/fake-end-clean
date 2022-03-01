@@ -3,12 +3,14 @@ import { AccessToken, LoginUser, LoginUserModel } from '../../../../domain/useca
 import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindUserByEmailRepository'
 import { HashCompare } from '../../../../data/protocols/cryptography/HashCompare'
 import { RandomStringGenerator } from '../../../../data/protocols/cryptography/RandomStringGenerator'
+import { AddUserRefreshTokenRepository } from '../../../../data/protocols/user/AddUserRefreshTokenRepository'
 
 export class DbLoginUser implements LoginUser {
   constructor (
     private readonly findUserByEmailRepository: FindUserByEmailRepository,
     private readonly hasherCompare: HashCompare,
-    private readonly randomStringGenerator: RandomStringGenerator
+    private readonly randomStringGenerator: RandomStringGenerator,
+    private readonly addRefreshTokenRepository: AddUserRefreshTokenRepository
   ) {}
 
   async login (userLoginModel: LoginUserModel): Promise<AccessToken | LoginUserError> {
@@ -17,7 +19,12 @@ export class DbLoginUser implements LoginUser {
 
     if (!user || !passwordIsValid) return new LoginUserError('Email or password are incorrects')
 
-    await this.randomStringGenerator.generateRandomString()
+    const refreshToken = await this.randomStringGenerator.generateRandomString()
+
+    await this.addRefreshTokenRepository.addRefreshToken({
+      refreshToken,
+      userId: user.id
+    })
 
     return null as any
   }
