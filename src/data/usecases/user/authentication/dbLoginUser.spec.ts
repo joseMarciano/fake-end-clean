@@ -5,6 +5,7 @@ import { DbLoginUser } from './DbLoginUser'
 import { LoginUserError } from '../../../../domain/usecases/user/validations/LoginUserError'
 import { HashCompare } from '../../../../data/protocols/cryptography/HashCompare'
 import { RandomStringGenerator } from '../../../../data/protocols/cryptography/RandomStringGenerator'
+import { AddUserRefreshTokenModel, AddUserRefreshTokenRepository } from '../../../../data/protocols/user/AddUserRefreshTokenRepository'
 
 const makeFakeUser = (): User => ({
   id: 'any_id',
@@ -49,24 +50,37 @@ const makeRandomStringGenerator = (): RandomStringGenerator => {
   return new RandomStringGeneratorStub()
 }
 
+const makeAddUserRefreshTokenRepository = (): AddUserRefreshTokenRepository => {
+  class AddUserRefreshTokenRepositoryStub implements AddUserRefreshTokenRepository {
+    async addRefreshToken (_data: AddUserRefreshTokenModel): Promise<void> {
+      await Promise.resolve(null)
+    }
+  }
+
+  return new AddUserRefreshTokenRepositoryStub()
+}
+
 interface SutTypes {
   sut: DbLoginUser
   findUserByEmailRepositoryStub: FindUserByEmailRepository
   hashCompareStub: HashCompare
   randomStringGeneratorStub: RandomStringGenerator
+  addRefreshTokenRespotoryStub: AddUserRefreshTokenRepository
 }
 
 const makeSut = (): SutTypes => {
+  const addRefreshTokenRespotoryStub = makeAddUserRefreshTokenRepository()
   const randomStringGeneratorStub = makeRandomStringGenerator()
   const hashCompareStub = makeHashCompare()
   const findUserByEmailRepositoryStub = makeFindUserByEmailRepository()
-  const sut = new DbLoginUser(findUserByEmailRepositoryStub, hashCompareStub, randomStringGeneratorStub)
+  const sut = new DbLoginUser(findUserByEmailRepositoryStub, hashCompareStub, randomStringGeneratorStub, addRefreshTokenRespotoryStub)
 
   return {
     sut,
     findUserByEmailRepositoryStub,
     hashCompareStub,
-    randomStringGeneratorStub
+    randomStringGeneratorStub,
+    addRefreshTokenRespotoryStub
   }
 }
 
@@ -141,5 +155,17 @@ describe('DbLoginUser', () => {
     const promise = sut.login(makeFakeLoginUserModel())
 
     await expect(promise).rejects.toThrowError()
+  })
+
+  test('Should call AddRefreshTokenRepository with correct values', async () => {
+    const { sut, addRefreshTokenRespotoryStub } = makeSut()
+
+    const addRefreshTokenRepositorySpy = jest.spyOn(addRefreshTokenRespotoryStub, 'addRefreshToken')
+    await sut.login(makeFakeLoginUserModel())
+
+    expect(addRefreshTokenRepositorySpy).toHaveBeenCalledWith({
+      userId: 'any_id',
+      refreshToken: 'any_string'
+    })
   })
 })
