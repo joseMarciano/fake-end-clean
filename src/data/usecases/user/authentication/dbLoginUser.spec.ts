@@ -6,6 +6,7 @@ import { LoginUserError } from '../../../../domain/usecases/user/validations/Log
 import { HashCompare } from '../../../../data/protocols/cryptography/HashCompare'
 import { RandomStringGenerator } from '../../../../data/protocols/cryptography/RandomStringGenerator'
 import { AddUserRefreshTokenModel, AddUserRefreshTokenRepository } from '../../../../data/protocols/user/AddUserRefreshTokenRepository'
+import { Encrypter } from '../../../../data/protocols/cryptography/Encrypter'
 
 const makeFakeUser = (): User => ({
   id: 'any_id',
@@ -60,27 +61,40 @@ const makeAddUserRefreshTokenRepository = (): AddUserRefreshTokenRepository => {
   return new AddUserRefreshTokenRepositoryStub()
 }
 
+const makeEncrypterStub = (): Encrypter => {
+  class EncrypterStub implements Encrypter {
+    async encrypt (_input: any): Promise<string> {
+      return await Promise.resolve('any_encrypted_value')
+    }
+  }
+
+  return new EncrypterStub()
+}
+
 interface SutTypes {
   sut: DbLoginUser
   findUserByEmailRepositoryStub: FindUserByEmailRepository
   hashCompareStub: HashCompare
   randomStringGeneratorStub: RandomStringGenerator
   addRefreshTokenRespotoryStub: AddUserRefreshTokenRepository
+  encrypterStub: Encrypter
 }
 
 const makeSut = (): SutTypes => {
+  const encrypterStub = makeEncrypterStub()
   const addRefreshTokenRespotoryStub = makeAddUserRefreshTokenRepository()
   const randomStringGeneratorStub = makeRandomStringGenerator()
   const hashCompareStub = makeHashCompare()
   const findUserByEmailRepositoryStub = makeFindUserByEmailRepository()
-  const sut = new DbLoginUser(findUserByEmailRepositoryStub, hashCompareStub, randomStringGeneratorStub, addRefreshTokenRespotoryStub)
+  const sut = new DbLoginUser(findUserByEmailRepositoryStub, hashCompareStub, randomStringGeneratorStub, addRefreshTokenRespotoryStub, encrypterStub)
 
   return {
     sut,
     findUserByEmailRepositoryStub,
     hashCompareStub,
     randomStringGeneratorStub,
-    addRefreshTokenRespotoryStub
+    addRefreshTokenRespotoryStub,
+    encrypterStub
   }
 }
 
@@ -185,5 +199,17 @@ describe('DbLoginUser', () => {
     const promise = sut.login(makeFakeLoginUserModel())
 
     await expect(promise).rejects.toThrowError()
+  })
+
+  test('Should call Encrypter with correct values', async () => {
+    const { sut, encrypterStub } = makeSut()
+
+    const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
+    await sut.login(makeFakeLoginUserModel())
+
+    expect(encryptSpy).toHaveBeenCalledWith({
+      id: 'any_id',
+      email: 'any_email'
+    })
   })
 })
