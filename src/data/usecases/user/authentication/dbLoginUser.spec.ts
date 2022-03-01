@@ -157,6 +157,15 @@ describe('DbLoginUser', () => {
     await expect(promise).rejects.toThrowError()
   })
 
+  test('Should throws if RandomStringGenerator throws', async () => {
+    const { sut, randomStringGeneratorStub } = makeSut()
+
+    jest.spyOn(randomStringGeneratorStub, 'generateRandomString').mockRejectedValueOnce(new Error())
+    const promise = sut.login(makeFakeLoginUserModel())
+
+    await expect(promise).rejects.toThrowError()
+  })
+
   test('Should call AddRefreshTokenRepository with correct values', async () => {
     const { sut, addRefreshTokenRespotoryStub } = makeSut()
 
