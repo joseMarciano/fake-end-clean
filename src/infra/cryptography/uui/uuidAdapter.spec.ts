@@ -18,4 +18,11 @@ describe('UUIDAdapter', () => {
 
     expect(v4Spy).toHaveBeenCalledTimes(1)
   })
+  test('Should return a uuid.v4 return value', async () => {
+    const sut = makeSut()
+
+    const result = await sut.generateRandomString()
+
+    expect(result).toBe('any_uuid')
+  })
 })
