@@ -49,7 +49,10 @@ export class UserMongoRespository implements BasicRepository {
 
   async addRefreshToken (data: AddUserRefreshTokenModel): Promise<void> {
     const collection = await MongoHelper.getCollection('usersAccessToken')
-    await collection.insertOne(data)
+    await collection.insertOne({
+      ...data,
+      createdAt: new Date()
+    })
   }
 
   async activeById (id: string): Promise<User> {

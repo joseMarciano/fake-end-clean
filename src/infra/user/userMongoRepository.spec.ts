@@ -81,8 +81,7 @@ describe('UserMongoRepository', () => {
 
       await sut.addRefreshToken({
         refreshToken: 'any_token',
-        userId: result.insertedId.toString(),
-        createdAt: new Date()
+        userId: result.insertedId.toString()
       })
 
       const mongoUserAccessToken =

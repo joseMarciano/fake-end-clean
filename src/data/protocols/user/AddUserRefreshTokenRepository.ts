@@ -5,5 +5,4 @@ export interface AddUserRefreshTokenRepository {
 export interface AddUserRefreshTokenModel {
   refreshToken: string
   userId: string
-  createdAt: Date
 }
