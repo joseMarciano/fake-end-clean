@@ -2,6 +2,7 @@ import { User } from '../../../../domain/model/User'
 import { LoginUserModel } from '../../../../domain/usecases/user/authentication/LoginUser'
 import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindUserByEmailRepository'
 import { DbLoginUser } from './DbLoginUser'
+import { LoginUserError } from '../../../../domain/usecases/user/validations/LoginUserError'
 
 const makeFakeUser = (): User => ({
   id: 'any_id',
@@ -58,5 +59,14 @@ describe('DbLoginUser', () => {
     const promise = sut.login(makeFakeLoginUserModel())
 
     await expect(promise).rejects.toThrowError()
+  })
+
+  test('Should return LoginUserError if FindUserByEmailRepository returns null', async () => {
+    const { sut, findUserByEmailRepositoryStub } = makeSut()
+
+    jest.spyOn(findUserByEmailRepositoryStub, 'findByEmail').mockResolvedValueOnce(null as any)
+    const result = await sut.login(makeFakeLoginUserModel())
+
+    expect(result).toEqual(new LoginUserError('Email or password are incorrects'))
   })
 })
