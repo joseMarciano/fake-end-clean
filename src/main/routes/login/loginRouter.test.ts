@@ -127,5 +127,14 @@ describe('loginRouter', () => {
       expect(response.status).toBe(400)
       expect(response.body).toEqual({ message: 'Missing param: password', error: 'MissingParamError' })
     })
+
+    test('Should return an 400 if email not exists', async () => {
+      const response = await request(app)
+        .post(`${defaultPath}/login`)
+        .send({ email: 'any_not_exists_email@mail.com', password: '123456789' })
+
+      expect(response.status).toBe(400)
+      expect(response.body).toEqual({ message: 'Email or password are incorrects', error: 'LoginUserError' })
+    })
   })
 })
