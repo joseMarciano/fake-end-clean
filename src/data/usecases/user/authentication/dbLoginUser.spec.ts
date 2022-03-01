@@ -3,13 +3,14 @@ import { LoginUserModel } from '../../../../domain/usecases/user/authentication/
 import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindUserByEmailRepository'
 import { DbLoginUser } from './DbLoginUser'
 import { LoginUserError } from '../../../../domain/usecases/user/validations/LoginUserError'
+import { HashCompare } from '../../../../data/protocols/cryptography/HashCompare'
 
 const makeFakeUser = (): User => ({
   id: 'any_id',
   email: 'any_email',
   isActive: false,
   name: 'any_name',
-  password: 'any_password'
+  password: 'hashed_password'
 })
 
 const makeFakeLoginUserModel = (): LoginUserModel => ({
@@ -27,18 +28,31 @@ const makeFindUserByEmailRepository = (): FindUserByEmailRepository => {
   return new FindUserByEmailRepositoryStub()
 }
 
+const makeHashCompare = (): HashCompare => {
+  class HashCompareStub implements HashCompare {
+    async compare (_data: string, _hash: string): Promise<boolean> {
+      return await Promise.resolve(true)
+    }
+  }
+
+  return new HashCompareStub()
+}
+
 interface SutTypes {
   sut: DbLoginUser
   findUserByEmailRepositoryStub: FindUserByEmailRepository
+  hashCompareStub: HashCompare
 }
 
 const makeSut = (): SutTypes => {
+  const hashCompareStub = makeHashCompare()
   const findUserByEmailRepositoryStub = makeFindUserByEmailRepository()
-  const sut = new DbLoginUser(findUserByEmailRepositoryStub)
+  const sut = new DbLoginUser(findUserByEmailRepositoryStub, hashCompareStub)
 
   return {
     sut,
-    findUserByEmailRepositoryStub
+    findUserByEmailRepositoryStub,
+    hashCompareStub
   }
 }
 
@@ -68,5 +82,14 @@ describe('DbLoginUser', () => {
     const result = await sut.login(makeFakeLoginUserModel())
 
     expect(result).toEqual(new LoginUserError('Email or password are incorrects'))
+  })
+
+  test('Should call HashCompare with correct values', async () => {
+    const { sut, hashCompareStub } = makeSut()
+
+    const hashSpy = jest.spyOn(hashCompareStub, 'compare')
+    await sut.login(makeFakeLoginUserModel())
+
+    expect(hashSpy).toHaveBeenCalledWith('any_password', 'hashed_password')
   })
 })
