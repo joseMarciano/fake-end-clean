@@ -4,13 +4,15 @@ import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindU
 import { HashCompare } from '../../../../data/protocols/cryptography/HashCompare'
 import { RandomStringGenerator } from '../../../../data/protocols/cryptography/RandomStringGenerator'
 import { AddUserRefreshTokenRepository } from '../../../../data/protocols/user/AddUserRefreshTokenRepository'
+import { Encrypter } from '../../../../data/protocols/cryptography/Encrypter'
 
 export class DbLoginUser implements LoginUser {
   constructor (
     private readonly findUserByEmailRepository: FindUserByEmailRepository,
     private readonly hasherCompare: HashCompare,
     private readonly randomStringGenerator: RandomStringGenerator,
-    private readonly addRefreshTokenRepository: AddUserRefreshTokenRepository
+    private readonly addRefreshTokenRepository: AddUserRefreshTokenRepository,
+    private readonly encrypter: Encrypter
   ) {}
 
   async login (userLoginModel: LoginUserModel): Promise<AccessToken | LoginUserError> {
@@ -24,6 +26,11 @@ export class DbLoginUser implements LoginUser {
     await this.addRefreshTokenRepository.addRefreshToken({
       refreshToken,
       userId: user.id
+    })
+
+    await this.encrypter.encrypt({
+      id: user.id,
+      email: user.email
     })
 
     return null as any
