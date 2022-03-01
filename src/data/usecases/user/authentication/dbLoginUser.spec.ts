@@ -177,4 +177,13 @@ describe('DbLoginUser', () => {
       refreshToken: 'any_string'
     })
   })
+
+  test('Should throws if AddRefreshTokenRepository throws', async () => {
+    const { sut, addRefreshTokenRespotoryStub } = makeSut()
+
+    jest.spyOn(addRefreshTokenRespotoryStub, 'addRefreshToken').mockRejectedValueOnce(new Error())
+    const promise = sut.login(makeFakeLoginUserModel())
+
+    await expect(promise).rejects.toThrowError()
+  })
 })
