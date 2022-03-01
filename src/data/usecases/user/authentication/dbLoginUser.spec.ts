@@ -133,4 +133,13 @@ describe('DbLoginUser', () => {
 
     expect(randomStringGeneratorSpy).toHaveBeenCalledTimes(1)
   })
+
+  test('Should throws if RandomStringGenerator throws', async () => {
+    const { sut, randomStringGeneratorStub } = makeSut()
+
+    jest.spyOn(randomStringGeneratorStub, 'generateRandomString').mockRejectedValueOnce(new Error())
+    const promise = sut.login(makeFakeLoginUserModel())
+
+    await expect(promise).rejects.toThrowError()
+  })
 })
