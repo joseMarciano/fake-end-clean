@@ -8,7 +8,10 @@ export class DbLoginUser implements LoginUser {
   ) {}
 
   async login (userLoginModel: LoginUserModel): Promise<AccessToken | LoginUserError> {
-    await this.findUserByEmailRepository.findByEmail(userLoginModel.email)
+    const user = await this.findUserByEmailRepository.findByEmail(userLoginModel.email)
+
+    if (!user) return new LoginUserError('Email or password are incorrects')
+
     return null as any
   }
 }
