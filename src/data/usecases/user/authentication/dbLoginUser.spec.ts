@@ -263,4 +263,15 @@ describe('DbLoginUser', () => {
 
     await expect(promise).rejects.toThrowError()
   })
+
+  test('Should retuns AccessToken on success"', async () => {
+    const { sut } = makeSut()
+
+    const accessToken = await sut.login(makeFakeLoginUserModel())
+
+    expect(accessToken).toEqual({
+      accessToken: 'any_encrypted_value',
+      refreshToken: 'any_string'
+    })
+  })
 })
