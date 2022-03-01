@@ -4,6 +4,7 @@ import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindU
 import { DbLoginUser } from './DbLoginUser'
 import { LoginUserError } from '../../../../domain/usecases/user/validations/LoginUserError'
 import { HashCompare } from '../../../../data/protocols/cryptography/HashCompare'
+import { RandomStringGenerator } from '../../../../data/protocols/cryptography/RandomStringGenerator'
 
 const makeFakeUser = (): User => ({
   id: 'any_id',
@@ -38,21 +39,34 @@ const makeHashCompare = (): HashCompare => {
   return new HashCompareStub()
 }
 
+const makeRandomStringGenerator = (): RandomStringGenerator => {
+  class RandomStringGeneratorStub implements RandomStringGenerator {
+    async generateRandomString (): Promise<string> {
+      return 'any_string'
+    }
+  }
+
+  return new RandomStringGeneratorStub()
+}
+
 interface SutTypes {
   sut: DbLoginUser
   findUserByEmailRepositoryStub: FindUserByEmailRepository
   hashCompareStub: HashCompare
+  randomStringGeneratorStub: RandomStringGenerator
 }
 
 const makeSut = (): SutTypes => {
+  const randomStringGeneratorStub = makeRandomStringGenerator()
   const hashCompareStub = makeHashCompare()
   const findUserByEmailRepositoryStub = makeFindUserByEmailRepository()
-  const sut = new DbLoginUser(findUserByEmailRepositoryStub, hashCompareStub)
+  const sut = new DbLoginUser(findUserByEmailRepositoryStub, hashCompareStub, randomStringGeneratorStub)
 
   return {
     sut,
     findUserByEmailRepositoryStub,
-    hashCompareStub
+    hashCompareStub,
+    randomStringGeneratorStub
   }
 }
 
@@ -100,5 +114,14 @@ describe('DbLoginUser', () => {
     const result = await sut.login(makeFakeLoginUserModel())
 
     expect(result).toEqual(new LoginUserError('Email or password are incorrects'))
+  })
+
+  test('Should call RandomStringGenerator', async () => {
+    const { sut, randomStringGeneratorStub } = makeSut()
+
+    const randomStringGeneratorSpy = jest.spyOn(randomStringGeneratorStub, 'generateRandomString')
+    await sut.login(makeFakeLoginUserModel())
+
+    expect(randomStringGeneratorSpy).toHaveBeenCalledTimes(1)
   })
 })
