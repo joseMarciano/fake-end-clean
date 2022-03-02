@@ -12,7 +12,7 @@ import { AddUserAccessRepository, AddUserAccessTokenModel } from '../../../../da
 const makeFakeUser = (): User => ({
   id: 'any_id',
   email: 'any_email',
-  isActive: false,
+  isActive: true,
   name: 'any_name',
   password: 'hashed_password'
 })
@@ -145,6 +145,18 @@ describe('DbLoginUser', () => {
     const result = await sut.login(makeFakeLoginUserModel())
 
     expect(result).toEqual(new LoginUserError('Email or password are incorrects'))
+  })
+
+  test('Should return LoginUserError User is not active', async () => {
+    const { sut, findUserByEmailRepositoryStub } = makeSut()
+
+    jest.spyOn(findUserByEmailRepositoryStub, 'findByEmail').mockResolvedValueOnce({
+      ...makeFakeUser(),
+      isActive: false
+    })
+    const result = await sut.login(makeFakeLoginUserModel())
+
+    expect(result).toEqual(new LoginUserError('User is not active yet'))
   })
 
   test('Should call HashCompare with correct values', async () => {
