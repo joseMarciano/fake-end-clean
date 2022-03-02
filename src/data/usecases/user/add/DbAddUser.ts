@@ -17,7 +17,7 @@ export class DbAddUser implements AddUser {
 
     if (existsUser) return new EmailInUseError(existsUser.email)
 
-    const hasherPassword = await this.hasher.hash(user.password ?? '')
+    const hasherPassword = await this.hasher.hash(user.password as string)
     return await this.addUserRepository.add({
       ...user,
       password: hasherPassword
