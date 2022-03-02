@@ -19,6 +19,11 @@ const createContextAuthentication = async (): Promise<void> => {
   userId = result.insertedId.toString()
 }
 
+const clearCollections = async (): Promise<void> => {
+  await userCollection.deleteMany({})
+  await userAccessCollection.deleteMany({})
+}
+
 describe('projectRoute', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
@@ -27,12 +32,12 @@ describe('projectRoute', () => {
   })
 
   beforeEach(async () => {
+    await clearCollections()
     await createContextAuthentication()
   })
 
   afterEach(async () => {
-    await userCollection.deleteMany({})
-    await userAccessCollection.deleteMany({})
+    await clearCollections()
     authorization = ''
   })
 
@@ -49,6 +54,7 @@ describe('projectRoute', () => {
         .query({ userId })
         .set('Authorization', authorization)
 
+      console.log(response.body)
       expect(response.status).toBe(200)
       expect(response.body?.id).toBeTruthy()
     })
