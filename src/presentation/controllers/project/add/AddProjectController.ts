@@ -15,8 +15,7 @@ export class AddProjectController implements Controller {
       if (error) return badRequest(error)
 
       const userModel = {
-        ...httpRequest.body,
-        ...httpRequest.params
+        ...httpRequest.body
       }
 
       const result = await this.addProject.add(userModel)

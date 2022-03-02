@@ -8,9 +8,6 @@ const makeFakeHttpRequest = (): HttpRequest => ({
   body: {
     title: 'any_title',
     description: 'any_description'
-  },
-  params: {
-    userId: 'any_id'
   }
 })
 
