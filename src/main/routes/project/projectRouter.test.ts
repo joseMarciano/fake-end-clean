@@ -54,7 +54,6 @@ describe('projectRoute', () => {
         .query({ userId })
         .set('Authorization', authorization)
 
-      console.log(response.body)
       expect(response.status).toBe(200)
       expect(response.body?.id).toBeTruthy()
     })
