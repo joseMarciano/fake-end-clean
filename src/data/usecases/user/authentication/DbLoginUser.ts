@@ -23,6 +23,8 @@ export class DbLoginUser implements LoginUser {
 
     if (!user || !passwordIsValid) return new LoginUserError('Email or password are incorrects')
 
+    if (!user.isActive) return new LoginUserError('User is not active yet')
+
     const refreshToken = await this.randomStringGenerator.generateRandomString()
 
     await this.addRefreshTokenRepository.addRefreshToken({
