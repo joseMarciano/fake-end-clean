@@ -80,6 +80,18 @@ describe('loginRouter', () => {
       expect(response.status).toBe(400)
       expect(response.body).toEqual({ message: 'Missing param: email', error: 'MissingParamError' })
     })
+
+    test('Should return an 400 if no password is provided', async () => {
+      const response = await request(app)
+        .post(`${defaultPath}/signup`)
+        .send({
+          email: 'marcianojosepaulo@email.com',
+          name: 'marcianojosepaulo'
+        })
+
+      expect(response.status).toBe(400)
+      expect(response.body).toEqual({ message: 'Missing param: password', error: 'MissingParamError' })
+    })
   })
 
   describe('GET /active', () => {
