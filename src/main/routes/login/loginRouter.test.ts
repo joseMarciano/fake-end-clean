@@ -105,6 +105,20 @@ describe('loginRouter', () => {
       expect(response.status).toBe(400)
       expect(response.body).toEqual({ message: 'Missing param: passwordConfirmation', error: 'MissingParamError' })
     })
+
+    test('Should return an 400 if no password not match with passwordConfirmation', async () => {
+      const response = await request(app)
+        .post(`${defaultPath}/signup`)
+        .send({
+          email: 'marcianojosepaulo@email.com',
+          name: 'marcianojosepaulo',
+          password: '123',
+          passwordConfirmation: '456'
+        })
+
+      expect(response.status).toBe(400)
+      expect(response.body).toEqual({ message: 'Invalid param: passwordConfirmation', error: 'InvalidParamError' })
+    })
   })
 
   describe('GET /active', () => {
@@ -179,7 +193,7 @@ describe('loginRouter', () => {
       const response = await request(app)
         .post(`${defaultPath}/login`)
         .send(createLoginBody())
-      console.log(response.body)
+
       expect(response.status).toBe(200)
     })
 
