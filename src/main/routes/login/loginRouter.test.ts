@@ -7,25 +7,40 @@ import jwt from 'jsonwebtoken'
 import { validate } from 'uuid'
 
 let userCollection: Collection
+let userAccessCollection: Collection
 const defaultPath = process.env.DEFAULT_PATH as string
 const jwtAdapter = new JwtAdapter('secret')
 
+const connectDb = async (): Promise<void> => {
+  await MongoHelper.connect(process.env.MONGO_URL as string)
+}
+
+const disconnectDb = async (): Promise<void> => {
+  await MongoHelper.disconnect()
+}
+
+const clearCollections = async (): Promise<void> => {
+  userCollection = await MongoHelper.getCollection('users')
+  userAccessCollection = await MongoHelper.getCollection('usersAccessToken')
+  await userCollection.deleteMany({})
+  await userAccessCollection.deleteMany({})
+}
+
 describe('loginRouter', () => {
   beforeAll(async () => {
-    await MongoHelper.connect(process.env.MONGO_URL as string)
+    await connectDb()
+    await clearCollections()
   })
 
   afterAll(async () => {
-    await MongoHelper.disconnect()
-  })
-
-  beforeEach(async () => {
-    userCollection = await MongoHelper.getCollection('users')
-    await userCollection.deleteMany({})
+    await disconnectDb()
   })
 
   describe('POST /signup', () => {
-    // TODO: ADD VALIDATION TESTS LIKE 400 RETURNS
+    beforeEach(async () => {
+      await clearCollections()
+    })
+
     test('Should return an 204 on signup success', async () => {
       const response = await request(app)
         .post(`${defaultPath}/signup`)
@@ -42,7 +57,6 @@ describe('loginRouter', () => {
   })
 
   describe('GET /active', () => {
-    // TODO: ADD VALIDATION TESTS LIKE 403 RETURNS/ 302 RETURNS
     const makeFakeUserParam = async (): Promise<string> => {
       return await jwtAdapter.encrypt({
         email: 'any_email@mail.com',
@@ -70,6 +84,10 @@ describe('loginRouter', () => {
       })
     }
 
+    beforeEach(async () => {
+      await clearCollections()
+    })
+
     test('Should return an 200 on active success', async () => {
       const userId = await insertFakeUser()
       const accessToken = await makeFakeUserParam()
@@ -86,7 +104,6 @@ describe('loginRouter', () => {
   describe('POST /login', () => {
     let insertedId: string
     const insertFakeUser = async (): Promise<string> => {
-      const userCollection = await MongoHelper.getCollection('users')
       const result = await userCollection.insertOne({
         name: 'Josefh',
         email: 'any_email@mail.com',
@@ -103,18 +120,15 @@ describe('loginRouter', () => {
     })
 
     beforeEach(async () => {
+      await clearCollections()
       insertedId = await insertFakeUser()
-    })
-
-    afterEach(async () => {
-      await userCollection.deleteOne({ _id: new ObjectId(insertedId) })
     })
 
     test('Should return an 200 on login success', async () => {
       const response = await request(app)
         .post(`${defaultPath}/login`)
         .send(createLoginBody())
-
+      console.log(response.body)
       expect(response.status).toBe(200)
     })
 
