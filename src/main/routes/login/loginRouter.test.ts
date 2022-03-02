@@ -3,6 +3,8 @@ import request from 'supertest'
 import { MongoHelper } from '../../../infra/db/mongo/mongoHelper'
 import { JwtAdapter } from '../../../infra/cryptography/jwt/JwtAdapter'
 import { Collection, ObjectId } from 'mongodb'
+import jwt from 'jsonwebtoken'
+import { validate } from 'uuid'
 
 let userCollection: Collection
 const defaultPath = process.env.DEFAULT_PATH as string
@@ -108,6 +110,16 @@ describe('loginRouter', () => {
         .send({ email: 'any_email@mail.com', password: '123456789' })
 
       expect(response.status).toBe(200)
+    })
+
+    test('Should return an accessToken if password not match', async () => {
+      const response = await request(app)
+        .post(`${defaultPath}/login`)
+        .send({ email: 'any_email@mail.com', password: '123456789' })
+
+      expect(response.status).toBe(200)
+      expect(jwt.verify(response.body.accessToken, process.env.JWT_SECRET_KEY as string)).toBeTruthy()
+      expect(validate(response.body.refreshToken)).toBeTruthy()
     })
 
     test('Should return an 400 if no email is provided', async () => {
