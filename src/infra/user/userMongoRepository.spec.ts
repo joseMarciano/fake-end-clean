@@ -24,6 +24,7 @@ const makeSut = (): SutTypes => {
 describe('UserMongoRepository', () => {
   let userCollection: Collection
   let userAccessTokenCollection: Collection
+  let userRefreshTokenCollection: Collection
 
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
@@ -36,8 +37,10 @@ describe('UserMongoRepository', () => {
   beforeEach(async () => {
     userCollection = await MongoHelper.getCollection('users')
     userAccessTokenCollection = await MongoHelper.getCollection('usersAccessToken')
+    userRefreshTokenCollection = await MongoHelper.getCollection('usersRefreshToken')
     await userCollection.deleteMany({})
     await userAccessTokenCollection.deleteMany({})
+    await userRefreshTokenCollection.deleteMany({})
   })
 
   describe('INTERFACE AddUserRepository', () => {
@@ -85,7 +88,7 @@ describe('UserMongoRepository', () => {
       })
 
       const mongoUserAccessToken =
-      await userAccessTokenCollection.findOne({ userId: result.insertedId.toString() }) as any
+      await userRefreshTokenCollection.findOne({ userId: result.insertedId.toString() }) as any
 
       expect(mongoUserAccessToken.userId).toBe(result.insertedId.toString())
       expect(mongoUserAccessToken.refreshToken).toBe('any_token')
@@ -127,8 +130,6 @@ describe('UserMongoRepository', () => {
 
   describe('INTERFACE AddUserAccessRepository', () => {
     test('Should add a userAccessToken in on success', async () => {
-      const userAccessTokenCollection = await MongoHelper.getCollection('usersAccessToken')
-
       const { sut } = makeSut()
 
       await sut.addUserAccess({
