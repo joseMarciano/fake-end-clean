@@ -90,7 +90,8 @@ describe('loginRouter', () => {
       const result = await userCollection.insertOne({
         name: 'Josefh',
         email: 'any_email@mail.com',
-        password: '$2a$12$HALpxOxdmI6cBGPu7LIoO.lAw0Lqy.rpGWoCl5FM9GZzXowG7n.9S'
+        password: '$2a$12$HALpxOxdmI6cBGPu7LIoO.lAw0Lqy.rpGWoCl5FM9GZzXowG7n.9S',
+        isActive: true
       })
 
       return result.insertedId.toString()
@@ -156,6 +157,17 @@ describe('loginRouter', () => {
 
       expect(response.status).toBe(400)
       expect(response.body).toEqual({ message: 'Email or password are incorrects', error: 'LoginUserError' })
+    })
+
+    test('Should return an 400 if User is not active', async () => {
+      await userCollection.findOneAndUpdate({ _id: new ObjectId(insertedId) }, { $set: { isActive: false } })
+
+      const response = await request(app)
+        .post(`${defaultPath}/login`)
+        .send({ email: 'any_email@mail.com', password: '123456789' })
+
+      expect(response.status).toBe(400)
+      expect(response.body).toEqual({ message: 'User is not active yet', error: 'LoginUserError' })
     })
   })
 })
