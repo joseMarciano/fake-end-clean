@@ -12,7 +12,8 @@ export class DbAuthByToken implements AuthByToken {
   ) {}
 
   async authByToken (token: string): Promise<User | null> {
-    token = token.replace(/^Bearer/, '')?.trim()
+    if (!token) return null
+
     const decrypted = await this.decrypter.decrypt(token)
     if (!decrypted) return null
 
