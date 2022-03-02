@@ -11,7 +11,7 @@ export class AuthController implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const user = await this.auth.authByToken(httpRequest.headers?.authorization)
+      const user = await this.auth.authByToken(httpRequest.headers.authorization)
 
       if (!user) return unauthorized()
 
