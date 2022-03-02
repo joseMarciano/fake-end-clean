@@ -97,6 +97,11 @@ describe('loginRouter', () => {
       return result.insertedId.toString()
     }
 
+    const createLoginBody = (): any => ({
+      email: 'any_email@mail.com',
+      password: '123456789'
+    })
+
     beforeEach(async () => {
       insertedId = await insertFakeUser()
     })
@@ -108,7 +113,7 @@ describe('loginRouter', () => {
     test('Should return an 200 on login success', async () => {
       const response = await request(app)
         .post(`${defaultPath}/login`)
-        .send({ email: 'any_email@mail.com', password: '123456789' })
+        .send(createLoginBody())
 
       expect(response.status).toBe(200)
     })
@@ -116,7 +121,7 @@ describe('loginRouter', () => {
     test('Should return an accessToken if password not match', async () => {
       const response = await request(app)
         .post(`${defaultPath}/login`)
-        .send({ email: 'any_email@mail.com', password: '123456789' })
+        .send(createLoginBody())
 
       expect(response.status).toBe(200)
       expect(jwt.verify(response.body.accessToken, process.env.JWT_SECRET_KEY as string)).toBeTruthy()
