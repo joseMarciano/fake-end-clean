@@ -157,6 +157,14 @@ describe('DbAuthByToken', () => {
     expect(result).toBeNull()
   })
 
+  test('Should return null if no token is provided', async () => {
+    const { sut } = makeSut()
+
+    const result = await sut.authByToken(null as unknown as string)
+
+    expect(result).toBeNull()
+  })
+
   test('Should return User if FindUserAccessRepository returns a UserAccessToken', async () => {
     const { sut } = makeSut()
     const result = await sut.authByToken('any_token')
