@@ -19,7 +19,7 @@ export class DbLoginUser implements LoginUser {
 
   async login (userLoginModel: LoginUserModel): Promise<AccessToken | LoginUserError> {
     const user = await this.findUserByEmailRepository.findByEmail(userLoginModel.email)
-    const passwordIsValid = await this.hasherCompare.compare(userLoginModel.password, user?.password as string)
+    const passwordIsValid = await this.hasherCompare.compare(userLoginModel.password, user?.password ?? '')
 
     if (!user || !passwordIsValid) return new LoginUserError('Email or password are incorrects')
 
