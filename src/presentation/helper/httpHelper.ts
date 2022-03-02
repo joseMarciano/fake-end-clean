@@ -27,14 +27,7 @@ export const noContent = (): HttpResponse => {
     body: null
   }
 }
-export const redirect = (to: string): HttpResponse => {
-  return {
-    statusCode: 302,
-    body: {
-      to
-    }
-  }
-}
+
 export const forbiden = (error: Error): HttpResponse => {
   return {
     statusCode: 403,
