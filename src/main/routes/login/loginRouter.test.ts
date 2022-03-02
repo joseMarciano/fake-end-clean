@@ -136,5 +136,14 @@ describe('loginRouter', () => {
       expect(response.status).toBe(400)
       expect(response.body).toEqual({ message: 'Email or password are incorrects', error: 'LoginUserError' })
     })
+
+    test('Should return an 400 if password not match', async () => {
+      const response = await request(app)
+        .post(`${defaultPath}/login`)
+        .send({ email: 'any_email@mail.com', password: '123' })
+
+      expect(response.status).toBe(400)
+      expect(response.body).toEqual({ message: 'Email or password are incorrects', error: 'LoginUserError' })
+    })
   })
 })
