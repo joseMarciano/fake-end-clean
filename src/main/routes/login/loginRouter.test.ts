@@ -176,6 +176,18 @@ describe('loginRouter', () => {
 
       expect(response.status).toBe(400)
     })
+
+    test('Should return an 403 if user param is invalid', async () => {
+      await insertFakeUser()
+      const accessToken = await makeFakeUserParam()
+
+      const response = await request(app)
+        .get(`${defaultPath}/active`)
+        .query({ user: accessToken })
+        .send()
+
+      expect(response.status).toBe(403)
+    })
   })
 
   describe('POST /login', () => {
