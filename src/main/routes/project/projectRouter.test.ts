@@ -63,5 +63,15 @@ describe('projectRoute', () => {
       expect(response.status).toBe(400)
       expect(response.body).toEqual({ message: 'Missing param: title', error: 'MissingParamError' })
     })
+
+    test('Should return 400 if no description is provided', async () => {
+      const response = await request(app)
+        .post(defaultPath)
+        .send({ title: 'Project' })
+        .set('Authorization', authorization)
+
+      expect(response.status).toBe(400)
+      expect(response.body).toEqual({ message: 'Missing param: description', error: 'MissingParamError' })
+    })
   })
 })
