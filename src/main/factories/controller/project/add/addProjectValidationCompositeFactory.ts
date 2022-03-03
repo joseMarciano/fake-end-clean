@@ -4,16 +4,11 @@ import { RequestBodyValidation } from '../../../../../presentation/validators/Re
 import { RequiredFieldValidation } from '../../../../../presentation/validators/RequiredFieldValidation'
 
 export const makeValidationComposite = (): Validator => {
-  const bodyRequiredFieldValidation = RequiredFieldValidation
+  const bodyRequiredFieldValidation = ['title', 'description'].map(field => new RequestBodyValidation(RequiredFieldValidation.builder().field(field).build()))
+  const composite = ValidationErrorComposite
     .builder()
-    .field('title')
-    .field('description')
-    .build()
 
-  const requestBodyValidaton = new RequestBodyValidation(bodyRequiredFieldValidation)
+  bodyRequiredFieldValidation.forEach(validation => composite.validator(validation))
 
-  return ValidationErrorComposite
-    .builder()
-    .validator(requestBodyValidaton)
-    .build()
+  return composite.build()
 }
