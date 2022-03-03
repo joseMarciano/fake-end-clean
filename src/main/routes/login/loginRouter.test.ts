@@ -164,6 +164,18 @@ describe('loginRouter', () => {
         .send()
       expect(response.status).toBe(200)
     })
+
+    test('Should return an 400 if user param is not provided', async () => {
+      const userId = await insertFakeUser()
+      const accessToken = await makeFakeUserParam()
+      await insertFakeUserAccessToken(userId, accessToken)
+
+      const response = await request(app)
+        .get(`${defaultPath}/active`)
+        .send()
+
+      expect(response.status).toBe(400)
+    })
   })
 
   describe('POST /login', () => {
