@@ -1,3 +1,4 @@
+import { ok } from '../../../../presentation/helper/httpHelper'
 import { FindProjectById } from '../../../../domain/usecases/project/find/FindProjectById'
 import { Controller, HttpRequest, HttpResponse } from '../../../../presentation/protocols'
 
@@ -7,8 +8,6 @@ export class FindProjectByIdController implements Controller {
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    await this.findProjectById.findById(httpRequest.paths.id)
-
-    return null as any
+    return ok(await this.findProjectById.findById(httpRequest.paths.id))
   }
 }
