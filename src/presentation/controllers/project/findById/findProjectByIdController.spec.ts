@@ -1,3 +1,4 @@
+import { ok } from '../../../../presentation/helper/httpHelper'
 import { FindProjectById } from '../../../../domain/usecases/project/find/FindProjectById'
 import { ProjectModel } from '../../../../domain/usecases/project/find/ProjectModel'
 import { HttpRequest } from '../../../../presentation/protocols'
@@ -9,15 +10,17 @@ const makeFakeHttpRequest = (): HttpRequest => ({
   }
 })
 
+const makeFakeProjectModel = (): ProjectModel => ({
+  id: 'any_id',
+  description: 'any_decription',
+  secretKey: 'any_secretKey',
+  title: 'any_title'
+})
+
 const makeFindProjectById = (): FindProjectById => {
   class FindProjectByIdStub implements FindProjectById {
     async findById (_id: string): Promise<ProjectModel> {
-      return await Promise.resolve({
-        id: 'any_id',
-        description: 'any_decription',
-        secretKey: 'any_secretKey',
-        title: 'any_title'
-      })
+      return await Promise.resolve(makeFakeProjectModel())
     }
   }
 
@@ -46,5 +49,13 @@ describe('FindProjectById', () => {
     await sut.handle(makeFakeHttpRequest())
 
     expect(findByIdSpy).toHaveBeenCalledWith('any_id')
+  })
+
+  test('Should return an 200 on FindProjectById success', async () => {
+    const { sut } = makeSut()
+
+    const response = await sut.handle(makeFakeHttpRequest())
+
+    expect(response).toEqual(ok(makeFakeProjectModel()))
   })
 })
