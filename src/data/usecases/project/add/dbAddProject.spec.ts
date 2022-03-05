@@ -1,7 +1,7 @@
 import { DbAddProject } from './DbAddProject'
-import { AddProjectModel } from '../../../domain/usecases/project/add/AddProject'
-import { Project } from '../../../domain/model/Project'
-import { AddProjectRepository } from '../../../data/protocols/project/AddProjectRepository'
+import { AddProjectModel } from '../../../../domain/usecases/project/add/AddProject'
+import { Project } from '../../../../domain/model/Project'
+import { AddProjectRepository } from '../../../protocols/project/AddProjectRepository'
 import { Encrypter } from 'src/data/protocols/cryptography/Encrypter'
 
 const makeFakeProjectModel = (): AddProjectModel => ({

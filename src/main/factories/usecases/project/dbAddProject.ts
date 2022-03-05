@@ -1,4 +1,4 @@
-import { DbAddProject } from '../../../../data/usecases/project/DbAddProject'
+import { DbAddProject } from '../../../../data/usecases/project/add/DbAddProject'
 import { AddProject } from '../../../../domain/usecases/project/add/AddProject'
 import { makeJwtAdapter } from '../../cryptography/jwtAdapterFactory'
 import { makeProjectMongoRepository } from '../../repositories/projectMongoRepositoryFactory'

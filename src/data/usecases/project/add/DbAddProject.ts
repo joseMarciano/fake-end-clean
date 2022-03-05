@@ -1,7 +1,7 @@
-import { Encrypter } from '../../../data/protocols/cryptography/Encrypter'
-import { AddProjectRepository } from '../../../data/protocols/project/AddProjectRepository'
-import { Project } from '../../../domain/model/Project'
-import { AddProject, AddProjectModel } from '../../../domain/usecases/project/add/AddProject'
+import { Encrypter } from '../../../protocols/cryptography/Encrypter'
+import { AddProjectRepository } from '../../../protocols/project/AddProjectRepository'
+import { Project } from '../../../../domain/model/Project'
+import { AddProject, AddProjectModel } from '../../../../domain/usecases/project/add/AddProject'
 
 export class DbAddProject implements AddProject {
   constructor (
