@@ -24,6 +24,7 @@ describe('mongoHelper', () => {
 
     client = MongoHelper.client
     expect(client).toBeTruthy()
+    await MongoHelper.disconnect()
   })
   test('Should disconnect when disconnect is called', async () => {
     await MongoHelper.connect(MONGO_URL)
@@ -46,6 +47,8 @@ describe('mongoHelper', () => {
 
     collection = await MongoHelper.getCollection('any')
     expect(collection).toBeTruthy()
+
+    await MongoHelper.disconnect()
   })
   test('Should create usersRefreshToken collection', async () => {
     await MongoHelper.connect(MONGO_URL)
