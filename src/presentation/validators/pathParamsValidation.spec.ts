@@ -32,7 +32,7 @@ describe('PathParamValidation', () => {
     const validateSpy = jest.spyOn(validationStub, 'validate')
 
     sut.validate({
-      path: {
+      paths: {
         field: 'any_field',
         otherField: 'any_field'
       }
@@ -49,7 +49,7 @@ describe('PathParamValidation', () => {
     jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error())
 
     const error = sut.validate({
-      params: {
+      paths: {
         field: 'any_field',
         otherField: 'any_field'
       }
@@ -62,7 +62,7 @@ describe('PathParamValidation', () => {
     const { sut } = makeSut()
 
     const error = sut.validate({
-      params: {
+      paths: {
         field: 'any_field',
         otherField: 'any_field'
       }

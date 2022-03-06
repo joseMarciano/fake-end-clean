@@ -6,6 +6,6 @@ export class PathParamValidation implements Validator {
   ) {}
 
   validate (input: any): Error | null {
-    return this.validator.validate(input.path)
+    return this.validator.validate(input.paths)
   }
 }
