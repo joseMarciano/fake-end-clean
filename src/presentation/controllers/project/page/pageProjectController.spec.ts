@@ -3,7 +3,7 @@ import { ProjectModel } from '../../../../domain/usecases/project/find/ProjectMo
 import { PageProjectController } from './PageProjectController'
 import { PageProject } from '../../../../domain/usecases/project/find/PageProject'
 import { Page, Pageable } from '../../../../domain/usecases/commons/Page'
-import { serverError } from '../../../../presentation/helper/httpHelper'
+import { ok, serverError } from '../../../../presentation/helper/httpHelper'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   params: {
@@ -70,5 +70,11 @@ describe('PageProjectController', () => {
     const httpResponse = await sut.handle(makeFakeHttpRequest())
 
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  test('Should return 200 if PageProject succeeds', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+    expect(httpResponse).toEqual(ok(makeFakePageProject()))
   })
 })
