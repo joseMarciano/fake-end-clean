@@ -54,4 +54,11 @@ describe('PageProjectController', () => {
     await sut.handle(makeFakeHttpRequest())
     expect(pageSpy).toHaveBeenCalledWith({ offset: 0, limit: 20 })
   })
+
+  test('Should call dbPageProject with default values if no params is provided', async () => {
+    const { sut, dbPageProjectStub } = makeSut()
+    const pageSpy = jest.spyOn(dbPageProjectStub, 'page')
+    await sut.handle({})
+    expect(pageSpy).toHaveBeenCalledWith({ offset: 0, limit: 20 })
+  })
 })
