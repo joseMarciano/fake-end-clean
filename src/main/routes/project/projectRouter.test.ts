@@ -8,13 +8,18 @@ const defaultPath = `${process.env.DEFAULT_PATH as string}/auth/project`
 
 let userCollection: Collection
 let userAccessCollection: Collection
+let projectCollection: Collection
 let authorization: string
 
-const createContextAuthentication = async (): Promise<void> => {
+const createContextAuthentication = async (): Promise<any> => {
   const result = await userCollection.insertOne({ email: 'any_email@mail.com', name: 'any_name', password: '123', isActive: true })
   const token = sign({ email: 'any_email@mail.com', name: 'any_name' }, process.env.JWT_SECRET_KEY as string)
   await userAccessCollection.insertOne({ userId: result.insertedId.toString(), accessToken: token })
   authorization = token
+
+  return {
+    userIdContext: result.insertedId.toString()
+  }
 }
 
 const clearCollections = async (): Promise<void> => {
@@ -27,6 +32,7 @@ describe('projectRoute', () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
     userCollection = await MongoHelper.getCollection('users')
     userAccessCollection = await MongoHelper.getCollection('usersAccessToken')
+    projectCollection = await MongoHelper.getCollection('projects')
   })
 
   afterAll(async () => {
@@ -72,6 +78,29 @@ describe('projectRoute', () => {
 
       expect(response.status).toBe(400)
       expect(response.body).toEqual({ message: 'Missing param: description', error: 'MissingParamError' })
+    })
+  })
+  describe('/project/:id GET', () => {
+    let projectId = ''
+
+    beforeEach(async () => {
+      await clearCollections()
+      const result = await createContextAuthentication()
+      projectId = (await projectCollection.insertOne({ user: result.userIdContext })).insertedId.toString()
+    })
+
+    afterEach(async () => {
+      await clearCollections()
+      authorization = ''
+    })
+
+    test('Should return 200 on Project is find', async () => {
+      const response = await request(app)
+        .get(`${defaultPath}/${projectId}`)
+        .set('Authorization', authorization)
+
+      expect(response.status).toBe(200)
+      expect(response.body?.id).toBe(projectId)
     })
   })
 })
