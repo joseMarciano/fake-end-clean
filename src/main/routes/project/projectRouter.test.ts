@@ -29,21 +29,21 @@ describe('projectRoute', () => {
     userAccessCollection = await MongoHelper.getCollection('usersAccessToken')
   })
 
-  beforeEach(async () => {
-    await clearCollections()
-    await createContextAuthentication()
-  })
-
-  afterEach(async () => {
-    await clearCollections()
-    authorization = ''
-  })
-
   afterAll(async () => {
     await MongoHelper.disconnect()
   })
 
   describe('/project POST', () => {
+    beforeEach(async () => {
+      await clearCollections()
+      await createContextAuthentication()
+    })
+
+    afterEach(async () => {
+      await clearCollections()
+      authorization = ''
+    })
+
     test('Should return 200 on Project is added', async () => {
       const response = await request(app)
         .post(defaultPath)
