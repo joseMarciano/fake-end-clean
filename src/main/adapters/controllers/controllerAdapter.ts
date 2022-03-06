@@ -6,7 +6,8 @@ export const controllerAdapter = (controller: Controller): any => {
   return async (req: Request, res: Response) => {
     const httpRequest: HttpRequest = {
       body: req.body,
-      params: req.query
+      params: req.query,
+      paths: req.params
     }
 
     const httpResponse = await controller.handle(httpRequest)
