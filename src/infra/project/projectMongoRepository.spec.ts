@@ -48,14 +48,17 @@ describe('ProjectMongoRepository', () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
     projectCollection = await MongoHelper.getCollection('projects')
   })
-  beforeEach(async () => {
-    await projectCollection.deleteMany({})
-  })
+
   afterAll(async () => {
+    await projectCollection.deleteMany({})
     await MongoHelper.disconnect()
   })
 
   describe('INTERFACE AddProjectRepository', () => {
+    beforeEach(async () => {
+      await projectCollection.deleteMany({})
+    })
+
     test('Should add a Project', async () => {
       const { sut } = makeSut()
       const fakeProjectModel = makeFakeProjectModel()
@@ -75,6 +78,38 @@ describe('ProjectMongoRepository', () => {
       const promise = sut.addProject(fakeProjectModel)
 
       await expect(promise).rejects.toThrow()
+    })
+  })
+  describe('INTERFACE FindProjectBYIdRepository', () => {
+    beforeEach(async () => {
+      await projectCollection.deleteMany({})
+    })
+
+    test('Should findProjectById', async () => {
+      const { sut } = makeSut()
+      const result = await projectCollection.insertOne({ ...makeFakeProjectModel(), user: 'any_id' })
+      const project = await sut.findById(result.insertedId.toString())
+
+      expect(project.id).toBe(result.insertedId.toString())
+    })
+
+    test('Should throws if GetUserContext throws', async () => {
+      const { sut, applicationContextStub } = makeSut()
+
+      jest.spyOn(applicationContextStub, 'getUser').mockImplementationOnce(() => { throw new Error() })
+
+      const result = await projectCollection.insertOne({ ...makeFakeProjectModel(), user: 'any_id' })
+      const promise = sut.findById(result.insertedId.toString())
+
+      await expect(promise).rejects.toThrow()
+    })
+
+    test('Should returns null if project is not found', async () => {
+      const { sut } = makeSut()
+      const result = await projectCollection.insertOne({ ...makeFakeProjectModel(), user: 'any_id' })
+      await projectCollection.deleteMany({})
+      const project = await sut.findById(result.insertedId.toString())
+      expect(project).toBeNull()
     })
   })
 })
