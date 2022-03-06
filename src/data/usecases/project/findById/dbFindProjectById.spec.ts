@@ -51,4 +51,13 @@ describe('DbFindProjectById', () => {
 
     await expect(result).rejects.toThrow()
   })
+
+  test('Should return null if FindProjectByIdRepository returns null', async () => {
+    const { sut, findProjectByIdRepositoryStub } = makeSut()
+
+    jest.spyOn(findProjectByIdRepositoryStub, 'findById').mockResolvedValueOnce(null as any)
+    const result = await sut.findById('any_id')
+
+    expect(result).toBeNull()
+  })
 })
