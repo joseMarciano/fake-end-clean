@@ -42,4 +42,13 @@ describe('DbFindProjectById', () => {
 
     expect(findByIdSpy).toHaveBeenCalledWith('any_id')
   })
+
+  test('Should throw if FindProjectByIdRepository throws', async () => {
+    const { sut, findProjectByIdRepositoryStub } = makeSut()
+
+    jest.spyOn(findProjectByIdRepositoryStub, 'findById').mockImplementationOnce(() => { throw new Error() })
+    const result = sut.findById('any_id')
+
+    await expect(result).rejects.toThrow()
+  })
 })
