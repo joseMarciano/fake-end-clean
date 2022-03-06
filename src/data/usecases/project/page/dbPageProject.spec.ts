@@ -11,6 +11,8 @@ const makeFakeProject = (): ProjectModel => ({
 })
 const makeFakePageProject = (): Page<ProjectModel> => ({
   offset: 0,
+  total: 30,
+  hasNext: false,
   limit: 20,
   content: [makeFakeProject()]
 })
