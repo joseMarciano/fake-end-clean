@@ -3,6 +3,7 @@ import { ProjectModel } from '../../../../domain/usecases/project/find/ProjectMo
 import { PageProjectController } from './PageProjectController'
 import { PageProject } from '../../../../domain/usecases/project/find/PageProject'
 import { Page, Pageable } from '../../../../domain/usecases/commons/Page'
+import { serverError } from '../../../../presentation/helper/httpHelper'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   params: {
@@ -60,5 +61,14 @@ describe('PageProjectController', () => {
     const pageSpy = jest.spyOn(dbPageProjectStub, 'page')
     await sut.handle({})
     expect(pageSpy).toHaveBeenCalledWith({ offset: 0, limit: 20 })
+  })
+
+  test('Should return 500 if PageProject throws', async () => {
+    const { sut, dbPageProjectStub } = makeSut()
+
+    jest.spyOn(dbPageProjectStub, 'page').mockImplementationOnce(() => { throw new Error() })
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
