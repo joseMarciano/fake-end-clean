@@ -80,6 +80,7 @@ describe('ProjectMongoRepository', () => {
       await expect(promise).rejects.toThrow()
     })
   })
+
   describe('INTERFACE FindProjectBYIdRepository', () => {
     beforeEach(async () => {
       await projectCollection.deleteMany({})
@@ -110,6 +111,27 @@ describe('ProjectMongoRepository', () => {
       await projectCollection.deleteMany({})
       const project = await sut.findById(result.insertedId.toString())
       expect(project).toBeNull()
+    })
+  })
+
+  describe('INTERFACE PageProjectRepository', () => {
+    beforeEach(async () => {
+      await projectCollection.deleteMany({})
+    })
+
+    test('Should return a Page of Project', async () => {
+      const { sut } = makeSut()
+      const result1 = await projectCollection.insertOne({ ...makeFakeProjectModel(), user: 'any_id' })
+      const result2 = await projectCollection.insertOne({ ...makeFakeProjectModel(), user: 'any_id' })
+      const page = await sut.page({ limit: 7, offset: 1 })
+
+      page.content.forEach((item) => {
+        expect([result1.insertedId.toString(), result2.insertedId.toString()]).toContain(item.id)
+      })
+
+      expect(page.limit).toBe(7)
+      expect(page.offset).toBe(1)
+      expect(page.hasNext).toBe(false)
     })
   })
 })
