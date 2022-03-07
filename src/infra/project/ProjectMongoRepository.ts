@@ -6,11 +6,14 @@ import { AddProjectModel } from '../../domain/usecases/project/add/AddProject'
 import { MongoHelper } from '../db/mongo/mongoHelper'
 import { ProjectModel } from '../../domain/usecases/project/find/ProjectModel'
 import { ObjectId } from 'mongodb'
+import { PageProjectRepository } from '../../data/protocols/project/PageProjectRepository'
+import { Pageable, Page, PageUtils } from '../../domain/usecases/commons/Page'
 
 interface BasicRepository
   extends
   AddProjectRepository,
-  FindProjectByIdRepository
+  FindProjectByIdRepository,
+  PageProjectRepository
 {}
 export class ProjectMongoRepository implements BasicRepository {
   constructor (private readonly applicationContext: GetUserContext) {}
@@ -49,6 +52,32 @@ export class ProjectMongoRepository implements BasicRepository {
     return {
       id: _id.toString(),
       ...obj
+    }
+  }
+
+  async page (pageable: Pageable): Promise<Page<ProjectModel>> {
+    const userContext = await this.applicationContext.getUser()
+    const collection = await MongoHelper.getCollection('projects')
+
+    const filter = { user: userContext.id }
+
+    const total = await collection.count(filter)
+
+    const arrayDocuments = await collection.find(filter)
+      .limit(pageable.limit)
+      .skip(pageable.offset)
+      .toArray()
+
+    const projectModelArray = arrayDocuments.map(createProjectModel)
+
+    return PageUtils.buildPage<ProjectModel>(pageable, total, projectModelArray)
+
+    function createProjectModel (document: any): ProjectModel {
+      const { _id, user, ...obj } = document
+      return {
+        id: _id.toString(),
+        ...obj
+      }
     }
   }
 }
