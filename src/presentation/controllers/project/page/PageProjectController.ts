@@ -10,8 +10,8 @@ export class PageProjectController implements Controller {
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const page = await this.dbPageProject.page({
-        offset: httpRequest.params?.offset || 0,
-        limit: httpRequest.params?.limit || 20
+        offset: Number(httpRequest.params?.offset) || 0,
+        limit: Number(httpRequest.params?.limit) || 20
       })
 
       return ok(page)
