@@ -103,4 +103,48 @@ describe('projectRoute', () => {
       expect(response.body?.id).toBe(projectId)
     })
   })
+  describe('/project/ GET', () => {
+    const projectsIds: string[] = []
+    beforeEach(async () => {
+      await clearCollections()
+      const result = await createContextAuthentication()
+      for (let index = 0; index < 50; index++) {
+        projectsIds.push(await (await projectCollection.insertOne({ user: result.userIdContext })).insertedId.toString())
+      }
+    })
+
+    afterEach(async () => {
+      await clearCollections()
+      authorization = ''
+    })
+
+    test('Should return 200 on has project', async () => {
+      const response = await request(app)
+        .get(defaultPath)
+        .set('Authorization', authorization)
+
+      expect(response.status).toBe(200)
+      expect(response.body?.offset).toBe(0)
+      expect(response.body?.limit).toBe(20)
+      expect(response.body?.hasNext).toBe(true)
+
+      response.body?.content.forEach((project: any) => {
+        projectsIds.includes(project.id)
+      })
+    })
+
+    test('Should return empty content if has no Project', async () => {
+      await projectCollection.deleteMany({})
+      const response = await request(app)
+        .get(defaultPath)
+        .set('Authorization', authorization)
+        .query({ offset: 10, limit: 10 })
+
+      expect(response.status).toBe(200)
+      expect(response.body?.offset).toBe(10)
+      expect(response.body?.limit).toBe(10)
+      expect(response.body?.hasNext).toBe(false)
+      expect(response.body?.content).toEqual([])
+    })
+  })
 })
