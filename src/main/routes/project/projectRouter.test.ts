@@ -147,4 +147,28 @@ describe('projectRoute', () => {
       expect(response.body?.content).toEqual([])
     })
   })
+
+  describe('/project/:id DELETE', () => {
+    let projectId = ''
+
+    beforeEach(async () => {
+      await clearCollections()
+      const result = await createContextAuthentication()
+      projectId = (await projectCollection.insertOne({ user: result.userIdContext })).insertedId.toString()
+    })
+
+    afterEach(async () => {
+      await clearCollections()
+      authorization = ''
+    })
+
+    test('Should return 200 on Project is deleted', async () => {
+      const response = await request(app)
+        .delete(`${defaultPath}/${projectId}`)
+        .set('Authorization', authorization)
+      const result = await projectCollection.findOne({})
+      expect(response.status).toBe(204)
+      expect(result).toBeNull()
+    })
+  })
 })
