@@ -8,12 +8,14 @@ import { ProjectModel } from '../../domain/usecases/project/find/ProjectModel'
 import { ObjectId } from 'mongodb'
 import { PageProjectRepository } from '../../data/protocols/project/PageProjectRepository'
 import { Pageable, Page, PageUtils } from '../../domain/usecases/commons/Page'
+import { DeleteProjectByIdRepository } from '../../data/protocols/project/DeleteProjectByIdRepository'
 
 interface BasicRepository
   extends
   AddProjectRepository,
   FindProjectByIdRepository,
-  PageProjectRepository
+  PageProjectRepository,
+  DeleteProjectByIdRepository
 {}
 export class ProjectMongoRepository implements BasicRepository {
   constructor (private readonly applicationContext: GetUserContext) {}
@@ -79,5 +81,12 @@ export class ProjectMongoRepository implements BasicRepository {
         ...obj
       }
     }
+  }
+
+  async deleteById (id: string): Promise<void> {
+    const userContext = await this.applicationContext.getUser()
+    const collection = await MongoHelper.getCollection('projects')
+
+    await collection.deleteOne({ user: userContext.id, _id: new ObjectId(id) })
   }
 }
