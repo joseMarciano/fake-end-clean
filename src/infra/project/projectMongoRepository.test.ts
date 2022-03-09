@@ -134,4 +134,30 @@ describe('ProjectMongoRepository', () => {
       expect(page.hasNext).toBe(false)
     })
   })
+
+  describe('INTERFACE DeleteProjectByIdRepository', () => {
+    beforeEach(async () => {
+      await projectCollection.deleteMany({})
+    })
+
+    test('Should deleteById', async () => {
+      const { sut } = makeSut()
+      const result = await projectCollection.insertOne({ ...makeFakeProjectModel(), user: 'any_id' })
+      await sut.deleteById(result.insertedId.toString())
+
+      const project = await projectCollection.findOne({ _id: result.insertedId })
+      expect(project).toBeNull()
+    })
+
+    test('Should throws if GetUserContext throws', async () => {
+      const { sut, applicationContextStub } = makeSut()
+
+      jest.spyOn(applicationContextStub, 'getUser').mockImplementationOnce(() => { throw new Error() })
+
+      const result = await projectCollection.insertOne({ ...makeFakeProjectModel(), user: 'any_id' })
+      const promise = sut.findById(result.insertedId.toString())
+
+      await expect(promise).rejects.toThrow()
+    })
+  })
 })
