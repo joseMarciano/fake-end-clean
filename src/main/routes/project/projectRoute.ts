@@ -4,9 +4,11 @@ import { controllerAdapter } from '../../../main/adapters/controllers/controller
 import { makeFindProjectByIdController } from '../../../main/factories/controller/project/findById/findProjectByIdControllerFactory'
 import { makePageProjectController } from '../../../main/factories/controller/project/page/pageProjectControllerFactory'
 import { makeDeleteProjectByIdController } from '../../../main/factories/controller/project/remove/deleteProjectByIdControllerFactory'
+import { makeEditProjectController } from '../../../main/factories/controller/project/edit/editProjectControllerFactory'
 
 export default Router()
   .post('/', controllerAdapter(makeAddProjectController()))
   .get('/', controllerAdapter(makePageProjectController()))
   .get('/:id', controllerAdapter(makeFindProjectByIdController()))
   .delete('/:id', controllerAdapter(makeDeleteProjectByIdController()))
+  .put('/:id', controllerAdapter(makeEditProjectController()))
