@@ -160,4 +160,43 @@ describe('ProjectMongoRepository', () => {
       await expect(promise).rejects.toThrow()
     })
   })
+
+  describe('INTERFACE EditProjectRepository', () => {
+    beforeEach(async () => {
+      await projectCollection.deleteMany({})
+    })
+
+    test('Should editProject with only editable fields', async () => {
+      const { sut } = makeSut()
+      const result = await projectCollection.insertOne({ ...makeFakeProjectModel(), user: 'any_id' })
+      await sut.edit({
+        id: result.insertedId.toString(),
+        description: 'edited_description',
+        secretKey: 'edited_secretKey',
+        title: 'edited_title',
+        user: 'edited_user'
+      })
+
+      const project = await projectCollection.findOne({ _id: result.insertedId })
+
+      expect(project).toEqual({
+        _id: result.insertedId,
+        description: 'edited_description',
+        title: 'edited_title',
+        user: 'any_id',
+        secretKey: 'any_secretKey'
+      })
+    })
+
+    test('Should throws if GetUserContext throws', async () => {
+      const { sut, applicationContextStub } = makeSut()
+
+      jest.spyOn(applicationContextStub, 'getUser').mockImplementationOnce(() => { throw new Error() })
+
+      const result = await projectCollection.insertOne({ ...makeFakeProjectModel(), user: 'any_id' })
+      const promise = sut.findById(result.insertedId.toString())
+
+      await expect(promise).rejects.toThrow()
+    })
+  })
 })
