@@ -1,8 +1,9 @@
 import request from 'supertest'
+import { sign } from 'jsonwebtoken'
+import { Collection, ObjectId } from 'mongodb'
 import { app } from '../../../main/config/app'
 import { MongoHelper } from '../../../infra/db/mongo/mongoHelper'
-import { Collection } from 'mongodb'
-import { sign } from 'jsonwebtoken'
+import { Project } from '../../../domain/model/Project'
 
 const defaultPath = `${process.env.DEFAULT_PATH as string}/auth/project`
 
@@ -169,6 +170,53 @@ describe('projectRoute', () => {
       const result = await projectCollection.findOne({})
       expect(response.status).toBe(204)
       expect(result).toBeNull()
+    })
+  })
+
+  describe('/project/:id PUT', () => {
+    let projectId = ''
+    let result = null as any
+
+    const makeFakeProject = (): Omit<Project, 'id'> => ({
+      description: 'any_description',
+      secretKey: 'any_secretKey',
+      title: 'any_title',
+      user: result.userIdContext
+    })
+
+    beforeEach(async () => {
+      await clearCollections()
+      result = await createContextAuthentication()
+      projectId = (await projectCollection.insertOne(makeFakeProject())).insertedId.toString()
+    })
+
+    afterEach(async () => {
+      await clearCollections()
+      authorization = ''
+    })
+
+    test('Should return 200 on Project is updated', async () => {
+      const response = await request(app)
+        .put(`${defaultPath}/${projectId}`)
+        .set('Authorization', authorization)
+        .send({
+          id: projectId,
+          description: 'edited_description',
+          secretKey: 'edited_secretKey',
+          title: 'edited_title',
+          user: 'edited_user'
+        })
+
+      const project = await projectCollection.findOne({})
+
+      expect(response.status).toBe(200)
+      expect(project).toEqual({
+        _id: new ObjectId(projectId),
+        description: 'edited_description',
+        secretKey: 'any_secretKey',
+        title: 'edited_title',
+        user: result.userIdContext
+      })
     })
   })
 })
