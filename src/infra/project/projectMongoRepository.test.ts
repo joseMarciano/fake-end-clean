@@ -188,6 +188,26 @@ describe('ProjectMongoRepository', () => {
       })
     })
 
+    test('Should return an Project if edit suceeds', async () => {
+      const { sut } = makeSut()
+      const result = await projectCollection.insertOne({ ...makeFakeProjectModel(), user: 'any_id' })
+      const project = await sut.edit({
+        id: result.insertedId.toString(),
+        description: 'edited_description',
+        secretKey: 'edited_secretKey',
+        title: 'edited_title',
+        user: 'edited_user'
+      })
+
+      expect(project).toEqual({
+        id: result.insertedId.toString(),
+        description: 'edited_description',
+        title: 'edited_title',
+        user: 'any_id',
+        secretKey: 'any_secretKey'
+      })
+    })
+
     test('Should throws if GetUserContext throws', async () => {
       const { sut, applicationContextStub } = makeSut()
 
