@@ -33,6 +33,12 @@
 ![Badge](https://img.shields.io/badge/Typescript-NODEJS-%237159c1?style=for-the-badge&logo=Typescript)
 ![Badge](https://img.shields.io/badge/MongoDb--%237159c1?style=for-the-badge&logo=MongoDb)
 
+## :wrench: Architecture fluxogram
+
+<img src="./flux.drawio.png">
+
+
+
 ## :dart: Developer purpose
 <p style="text-indent: 40px"> 
     I see some business without time to create prototypes to validate some applications or freelancers that need to validate with their clients some part of an application that is not ready yet.
