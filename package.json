@@ -6,8 +6,8 @@
   "scripts": {
     "postinstall": "husky install",
     "start:dev": "ts-node ./src/main/server.ts",
-    "test:unit": "npm test -- --silent --coverage=false --watch -c='./jest-unit.config.js'",
-    "test": "jest --runInBand",
+    "test:unit": "jest --silent --coverage=false --watch -c='./jest-unit.config.js'",
+    "test": "jest --clearCache && jest --runInBand",
     "test:verbose": "jest"
   },
   "keywords": [],
