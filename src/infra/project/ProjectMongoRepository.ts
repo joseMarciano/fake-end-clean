@@ -97,12 +97,18 @@ export class ProjectMongoRepository implements BasicRepository {
     const collection = await MongoHelper.getCollection('projects')
     const projectUpdate = buildUpdateProject()
 
-    await collection.findOneAndUpdate(
+    const { value } = await collection.findOneAndUpdate(
       { _id: new ObjectId(project.id), user: userContext.id },
-      { $set: projectUpdate }
-    )
+      { $set: projectUpdate }, { returnDocument: 'after' }
+    ) as any
 
-    return await Promise.resolve(null as any)
+    if (!value) return null as any
+
+    const { _id, ...obj } = value
+    return {
+      id: _id.toString(),
+      ...obj
+    }
 
     function buildUpdateProject (): any {
       const projectUpdate = {} as any
