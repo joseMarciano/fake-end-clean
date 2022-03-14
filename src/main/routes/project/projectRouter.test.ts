@@ -213,7 +213,7 @@ describe('projectRoute', () => {
       expect(project).toEqual({
         _id: new ObjectId(projectId),
         description: 'edited_description',
-        secretKey: 'any_secretKey',
+        secretKey: 'edited_secretKey',
         title: 'edited_title',
         user: result.userIdContext
       })

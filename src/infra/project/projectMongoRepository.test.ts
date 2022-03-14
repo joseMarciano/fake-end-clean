@@ -184,7 +184,7 @@ describe('ProjectMongoRepository', () => {
         description: 'edited_description',
         title: 'edited_title',
         user: 'any_id',
-        secretKey: 'any_secretKey'
+        secretKey: 'edited_secretKey'
       })
     })
 
@@ -204,7 +204,7 @@ describe('ProjectMongoRepository', () => {
         description: 'edited_description',
         title: 'edited_title',
         user: 'any_id',
-        secretKey: 'any_secretKey'
+        secretKey: 'edited_secretKey'
       })
     })
 
