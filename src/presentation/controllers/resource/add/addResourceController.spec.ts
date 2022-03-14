@@ -2,7 +2,8 @@ import { badRequest, ok, serverError } from '../../../helper/httpHelper'
 import { Resource } from '../../../../domain/model/Resource'
 import { HttpRequest, Validator } from '../../../protocols'
 import { AddResourceController } from './AddResourceController'
-import { AddResource, AddResourceModel } from 'src/domain/usecases/resource/add/AddResource'
+import { AddResource, AddResourceModel } from '../../../../domain/usecases/resource/add/AddResource'
+import { AddResourceError } from '../../../../domain/usecases/resource/validations/AddResourceError'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   body: {
@@ -104,6 +105,15 @@ describe('AddResourceController', () => {
     const response = await sut.handle(makeFakeHttpRequest())
 
     expect(response).toEqual(badRequest(new Error()))
+  })
+
+  test('Should return 400 if AddResource returns an Error', async () => {
+    const { sut, addResourceStub } = makeSut()
+
+    jest.spyOn(addResourceStub, 'add').mockResolvedValueOnce(new AddResourceError())
+    const response = await sut.handle(makeFakeHttpRequest())
+
+    expect(response).toEqual(badRequest(new AddResourceError()))
   })
 
   test('Should return 500 if Validator throws', async () => {
