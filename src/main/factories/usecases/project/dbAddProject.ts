@@ -8,6 +8,7 @@ export const makeDbAddProject = (): AddProject => {
   const encrypter = makeJwtAdapter(process.env.JWT_PROJECT_SECRET_KEY)
   return new DbAddProject(
     projectRepository,
-    encrypter
+    encrypter,
+    projectRepository
   )
 }
