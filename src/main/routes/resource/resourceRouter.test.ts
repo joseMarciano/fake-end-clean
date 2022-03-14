@@ -1,6 +1,6 @@
 import request from 'supertest'
 import { sign } from 'jsonwebtoken'
-import { Collection } from 'mongodb'
+import { Collection, ObjectId } from 'mongodb'
 import { app } from '../../config/app'
 import { MongoHelper } from '../../../infra/db/mongo/mongoHelper'
 
@@ -124,6 +124,44 @@ describe('resourceRoute', () => {
 
       expect(response.status).toBe(200)
       expect(response.body.length > 0).toBe(false)
+    })
+  })
+
+  describe('/resource/:id DELETE', () => {
+    let projectId = ''
+    let resourceId = ''
+    beforeEach(async () => {
+      await clearCollections()
+      await createContextAuthentication()
+      projectId = (await projectCollection.insertOne({ user: userContextId })).insertedId.toString()
+      resourceId = (await resourceCollection.insertOne({ user: userContextId, project: projectId, name: 'Resource' })).insertedId.toString()
+    })
+
+    afterEach(async () => {
+      await clearCollections()
+      authorization = ''
+    })
+
+    test('Should return 204 on Resource is deleted', async () => {
+      const response = await request(app)
+        .delete(`${defaultPath}/${resourceId}`)
+        .set('Authorization', authorization)
+
+      expect(response.status).toBe(204)
+    })
+
+    test('Should delete Resource if success', async () => {
+      let collection = await resourceCollection.findOne({ _id: new ObjectId(resourceId) })
+
+      expect(collection).toBeTruthy()
+
+      await request(app)
+        .delete(`${defaultPath}/${resourceId}`)
+        .set('Authorization', authorization)
+
+      collection = await resourceCollection.findOne({ _id: new ObjectId(resourceId) })
+
+      expect(collection).toBeFalsy()
     })
   })
 })
