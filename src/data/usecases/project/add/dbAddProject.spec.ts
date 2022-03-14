@@ -50,6 +50,7 @@ interface SutTypes {
   sut: DbAddProject
   addProjectRepositoryStub: AddProjectRepository
   encrypterStub: Encrypter
+  editProjectRepositoryStub: EditProjectRepository
 }
 const makeSut = (): SutTypes => {
   const encrypterStub = makeEncrypter()
@@ -60,7 +61,8 @@ const makeSut = (): SutTypes => {
   return {
     sut,
     addProjectRepositoryStub,
-    encrypterStub
+    encrypterStub,
+    editProjectRepositoryStub
   }
 }
 
@@ -80,6 +82,18 @@ describe('DbAddProject', () => {
     expect(addProjectStub).toHaveBeenCalledWith({
       ...makeFakeProjectModel(),
       secretKey: ''
+    })
+  })
+
+  test('Should call EditProjectRepository with correct values', async () => {
+    const { sut, editProjectRepositoryStub } = makeSut()
+
+    const editProjectSpy = jest.spyOn(editProjectRepositoryStub, 'edit')
+    await sut.add(makeFakeProjectModel())
+
+    expect(editProjectSpy).toHaveBeenCalledWith({
+      ...makeFakeProject(),
+      secretKey: 'any_encrypted'
     })
   })
 
