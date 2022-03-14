@@ -65,8 +65,6 @@ export class ResourceMongoRepository implements BasicRepository {
       project: id
     }).toArray()
 
-    if (!arrayDocuments) return [] as any
-
     return arrayDocuments.map(createResourceModel)
 
     function createResourceModel (document: any): Resource {
