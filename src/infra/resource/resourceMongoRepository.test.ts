@@ -80,15 +80,15 @@ describe('ResourceMongoRepository', () => {
       await expect(promise).rejects.toThrow()
     })
 
-    describe('INTERFACE FindResourceByNameRepository', () => {
+    describe('INTERFACE FindResourceByNameAndProjectIdRepository', () => {
       beforeEach(async () => {
         await resourceCollection.deleteMany({})
       })
 
-      test('Should findResourceByName', async () => {
+      test('Should findResourceByNameAndProjectId', async () => {
         const { sut } = makeSut()
         const result = await resourceCollection.insertOne({ ...makeFakeResourceModel(), user: 'any_id' })
-        const resource = await sut.findByName('any_name')
+        const resource = await sut.findByNameAndProjectId({ name: 'any_name', projectId: 'any_projectId' })
 
         expect(resource.id).toBe(result.insertedId.toString())
       })
@@ -98,8 +98,7 @@ describe('ResourceMongoRepository', () => {
 
         jest.spyOn(applicationContextStub, 'getUser').mockImplementationOnce(() => { throw new Error() })
 
-        await resourceCollection.insertOne({ ...makeFakeResourceModel(), user: 'any_id' })
-        const promise = sut.findByName('any_name')
+        const promise = sut.findByNameAndProjectId({ name: 'any_name', projectId: 'any_projectId' })
 
         await expect(promise).rejects.toThrow()
       })
@@ -108,7 +107,7 @@ describe('ResourceMongoRepository', () => {
         const { sut } = makeSut()
         await resourceCollection.insertOne({ ...makeFakeResourceModel(), user: 'any_id' })
         await resourceCollection.deleteMany({})
-        const resource = await sut.findByName('other_name')
+        const resource = await sut.findByNameAndProjectId({ name: 'other_name', projectId: 'any_projectId' })
         expect(resource).toBeNull()
       })
     })
