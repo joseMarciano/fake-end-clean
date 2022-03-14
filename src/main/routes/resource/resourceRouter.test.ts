@@ -78,5 +78,17 @@ describe('resourceRoute', () => {
       expect(response.status).toBe(400)
       expect(response.body).toEqual({ message: 'Project not found', error: 'AddResourceError' })
     })
+
+    test('Should return 400 if no Resource name already exists', async () => {
+      await resourceCollection.insertOne({ user: userContextId, project: projectId, name: 'Resource' })
+
+      const response = await request(app)
+        .post(`${defaultPath}/${projectId}`)
+        .send({ name: 'Resource' })
+        .set('Authorization', authorization)
+
+      expect(response.status).toBe(400)
+      expect(response.body).toEqual({ message: 'Resource name already exists', error: 'AddResourceError' })
+    })
   })
 })
