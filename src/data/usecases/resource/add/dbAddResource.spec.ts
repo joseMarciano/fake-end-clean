@@ -5,7 +5,7 @@ import { ProjectModel } from '../../../../domain/usecases/project/find/ProjectMo
 import { AddResourceRepository } from '../../../../data/protocols/resource/AddResourceRepository'
 import { DbAddResource } from './DbAddResource'
 import { AddResourceError } from '../../../../domain/usecases/resource/validations/AddResourceError'
-import { FindResourceByNameRepository } from '../../../../data/protocols/resource/FindResourceByNameRepository'
+import { FindResourceByNameAndProjectIdRepository } from '../../../protocols/resource/FindResourceByNameAndProjectIdRepository'
 
 const makeFakeResourceModel = (): AddResourceModel => ({
   name: 'any_name',
@@ -43,30 +43,30 @@ const makeFindProjectByIdRepository = (): FindProjectByIdRepository => {
 
   return new FindProjectByIdRepositoryStub()
 }
-const makeFindResourceByNameRepository = (): FindResourceByNameRepository => {
-  class FindResourceByNameRepositoryStub implements FindResourceByNameRepository {
-    async findByName (_name: string): Promise<Resource> {
+const makeFindResourceByNameAndProjectIdRepository = (): FindResourceByNameAndProjectIdRepository => {
+  class FindResourceByNameAndProjectIdRepositoryStub implements FindResourceByNameAndProjectIdRepository {
+    async findByNameAndProjectId (filter: any): Promise<Resource> {
       return await Promise.resolve(null as any)
     }
   }
 
-  return new FindResourceByNameRepositoryStub()
+  return new FindResourceByNameAndProjectIdRepositoryStub()
 }
 interface SutTypes {
   sut: DbAddResource
-  findResourceByNameRepositoryStub: FindResourceByNameRepository
+  findResourceByNameAndProjectIdRepositoryStub: FindResourceByNameAndProjectIdRepository
   addResourceRepositoryStub: AddResourceRepository
   findProjectByIdRepositoryStub: FindProjectByIdRepository
 }
 const makeSut = (): SutTypes => {
-  const findResourceByNameRepositoryStub = makeFindResourceByNameRepository()
+  const findResourceByNameAndProjectIdRepositoryStub = makeFindResourceByNameAndProjectIdRepository()
   const addResourceRepositoryStub = makeAddResourceRepository()
   const findProjectByIdRepositoryStub = makeFindProjectByIdRepository()
-  const sut = new DbAddResource(addResourceRepositoryStub, findResourceByNameRepositoryStub, findProjectByIdRepositoryStub)
+  const sut = new DbAddResource(addResourceRepositoryStub, findResourceByNameAndProjectIdRepositoryStub, findProjectByIdRepositoryStub)
 
   return {
     sut,
-    findResourceByNameRepositoryStub,
+    findResourceByNameAndProjectIdRepositoryStub,
     addResourceRepositoryStub,
     findProjectByIdRepositoryStub
   }
@@ -111,20 +111,20 @@ describe('DbAddResource usecase', () => {
     expect(findResourceByEmailSpy).toHaveBeenCalledWith('any_id')
   })
 
-  test('Should call FindResourceByNameRepository with correct values', async () => {
-    const { sut, findResourceByNameRepositoryStub } = makeSut()
+  test('Should call FindResourceByNameAndProjectIdRepository with correct values', async () => {
+    const { sut, findResourceByNameAndProjectIdRepositoryStub } = makeSut()
 
-    const findResourceByNameSpy = jest.spyOn(findResourceByNameRepositoryStub, 'findByName')
+    const findResourceByNameSpy = jest.spyOn(findResourceByNameAndProjectIdRepositoryStub, 'findByNameAndProjectId')
 
     await sut.add(makeFakeResourceModel())
 
-    expect(findResourceByNameSpy).toHaveBeenCalledWith('any_name')
+    expect(findResourceByNameSpy).toHaveBeenCalledWith({ name: 'any_name', projectId: 'any_id' })
   })
 
-  test('Should return AddResourceError if FindResourceByNameRepository returns a Resource', async () => {
-    const { sut, findResourceByNameRepositoryStub } = makeSut()
+  test('Should return AddResourceError if FindResourceByNameAndProjectIdRepository returns a Resource', async () => {
+    const { sut, findResourceByNameAndProjectIdRepositoryStub } = makeSut()
 
-    jest.spyOn(findResourceByNameRepositoryStub, 'findByName').mockResolvedValueOnce(makeFakeResource())
+    jest.spyOn(findResourceByNameAndProjectIdRepositoryStub, 'findByNameAndProjectId').mockResolvedValueOnce(makeFakeResource())
     const error = await sut.add(makeFakeResourceModel())
 
     expect(error).toEqual(new AddResourceError('Resource name already exists'))
