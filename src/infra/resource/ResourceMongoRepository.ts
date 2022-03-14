@@ -3,16 +3,16 @@ import { GetUserContext } from '../../data/protocols/application/UserContext'
 import { AddResourceModel } from '../../domain/usecases/resource/add/AddResource'
 import { Resource } from '../../domain/model/Resource'
 import { MongoHelper } from '../db/mongo/mongoHelper'
-import { FindResourceByNameRepository } from 'src/data/protocols/resource/FindResourceByNameRepository'
-import { FindResourcesByProjectIdRepository } from 'src/data/protocols/resource/FindResourceByProjectIdRepository'
-import { DeleteResourceByIdRepository } from 'src/data/protocols/resource/DeleteResourceByIdRepository'
+import { FindResourcesByProjectIdRepository } from '../../data/protocols/resource/FindResourceByProjectIdRepository'
+import { DeleteResourceByIdRepository } from '../../data/protocols/resource/DeleteResourceByIdRepository'
+import { FindResourceByNameAndProjectIdRepository, FindByNameType } from '../../data/protocols/resource/FindResourceByNameAndProjectIdRepository'
 import { ObjectId } from 'mongodb'
 
 interface BasicRepository
   extends
   AddResourceRepository,
-  FindResourceByNameRepository,
   FindResourcesByProjectIdRepository,
+  FindResourceByNameAndProjectIdRepository,
   DeleteResourceByIdRepository
 
 {}
@@ -36,13 +36,14 @@ export class ResourceMongoRepository implements BasicRepository {
     }
   }
 
-  async findByName (name: string): Promise<Resource> {
+  async findByNameAndProjectId (filter: FindByNameType): Promise<Resource> {
     const userContext = await this.applicationContext.getUser()
     const collection = await MongoHelper.getCollection('resources')
 
     const resourceDocument = await collection.findOne({
       user: userContext.id,
-      name
+      name: filter.name,
+      project: filter.projectId
     })
 
     if (!resourceDocument) return null as any
