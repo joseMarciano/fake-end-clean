@@ -2,7 +2,8 @@ import { DbAddProject } from './DbAddProject'
 import { AddProjectModel } from '../../../../domain/usecases/project/add/AddProject'
 import { Project } from '../../../../domain/model/Project'
 import { AddProjectRepository } from '../../../protocols/project/AddProjectRepository'
-import { Encrypter } from 'src/data/protocols/cryptography/Encrypter'
+import { Encrypter } from '../../../../data/protocols/cryptography/Encrypter'
+import { EditProjectRepository } from '../../../../data/protocols/project/EditProjectRepository'
 
 const makeFakeProjectModel = (): AddProjectModel => ({
   description: 'any_description',
@@ -11,7 +12,7 @@ const makeFakeProjectModel = (): AddProjectModel => ({
 
 const makeFakeProject = (): Project => ({
   id: 'any_id',
-  secretKey: 'any_secretKey',
+  secretKey: '',
   description: 'any_description',
   title: 'any_title',
   user: 'any_userId'
@@ -36,6 +37,15 @@ const makeAddProjectRepository = (): AddProjectRepository => {
   return new AddProjectRepositoryStub()
 }
 
+const makeEditProjectRepository = (): EditProjectRepository => {
+  class EditProjectRepositoryStub implements EditProjectRepository {
+    async edit (_project: Project): Promise<Project> {
+      return await Promise.resolve({ ...makeFakeProject(), secretKey: 'any_secretKey' })
+    }
+  }
+  return new EditProjectRepositoryStub()
+}
+
 interface SutTypes {
   sut: DbAddProject
   addProjectRepositoryStub: AddProjectRepository
@@ -44,7 +54,8 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
   const encrypterStub = makeEncrypter()
   const addProjectRepositoryStub = makeAddProjectRepository()
-  const sut = new DbAddProject(addProjectRepositoryStub, encrypterStub)
+  const editProjectRepositoryStub = makeEditProjectRepository()
+  const sut = new DbAddProject(addProjectRepositoryStub, encrypterStub, editProjectRepositoryStub)
 
   return {
     sut,
@@ -68,7 +79,7 @@ describe('DbAddProject', () => {
 
     expect(addProjectStub).toHaveBeenCalledWith({
       ...makeFakeProjectModel(),
-      secretKey: 'any_encrypted'
+      secretKey: ''
     })
   })
 
@@ -87,10 +98,7 @@ describe('DbAddProject', () => {
     const encrypSpy = jest.spyOn(encrypterStub, 'encrypt')
     await sut.add(makeFakeProjectModel())
 
-    expect(encrypSpy).toHaveBeenCalledWith({
-      ...makeFakeProjectModel(),
-      createdAt: new Date()
-    })
+    expect(encrypSpy).toHaveBeenCalledWith('any_id')
   })
 
   test('Should throws if Encrypter throws', async () => {
@@ -107,6 +115,9 @@ describe('DbAddProject', () => {
 
     const project = await sut.add(makeFakeProjectModel())
 
-    expect(project).toEqual(makeFakeProject())
+    expect(project).toEqual({
+      ...makeFakeProject(),
+      secretKey: 'any_secretKey'
+    })
   })
 })
