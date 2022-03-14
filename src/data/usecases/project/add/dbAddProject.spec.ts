@@ -97,6 +97,14 @@ describe('DbAddProject', () => {
     })
   })
 
+  test('Should throws if EditProjectRepository throws', async () => {
+    const { sut, editProjectRepositoryStub } = makeSut()
+
+    jest.spyOn(editProjectRepositoryStub, 'edit').mockImplementationOnce(() => { throw new Error() })
+    const promise = sut.add(makeFakeProjectModel())
+
+    await expect(promise).rejects.toThrow()
+  })
   test('Should throws if AddProjectRepository throws', async () => {
     const { sut, addProjectRepositoryStub } = makeSut()
 
