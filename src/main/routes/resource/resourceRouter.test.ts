@@ -44,7 +44,7 @@ describe('resourceRoute', () => {
     await MongoHelper.disconnect()
   })
 
-  describe('/resource POST', () => {
+  describe('/resource/:projectId POST', () => {
     let projectId = ''
     beforeEach(async () => {
       await clearCollections()
@@ -89,6 +89,41 @@ describe('resourceRoute', () => {
 
       expect(response.status).toBe(400)
       expect(response.body).toEqual({ message: 'Resource name already exists', error: 'AddResourceError' })
+    })
+  })
+
+  describe('/resource/:projectId GET', () => {
+    let projectId = ''
+    beforeEach(async () => {
+      await clearCollections()
+      await createContextAuthentication()
+      projectId = (await projectCollection.insertOne({ user: userContextId })).insertedId.toString()
+    })
+
+    afterEach(async () => {
+      await clearCollections()
+      authorization = ''
+    })
+
+    test('Should return 200 on Resource is found', async () => {
+      await resourceCollection.insertOne({ user: userContextId, project: projectId, name: 'Resource' })
+
+      const response = await request(app)
+        .get(`${defaultPath}/${projectId}`)
+        .set('Authorization', authorization)
+
+      expect(response.status).toBe(200)
+      expect(response.body.length > 0).toBe(true)
+    })
+
+    test('Should return empty array if no Resource is found', async () => {
+      const response = await request(app)
+        .post(`${defaultPath}/${projectId}`)
+        .send({ name: 'Resource' })
+        .set('Authorization', authorization)
+
+      expect(response.status).toBe(200)
+      expect(response.body.length > 0).toBe(false)
     })
   })
 })
