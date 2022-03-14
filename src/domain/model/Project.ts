@@ -6,4 +6,4 @@ export interface Project {
   user: string
 }
 
-export const nonUpdatableFields = ['id', 'secretKey', 'createdAt', 'user']
+export const nonUpdatableFields = ['id', 'createdAt', 'user']
