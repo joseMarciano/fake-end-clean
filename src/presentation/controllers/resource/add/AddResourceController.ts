@@ -1,3 +1,4 @@
+import { AddResourceError } from '../../../../domain/usecases/resource/validations/AddResourceError'
 import { AddResource, AddResourceModel } from '../../../../domain/usecases/resource/add/AddResource'
 import { badRequest, ok, serverError } from '../../../helper/httpHelper'
 import { Controller, HttpRequest, HttpResponse, Validator } from '../../../protocols'
@@ -20,6 +21,8 @@ export class AddResourceController implements Controller {
       }
 
       const result = await this.addResource.add(resourceModel)
+
+      if (result instanceof AddResourceError) return badRequest(result)
 
       return ok(result)
     } catch (error) {
