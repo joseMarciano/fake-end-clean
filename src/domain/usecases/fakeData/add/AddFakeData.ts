@@ -1,5 +1,5 @@
-import { FakeData } from '../../../../domain/model/FakeData'
+import { FakeDataModel } from '../FakeDataModel'
 
 export interface AddFakeData {
-  add: (data: any) => Promise<FakeData>
+  add: (data: any) => Promise<FakeDataModel>
 }
