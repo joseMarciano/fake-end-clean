@@ -1,4 +1,4 @@
-import { User } from 'src/domain/model/User'
+import { User } from '../../domain/model/User'
 import { ApplicationContext } from '../protocols/application/ApplicationContext'
 
 export class ApplicationContextImpl implements ApplicationContext {
