@@ -1,6 +1,6 @@
-import { EditFakeData } from '../../../../../domain/usecases/fakeData/edit/EditFakeData'
-import { badRequest, ok, serverError } from '../../../../../presentation/helper/httpHelper'
-import { Controller, HttpRequest, HttpResponse, Validator } from '../../../../../presentation/protocols'
+import { EditFakeData } from '../../../../domain/usecases/fakeData/edit/EditFakeData'
+import { badRequest, ok, serverError } from '../../../../presentation/helper/httpHelper'
+import { Controller, HttpRequest, HttpResponse, Validator } from '../../../../presentation/protocols'
 
 export class EditFakeDataController implements Controller {
   constructor (

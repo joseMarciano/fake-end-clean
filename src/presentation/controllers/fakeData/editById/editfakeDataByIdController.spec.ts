@@ -1,7 +1,7 @@
-import { serverError, badRequest } from '../../../../../presentation/helper/httpHelper'
-import { EditFakeData } from '../../../../../domain/usecases/fakeData/edit/EditFakeData'
-import { FakeDataModel } from '../../../../../domain/usecases/fakeData/FakeDataModel'
-import { HttpRequest, Validator } from '../../../../protocols'
+import { serverError, badRequest } from '../../../../presentation/helper/httpHelper'
+import { EditFakeData } from '../../../../domain/usecases/fakeData/edit/EditFakeData'
+import { FakeDataModel } from '../../../../domain/usecases/fakeData/FakeDataModel'
+import { HttpRequest, Validator } from '../../../protocols'
 import { EditFakeDataController } from './EditFakeDataByIdController'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
