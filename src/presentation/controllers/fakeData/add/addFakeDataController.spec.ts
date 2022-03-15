@@ -1,6 +1,6 @@
 import { FakeDataModel } from '../../../../domain/usecases/fakeData/FakeDataModel'
 import { AddFakeData } from '../../../../domain/usecases/fakeData/add/AddFakeData'
-import { HttpRequest } from '../../../../presentation/protocols'
+import { HttpRequest, Validator } from '../../../../presentation/protocols'
 import { AddFakeDataController } from './AddFakeDataController'
 import { serverError } from '../../../../presentation/helper/httpHelper'
 
@@ -29,18 +29,31 @@ const makeAddFakeData = (): AddFakeData => {
   return new AddFakeDataStub()
 }
 
+const makeValidator = (): Validator => {
+  class ValidatorStub implements Validator {
+    validate (input: any): Error | null {
+      return null
+    }
+  }
+
+  return new ValidatorStub()
+}
+
 interface SutTypes {
   sut: AddFakeDataController
   addFakeDataStub: AddFakeData
+  validatorStub: Validator
 }
 
 const makeSut = (): SutTypes => {
   const addFakeDataStub = makeAddFakeData()
-  const sut = new AddFakeDataController(addFakeDataStub)
+  const validatorStub = makeValidator()
+  const sut = new AddFakeDataController(addFakeDataStub, validatorStub)
 
   return {
     sut,
-    addFakeDataStub
+    addFakeDataStub,
+    validatorStub
   }
 }
 
@@ -70,5 +83,14 @@ describe('AddFakeDataController', () => {
     const response = await sut.handle(makeFakeHttpRequest())
 
     expect(response).toEqual(serverError(new Error()))
+  })
+
+  test('Should call Validator with correct values', async () => {
+    const { sut, validatorStub } = makeSut()
+
+    const validateSpy = jest.spyOn(validatorStub, 'validate')
+    await sut.handle(makeFakeHttpRequest())
+
+    expect(validateSpy).toHaveBeenCalledWith(makeFakeHttpRequest())
   })
 })
