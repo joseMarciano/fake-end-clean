@@ -2,7 +2,7 @@ import { FakeDataModel } from '../../../../domain/usecases/fakeData/FakeDataMode
 import { AddFakeData } from '../../../../domain/usecases/fakeData/add/AddFakeData'
 import { HttpRequest, Validator } from '../../../../presentation/protocols'
 import { AddFakeDataController } from './AddFakeDataController'
-import { serverError } from '../../../../presentation/helper/httpHelper'
+import { badRequest, serverError } from '../../../../presentation/helper/httpHelper'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   body: {
@@ -93,4 +93,22 @@ describe('AddFakeDataController', () => {
 
     expect(validateSpy).toHaveBeenCalledWith(makeFakeHttpRequest())
   })
+
+  test('Should return 400 if Validator returns an Error', async () => {
+    const { sut, validatorStub } = makeSut()
+
+    jest.spyOn(validatorStub, 'validate').mockReturnValueOnce(new Error())
+    const response = await sut.handle(makeFakeHttpRequest())
+
+    expect(response).toEqual(badRequest(new Error()))
+  })
+
+  // test('Should return 500 if Validator throws', async () => {
+  //   const { sut, validatorStub } = makeSut()
+
+  //   jest.spyOn(validatorStub, 'validate').mockImplementationOnce(() => { throw new Error() })
+  //   const response = await sut.handle(makeFakeHttpRequest())
+
+  //   expect(response).toEqual(serverError(new Error()))
+  // })
 })
