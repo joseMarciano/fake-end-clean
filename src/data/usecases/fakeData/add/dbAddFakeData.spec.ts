@@ -49,4 +49,13 @@ describe('DbAddFakeData', () => {
 
     expect(addProjectStub).toHaveBeenCalledWith(makeFakeDataModel())
   })
+
+  test('Should throws if AddFakeDataRepository throw', async () => {
+    const { sut, addFakeDataRepositoryStub } = makeSut()
+
+    jest.spyOn(addFakeDataRepositoryStub, 'add').mockImplementationOnce(() => { throw new Error() })
+    const promise = sut.add(makeFakeDataModel())
+
+    await expect(promise).rejects.toThrow()
+  })
 })
