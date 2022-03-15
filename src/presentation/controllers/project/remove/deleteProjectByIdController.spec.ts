@@ -1,6 +1,6 @@
-import { badRequest, noContent, serverError } from '../../../../presentation/helper/httpHelper'
+import { badRequest, noContent, serverError } from '../../../helper/httpHelper'
 import { DeleteProjectById } from '../../../../domain/usecases/project/remove/DeleteProjectById'
-import { HttpRequest, Validator } from '../../../../presentation/protocols'
+import { HttpRequest, Validator } from '../../../protocols'
 import { DeleteProjectByIdController } from './DeleteProjectByIdController'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
