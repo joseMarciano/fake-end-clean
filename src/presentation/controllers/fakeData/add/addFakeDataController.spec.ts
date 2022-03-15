@@ -12,11 +12,7 @@ const makeFakeHttpRequest = (): HttpRequest => ({
 })
 
 const makeFakeDataModel = (): FakeDataModel => ({
-  id: 'any_id',
-  content: {
-    data: 'any_data',
-    otherField: 'any_field'
-  }
+  id: 'any_id'
 })
 
 const makeAddFakeData = (): AddFakeData => {

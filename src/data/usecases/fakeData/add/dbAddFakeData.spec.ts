@@ -58,4 +58,14 @@ describe('DbAddFakeData', () => {
 
     await expect(promise).rejects.toThrow()
   })
+
+  test('Should return FakeDataModel on AddFakeDataRepository success', async () => {
+    const { sut } = makeSut()
+    const fakeDataModel = await sut.add(makeFakeDataModel())
+
+    expect(fakeDataModel).toEqual({
+      id: 'any_id',
+      ...makeFakeDataModel()
+    })
+  })
 })
