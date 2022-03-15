@@ -50,6 +50,12 @@ describe('DbPageProject', () => {
     expect(pageSpy).toHaveBeenCalledWith({ offset: 0, limit: 20 })
   })
 
+  test('Should return Page of Project model on success', async () => {
+    const { sut } = makeSut()
+    const page = await sut.page({ offset: 0, limit: 20 })
+    expect(page).toEqual(makeFakePageProject())
+  })
+
   test('Should throws if PageProjectRepository throws', async () => {
     const { sut, pageProjectRepositoryStub } = makeSut()
     jest.spyOn(pageProjectRepositoryStub, 'page').mockImplementationOnce(() => { throw new Error() })
