@@ -1,4 +1,4 @@
-import { FakeData } from '../../../../domain/model/FakeData'
+import { FakeDataModel } from '../../../../domain/usecases/fakeData/FakeDataModel'
 import { AddFakeData } from '../../../../domain/usecases/fakeData/add/AddFakeData'
 import { HttpRequest } from '../../../../presentation/protocols'
 import { AddFakeDataController } from './AddFakeDataController'
@@ -10,10 +10,8 @@ const makeFakeHttpRequest = (): HttpRequest => ({
   }
 })
 
-const makeFakeData = (): FakeData => ({
+const makeFakeDataModel = (): FakeDataModel => ({
   id: 'any_id',
-  project: 'any_id',
-  resource: 'any_id',
   content: {
     data: 'any_data',
     otherField: 'any_field'
@@ -22,8 +20,8 @@ const makeFakeData = (): FakeData => ({
 
 const makeAddFakeData = (): AddFakeData => {
   class AddFakeDataStub implements AddFakeData {
-    async add (_data: any): Promise<FakeData> {
-      return await Promise.resolve(makeFakeData())
+    async add (_data: any): Promise<FakeDataModel> {
+      return await Promise.resolve(makeFakeDataModel())
     }
   }
 
@@ -53,5 +51,14 @@ describe('AddFakeDataController', () => {
     await sut.handle(makeFakeHttpRequest())
 
     expect(addSpy).toHaveBeenCalledWith(makeFakeHttpRequest().body)
+  })
+
+  test('Should return FakeDataModel on AddFakeData success', async () => {
+    const { sut } = makeSut()
+
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+
+    expect(httpResponse.statusCode).toEqual(200)
+    expect(httpResponse.body).toEqual(makeFakeDataModel())
   })
 })
