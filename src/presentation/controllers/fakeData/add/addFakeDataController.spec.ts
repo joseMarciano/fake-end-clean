@@ -103,12 +103,12 @@ describe('AddFakeDataController', () => {
     expect(response).toEqual(badRequest(new Error()))
   })
 
-  // test('Should return 500 if Validator throws', async () => {
-  //   const { sut, validatorStub } = makeSut()
+  test('Should return 500 if Validator throws', async () => {
+    const { sut, validatorStub } = makeSut()
 
-  //   jest.spyOn(validatorStub, 'validate').mockImplementationOnce(() => { throw new Error() })
-  //   const response = await sut.handle(makeFakeHttpRequest())
+    jest.spyOn(validatorStub, 'validate').mockImplementationOnce(() => { throw new Error() })
+    const response = await sut.handle(makeFakeHttpRequest())
 
-  //   expect(response).toEqual(serverError(new Error()))
-  // })
+    expect(response).toEqual(serverError(new Error()))
+  })
 })
