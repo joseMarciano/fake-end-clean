@@ -2,6 +2,7 @@ import { FakeDataModel } from '../../../../domain/usecases/fakeData/FakeDataMode
 import { AddFakeData } from '../../../../domain/usecases/fakeData/add/AddFakeData'
 import { HttpRequest } from '../../../../presentation/protocols'
 import { AddFakeDataController } from './AddFakeDataController'
+import { serverError } from '../../../../presentation/helper/httpHelper'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   body: {
@@ -60,5 +61,14 @@ describe('AddFakeDataController', () => {
 
     expect(httpResponse.statusCode).toEqual(200)
     expect(httpResponse.body).toEqual(makeFakeDataModel())
+  })
+
+  test('Should return 500 on AddFakeData throws', async () => {
+    const { sut, addFakeDataStub } = makeSut()
+
+    jest.spyOn(addFakeDataStub, 'add').mockImplementationOnce(() => { throw new Error() })
+    const response = await sut.handle(makeFakeHttpRequest())
+
+    expect(response).toEqual(serverError(new Error()))
   })
 })
