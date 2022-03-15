@@ -8,7 +8,10 @@ export class DbAddFakeDataa implements AddFakeData {
   ) {}
 
   async add (data: any): Promise<FakeDataModel> {
-    await this.addFakeDataRepository.add(data)
-    return null as any
+    const fakeModel = await this.addFakeDataRepository.add(data)
+    return {
+      id: fakeModel.id,
+      ...fakeModel.content
+    }
   }
 }
