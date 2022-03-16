@@ -9,6 +9,9 @@ export class DbFindFakeDataById implements FindFakeDataById {
 
   async findById (id: string): Promise<FakeDataModel> {
     const fakeModel = await this.findFakeDataRepository.findById(id)
+
+    if (!fakeModel) return null as any
+
     return {
       id: fakeModel.id,
       ...fakeModel.content
