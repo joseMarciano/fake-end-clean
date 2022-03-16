@@ -2,7 +2,7 @@ import { makeDbAddFakeData } from 'src/main/factories/usecases/fakeData/dbAddFak
 import { AddFakeDataController } from 'src/presentation/controllers/fakeData/add/AddFakeDataController'
 import { Controller } from '../../../../../presentation/protocols'
 
-export const makeFakeDataController = (): Controller => {
+export const makeAddFakeDataController = (): Controller => {
   const addFakeData = makeDbAddFakeData()
   return new AddFakeDataController(addFakeData)
 }
