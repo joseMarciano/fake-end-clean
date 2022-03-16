@@ -14,10 +14,14 @@ let fakeDataCollection: Collection
 let resourceCollection: Collection
 let authorization: string
 
+let resultUserInsert: any
+let resultProjectInsert: any
+let resultResourceInsert: any
+
 const createContextAuthentication = async (): Promise<void> => {
-  const resultUserInsert = await userCollection.insertOne({ email: 'any_email@mail.com', name: 'any_name', password: '123', isActive: true })
-  const resultProjectInsert = await projectCollection.insertOne({ user: resultUserInsert.insertedId.toString() })
-  await resourceCollection.insertOne({ name: 'managers', user: resultUserInsert.insertedId.toString(), project: resultProjectInsert.insertedId.toString() })
+  resultUserInsert = await userCollection.insertOne({ email: 'any_email@mail.com', name: 'any_name', password: '123', isActive: true })
+  resultProjectInsert = await projectCollection.insertOne({ user: resultUserInsert.insertedId.toString() })
+  resultResourceInsert = await resourceCollection.insertOne({ name: 'managers', user: resultUserInsert.insertedId.toString(), project: resultProjectInsert.insertedId.toString() })
 
   const token = sign(resultProjectInsert.insertedId.toString(), process.env.JWT_SECRET_KEY as string)
   authorization = token
@@ -94,6 +98,53 @@ describe('projectRoute', () => {
       expect(response.body?.id).toBeTruthy()
       expect(response.body?.title).toBe('Project')
       expect(response.body?.description).toBe('Project to use')
+    })
+  })
+
+  describe('/^.+\/edit$/ PUT', () => {
+    beforeEach(async () => {
+      await clearCollections()
+      await createContextAuthentication()
+    })
+
+    afterEach(async () => {
+      await clearCollections()
+      authorization = ''
+    })
+
+    test('Should return 200 on FakeData is edited', async () => {
+      const resultFakeData = await fakeDataCollection.insertOne(
+        {
+          project: resultProjectInsert.insertedId.toString(),
+          resource: resultResourceInsert.insertedId.toString(),
+          content: {
+            field: 123,
+            otherField: 'name'
+          }
+        })
+
+      const response = await request(app)
+        .put(`${defaultPath}/edit`)
+        .send({ id: resultFakeData.insertedId.toString(), field: 'edited', otherField: 'edited_other' })
+        .set('Authorization', authorization)
+
+      expect(response.status).toBe(200)
+      expect(response.body?.id).toBeTruthy()
+      expect(response.body?.field).toBe('edited')
+      expect(response.body?.otherField).toBe('edited_other')
+    })
+
+    test('Should return no body if EditFakeDate fails', async () => {
+      const resultFakeData = await fakeDataCollection.insertOne({})
+      await fakeDataCollection.deleteMany({})
+
+      const response = await request(app)
+        .put(`${defaultPath}/edit`)
+        .send({ id: resultFakeData.insertedId.toString(), field: 'edited', otherField: 'edited_other' })
+        .set('Authorization', authorization)
+
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({})
     })
   })
 })
