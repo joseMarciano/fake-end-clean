@@ -1,4 +1,4 @@
-import { FakeData } from 'src/domain/model/FakeData'
+import { FakeData } from '../../../domain/model/FakeData'
 import { Page, Pageable } from '../../../domain/usecases/commons/Page'
 
 export interface PageFakeDataRepository {

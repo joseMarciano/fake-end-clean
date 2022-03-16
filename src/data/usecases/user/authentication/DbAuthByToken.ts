@@ -2,7 +2,7 @@ import { FindUserAccessRepository } from '../../../../data/protocols/user/FindUs
 import { FindUserByEmailRepository } from '../../../../data/protocols/user/FindUserByEmailRepository'
 import { Decrypter } from '../../../../data/protocols/cryptography/Decrypter'
 import { AuthByToken } from '../../../../domain/usecases/user/authentication/AuthByToken'
-import { User } from 'src/domain/model/User'
+import { User } from '../../../../domain/model/User'
 
 export class DbAuthByToken implements AuthByToken {
   constructor (

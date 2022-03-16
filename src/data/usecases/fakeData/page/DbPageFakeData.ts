@@ -1,7 +1,7 @@
 import { Pageable, Page } from '../../../../domain/usecases/commons/Page'
-import { PageFakeData } from 'src/domain/usecases/fakeData/find/PageFakeData'
-import { FakeDataModel } from 'src/domain/usecases/fakeData/FakeDataModel'
-import { PageFakeDataRepository } from 'src/data/protocols/fakeData/PageFakeDataRepository'
+import { PageFakeData } from '../../../../domain/usecases/fakeData/find/PageFakeData'
+import { FakeDataModel } from '../../../../domain/usecases/fakeData/FakeDataModel'
+import { PageFakeDataRepository } from '../../../../data/protocols/fakeData/PageFakeDataRepository'
 
 export class DbPageFakeData implements PageFakeData {
   constructor (

@@ -1,4 +1,4 @@
-import { FindFakeDataById } from 'src/domain/usecases/fakeData/find/FindFakeDataById'
+import { FindFakeDataById } from '../../../../domain/usecases/fakeData/find/FindFakeDataById'
 import { badRequest, ok, serverError } from '../../../helper/httpHelper'
 import { Controller, HttpRequest, HttpResponse, Validator } from '../../../protocols'
 

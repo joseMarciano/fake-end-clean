@@ -1,6 +1,6 @@
 import { serverError, badRequest } from '../../../helper/httpHelper'
 import { HttpRequest, Validator } from '../../../protocols'
-import { DeleteFakeDataById } from 'src/domain/usecases/fakeData/remove/DeleteFakeDataById'
+import { DeleteFakeDataById } from '../../../../domain/usecases/fakeData/remove/DeleteFakeDataById'
 import { DeleteFakeDataByIdController } from './DeleteFakeDataByIdController'
 
 const makeFakeHttpRequest = (): HttpRequest => ({

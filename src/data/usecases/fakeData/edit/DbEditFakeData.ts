@@ -1,6 +1,6 @@
 import { FakeDataModel } from '../../../../domain/usecases/fakeData/FakeDataModel'
 import { EditFakeDataRepository } from '../../../../data/protocols/fakeData/EditFakeDataRepository'
-import { EditFakeData } from 'src/domain/usecases/fakeData/edit/EditFakeData'
+import { EditFakeData } from '../../../../domain/usecases/fakeData/edit/EditFakeData'
 
 export class DbEditFakeData implements EditFakeData {
   constructor (

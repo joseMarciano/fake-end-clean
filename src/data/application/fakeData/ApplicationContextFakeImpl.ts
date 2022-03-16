@@ -1,6 +1,6 @@
-import { ApplicationContextFake, FakeContext } from 'src/data/protocols/application/fakeData/ApplicationContextFake'
-import { Project } from 'src/domain/model/Project'
-import { Resource } from 'src/domain/model/Resource'
+import { ApplicationContextFake, FakeContext } from '../../../data/protocols/application/fakeData/ApplicationContextFake'
+import { Project } from '../../../domain/model/Project'
+import { Resource } from '../../../domain/model/Resource'
 
 export class ApplicationContextFakeImpl implements ApplicationContextFake {
   private project: Project

@@ -5,7 +5,7 @@ import { AddResourceRepository } from '../../../../data/protocols/resource/AddRe
 import { DbAddResource } from './DbAddResource'
 import { AddResourceError } from '../../../../domain/usecases/resource/validations/AddResourceError'
 import { FindResourceByNameAndProjectIdRepository } from '../../../protocols/resource/FindResourceByNameAndProjectIdRepository'
-import { Project } from 'src/domain/model/Project'
+import { Project } from '../../../../domain/model/Project'
 
 const makeFakeResourceModel = (): AddResourceModel => ({
   name: 'any_name',

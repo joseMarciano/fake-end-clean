@@ -1,5 +1,5 @@
-import { PageFakeDataRepository } from 'src/data/protocols/fakeData/PageFakeDataRepository'
-import { FakeData } from 'src/domain/model/FakeData'
+import { PageFakeDataRepository } from '../../../../data/protocols/fakeData/PageFakeDataRepository'
+import { FakeData } from '../../../../domain/model/FakeData'
 import { Page, Pageable } from '../../../../domain/usecases/commons/Page'
 import { DbPageFakeData } from './DbPageFakeData'
 

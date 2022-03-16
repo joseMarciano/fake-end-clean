@@ -2,7 +2,7 @@ import { serverError, badRequest } from '../../../helper/httpHelper'
 import { FakeDataModel } from '../../../../domain/usecases/fakeData/FakeDataModel'
 import { HttpRequest, Validator } from '../../../protocols'
 import { FindFakeDataByIdController } from './FindFakeDataByIdController'
-import { FindFakeDataById } from 'src/domain/usecases/fakeData/find/FindFakeDataById'
+import { FindFakeDataById } from '../../../../domain/usecases/fakeData/find/FindFakeDataById'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   paths: {

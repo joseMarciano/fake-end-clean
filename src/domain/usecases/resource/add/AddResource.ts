@@ -1,4 +1,4 @@
-import { Resource } from 'src/domain/model/Resource'
+import { Resource } from '../../../../domain/model/Resource'
 import { AddResourceError } from '../validations/AddResourceError'
 
 export interface AddResource {

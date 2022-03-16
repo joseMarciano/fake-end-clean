@@ -1,6 +1,6 @@
 import { ok, serverError } from '../../../helper/httpHelper'
 import { Controller, HttpRequest, HttpResponse } from '../../../protocols'
-import { PageFakeData } from 'src/domain/usecases/fakeData/find/PageFakeData'
+import { PageFakeData } from '../../../../domain/usecases/fakeData/find/PageFakeData'
 
 export class PageFakeDataController implements Controller {
   constructor (

@@ -1,7 +1,7 @@
 import { noContent, serverError, unauthorized } from '../../../presentation/helper/httpHelper'
 import { AuthByToken } from '../../../domain/usecases/user/authentication/AuthByToken'
 import { Controller, HttpRequest, HttpResponse } from '../../../presentation/protocols'
-import { SetUserContext } from 'src/data/protocols/application/UserContext'
+import { SetUserContext } from '../../../data/protocols/application/UserContext'
 
 export class AuthController implements Controller {
   constructor (

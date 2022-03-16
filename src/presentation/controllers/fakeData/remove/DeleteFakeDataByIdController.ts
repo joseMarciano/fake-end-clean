@@ -1,4 +1,4 @@
-import { DeleteFakeDataById } from 'src/domain/usecases/fakeData/remove/DeleteFakeDataById'
+import { DeleteFakeDataById } from '../../../../domain/usecases/fakeData/remove/DeleteFakeDataById'
 import { badRequest, noContent, serverError } from '../../../helper/httpHelper'
 import { Controller, HttpRequest, HttpResponse, Validator } from '../../../protocols'
 

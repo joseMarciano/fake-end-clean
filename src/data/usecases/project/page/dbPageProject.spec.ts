@@ -1,4 +1,4 @@
-import { Project } from 'src/domain/model/Project'
+import { Project } from '../../../../domain/model/Project'
 import { PageProjectRepository } from '../../../../data/protocols/project/PageProjectRepository'
 import { Page, Pageable } from '../../../../domain/usecases/commons/Page'
 import { DbPageProject } from './DbPageProject'

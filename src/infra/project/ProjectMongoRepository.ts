@@ -8,7 +8,7 @@ import { Filter, ObjectId } from 'mongodb'
 import { PageProjectRepository } from '../../data/protocols/project/PageProjectRepository'
 import { Pageable, Page, PageUtils } from '../../domain/usecases/commons/Page'
 import { DeleteProjectByIdRepository } from '../../data/protocols/project/DeleteProjectByIdRepository'
-import { EditProjectRepository } from 'src/data/protocols/project/EditProjectRepository'
+import { EditProjectRepository } from '../../data/protocols/project/EditProjectRepository'
 
 interface BasicRepository
   extends
