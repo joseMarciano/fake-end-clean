@@ -94,6 +94,14 @@ describe('ProjectMongoRepository', () => {
       expect(project.id).toBe(result.insertedId.toString())
     })
 
+    test('Should findProjectById with context user false', async () => {
+      const { sut } = makeSut()
+      const result = await projectCollection.insertOne({ ...makeFakeProjectModel(), user: 'any_id' })
+      const project = await sut.findById(result.insertedId.toString(), false)
+
+      expect(project.id).toBe(result.insertedId.toString())
+    })
+
     test('Should throws if GetUserContext throws', async () => {
       const { sut, applicationContextStub } = makeSut()
 
