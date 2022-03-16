@@ -147,6 +147,7 @@ describe('projectRoute', () => {
       expect(response.body).toEqual({})
     })
   })
+
   describe('/^.+\/list-all$/ GET', () => {
     beforeEach(async () => {
       await clearCollections()
@@ -190,5 +191,92 @@ describe('projectRoute', () => {
       expect(response.status).toBe(200)
       expect(response.body.length > 0).toBe(false)
     })
+  })
+
+  describe('/^.+\/page$/ GET', () => {
+    const fakeDataIds = [] as any
+    beforeEach(async () => {
+      await clearCollections()
+      await createContextAuthentication()
+
+      for (let index = 0; index < 30; index++) {
+        fakeDataIds.push((await fakeDataCollection.insertOne(
+          {
+            project: resultProjectInsert.insertedId.toString(),
+            resource: resultResourceInsert.insertedId.toString(),
+            content: {
+              field: 123,
+              otherField: 'name'
+            }
+          })).insertedId.toString())
+      }
+    })
+
+    afterEach(async () => {
+      await clearCollections()
+      authorization = ''
+    })
+
+    test('Should return 200 on has project', async () => {
+      const response = await request(app)
+        .get(`${defaultPath}/page`)
+        .set('Authorization', authorization)
+
+      expect(response.status).toBe(200)
+      expect(response.body?.offset).toBe(0)
+      expect(response.body?.limit).toBe(20)
+      expect(response.body?.hasNext).toBe(true)
+
+      response.body?.content.forEach((fakeData: any) => {
+        fakeDataIds.includes(fakeData.id)
+      })
+    })
+
+    test('Should return empty content if has no FakeData', async () => {
+      await fakeDataCollection.deleteMany({})
+      const response = await request(app)
+        .get(`${defaultPath}/page`)
+        .set('Authorization', authorization)
+        .query({ offset: 10, limit: 10 })
+
+      expect(response.status).toBe(200)
+      expect(response.body?.offset).toBe(10)
+      expect(response.body?.limit).toBe(10)
+      expect(response.body?.hasNext).toBe(false)
+      expect(response.body?.content).toEqual([])
+    })
+
+    // test('Should return 200 on FakeData is found', async () => {
+    //   const result = await fakeDataCollection.insertOne(
+    //     {
+    //       project: resultProjectInsert.insertedId.toString(),
+    //       resource: resultResourceInsert.insertedId.toString(),
+    //       content: {
+    //         field: 123,
+    //         otherField: 'name'
+    //       }
+    //     })
+
+    //   const response = await request(app)
+    //     .get(`${defaultPath}/list-all`)
+    //     .set('Authorization', authorization)
+
+    //   expect(response.status).toBe(200)
+    //   expect(response.body.length > 0).toBe(true)
+    //   expect(response.body[0]).toEqual({
+    //     id: result.insertedId.toString(),
+    //     field: 123,
+    //     otherField: 'name'
+    //   })
+    // })
+
+    // test('Should return empty array on FakeData is not found', async () => {
+    //   const response = await request(app)
+    //     .get(`${defaultPath}/list-all`)
+    //     .set('Authorization', authorization)
+
+    //   expect(response.status).toBe(200)
+    //   expect(response.body.length > 0).toBe(false)
+    // })
   })
 })
