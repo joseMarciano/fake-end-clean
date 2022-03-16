@@ -4,7 +4,7 @@ import { AddProjectRepository } from '../../data/protocols/project/AddProjectRep
 import { nonUpdatableFields, Project } from '../../domain/model/Project'
 import { AddProjectModel } from '../../domain/usecases/project/add/AddProject'
 import { MongoHelper } from '../db/mongo/mongoHelper'
-import { ObjectId } from 'mongodb'
+import { Filter, ObjectId } from 'mongodb'
 import { PageProjectRepository } from '../../data/protocols/project/PageProjectRepository'
 import { Pageable, Page, PageUtils } from '../../domain/usecases/commons/Page'
 import { DeleteProjectByIdRepository } from '../../data/protocols/project/DeleteProjectByIdRepository'
@@ -39,14 +39,18 @@ export class ProjectMongoRepository implements BasicRepository {
     }
   }
 
-  async findById (id: string): Promise<Project> {
-    const userContext = await this.applicationContext.getUser()
+  async findById (id: string, useContext = true): Promise<Project> {
     const collection = await MongoHelper.getCollection('projects')
-
-    const projectDocument = await collection.findOne({
-      user: userContext.id,
+    const filter = {
       _id: new ObjectId(id)
-    })
+    } as any
+
+    if (useContext) {
+      const userContext = await this.applicationContext.getUser()
+      filter.user = userContext.id
+    }
+
+    const projectDocument = await collection.findOne(filter as Filter<any>)
 
     if (!projectDocument) return null as any
 
