@@ -1,5 +1,5 @@
-import { ProjectModel } from '../../../domain/usecases/project/find/ProjectModel'
+import { Project } from '../../../domain/model/Project'
 
 export interface FindProjectByIdRepository {
-  findById: (id: string) => Promise<ProjectModel>
+  findById: (id: string) => Promise<Project>
 }

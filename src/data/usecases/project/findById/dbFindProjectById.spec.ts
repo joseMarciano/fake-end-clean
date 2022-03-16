@@ -1,17 +1,18 @@
+import { Project } from '../../../../domain/model/Project'
 import { FindProjectByIdRepository } from '../../../../data/protocols/project/FindProjectByIdRepository'
-import { ProjectModel } from '../../../../domain/usecases/project/find/ProjectModel'
 import { DbFindProjectById } from './DbFindProjectById'
 
-const makeFakeProjectModel = (): ProjectModel => ({
+const makeFakeProjectModel = (): Project => ({
   id: 'any_id',
   description: 'any_decription',
   secretKey: 'any_secretKey',
-  title: 'any_title'
+  title: 'any_title',
+  user: 'any_user'
 })
 
 const makeFindProjectByIdRepositoryStub = (): FindProjectByIdRepository => {
   class FindProjectByIdRepositoryStub implements FindProjectByIdRepository {
-    async findById (id: string): Promise<ProjectModel> {
+    async findById (id: string): Promise<Project> {
       return await Promise.resolve(makeFakeProjectModel())
     }
   }

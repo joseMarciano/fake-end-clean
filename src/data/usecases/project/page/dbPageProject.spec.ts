@@ -1,15 +1,16 @@
+import { Project } from 'src/domain/model/Project'
 import { PageProjectRepository } from '../../../../data/protocols/project/PageProjectRepository'
 import { Page, Pageable } from '../../../../domain/usecases/commons/Page'
-import { ProjectModel } from '../../../../domain/usecases/project/find/ProjectModel'
 import { DbPageProject } from './DbPageProject'
 
-const makeFakeProject = (): ProjectModel => ({
+const makeFakeProject = (): Project => ({
   id: 'any_id',
   description: 'any_description',
   secretKey: 'any_secret_key',
-  title: 'any_title'
+  title: 'any_title',
+  user: 'any_user'
 })
-const makeFakePageProject = (): Page<ProjectModel> => ({
+const makeFakePageProject = (): Page<Project> => ({
   offset: 0,
   total: 30,
   hasNext: false,
@@ -19,7 +20,7 @@ const makeFakePageProject = (): Page<ProjectModel> => ({
 
 const makeProjectRepository = (): PageProjectRepository => {
   class PageProjectRepositoryStub implements PageProjectRepository {
-    async page (pageable: Pageable): Promise<Page<ProjectModel>> {
+    async page (pageable: Pageable): Promise<Page<Project>> {
       return await Promise.resolve(makeFakePageProject())
     }
   }

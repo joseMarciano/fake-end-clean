@@ -1,6 +1,6 @@
+import { Project } from '../../../../domain/model/Project'
 import { Page, Pageable } from '../../commons/Page'
-import { ProjectModel } from './ProjectModel'
 
 export interface PageProject {
-  page: (pageable: Pageable) => Promise<Page<ProjectModel>>
+  page: (pageable: Pageable) => Promise<Page<Project>>
 }

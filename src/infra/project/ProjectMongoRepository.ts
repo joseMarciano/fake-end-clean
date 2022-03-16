@@ -4,7 +4,6 @@ import { AddProjectRepository } from '../../data/protocols/project/AddProjectRep
 import { nonUpdatableFields, Project } from '../../domain/model/Project'
 import { AddProjectModel } from '../../domain/usecases/project/add/AddProject'
 import { MongoHelper } from '../db/mongo/mongoHelper'
-import { ProjectModel } from '../../domain/usecases/project/find/ProjectModel'
 import { ObjectId } from 'mongodb'
 import { PageProjectRepository } from '../../data/protocols/project/PageProjectRepository'
 import { Pageable, Page, PageUtils } from '../../domain/usecases/commons/Page'
@@ -40,7 +39,7 @@ export class ProjectMongoRepository implements BasicRepository {
     }
   }
 
-  async findById (id: string): Promise<ProjectModel> {
+  async findById (id: string): Promise<Project> {
     const userContext = await this.applicationContext.getUser()
     const collection = await MongoHelper.getCollection('projects')
 
@@ -51,7 +50,7 @@ export class ProjectMongoRepository implements BasicRepository {
 
     if (!projectDocument) return null as any
 
-    const { _id, user, ...obj } = projectDocument as any
+    const { _id, ...obj } = projectDocument as any
 
     return {
       id: _id.toString(),
@@ -59,7 +58,7 @@ export class ProjectMongoRepository implements BasicRepository {
     }
   }
 
-  async page (pageable: Pageable): Promise<Page<ProjectModel>> {
+  async page (pageable: Pageable): Promise<Page<Project>> {
     const userContext = await this.applicationContext.getUser()
     const collection = await MongoHelper.getCollection('projects')
 
@@ -74,10 +73,10 @@ export class ProjectMongoRepository implements BasicRepository {
 
     const projectModelArray = arrayDocuments.map(createProjectModel)
 
-    return PageUtils.buildPage<ProjectModel>(pageable, total, projectModelArray)
+    return PageUtils.buildPage<Project>(pageable, total, projectModelArray)
 
-    function createProjectModel (document: any): ProjectModel {
-      const { _id, user, ...obj } = document
+    function createProjectModel (document: any): Project {
+      const { _id, ...obj } = document
       return {
         id: _id.toString(),
         ...obj

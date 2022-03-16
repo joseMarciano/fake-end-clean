@@ -1,8 +1,8 @@
 import { badRequest, ok, serverError } from '../../../../presentation/helper/httpHelper'
 import { FindProjectById } from '../../../../domain/usecases/project/find/FindProjectById'
-import { ProjectModel } from '../../../../domain/usecases/project/find/ProjectModel'
 import { HttpRequest, Validator } from '../../../../presentation/protocols'
 import { FindProjectByIdController } from './FindProjectByIdController'
+import { Project } from '../../../../domain/model/Project'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   paths: {
@@ -10,16 +10,17 @@ const makeFakeHttpRequest = (): HttpRequest => ({
   }
 })
 
-const makeFakeProjectModel = (): ProjectModel => ({
+const makeFakeProjectModel = (): Project => ({
   id: 'any_id',
   description: 'any_decription',
   secretKey: 'any_secretKey',
-  title: 'any_title'
+  title: 'any_title',
+  user: 'any_user'
 })
 
 const makeFindProjectById = (): FindProjectById => {
   class FindProjectByIdStub implements FindProjectById {
-    async findById (_id: string): Promise<ProjectModel> {
+    async findById (_id: string): Promise<Project> {
       return await Promise.resolve(makeFakeProjectModel())
     }
   }

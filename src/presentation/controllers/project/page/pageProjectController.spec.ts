@@ -1,9 +1,9 @@
 import { HttpRequest } from '../../../../presentation/protocols'
-import { ProjectModel } from '../../../../domain/usecases/project/find/ProjectModel'
 import { PageProjectController } from './PageProjectController'
 import { PageProject } from '../../../../domain/usecases/project/find/PageProject'
 import { Page, Pageable } from '../../../../domain/usecases/commons/Page'
 import { ok, serverError } from '../../../../presentation/helper/httpHelper'
+import { Project } from '../../../../domain/model/Project'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   params: {
@@ -11,13 +11,14 @@ const makeFakeHttpRequest = (): HttpRequest => ({
     limit: 20
   }
 })
-const makeFakeProject = (): ProjectModel => ({
+const makeFakeProject = (): Project => ({
   id: 'any_id',
   description: 'any_description',
   secretKey: 'any_secret_key',
-  title: 'any_title'
+  title: 'any_title',
+  user: 'any_user'
 })
-const makeFakePageProject = (): Page<ProjectModel> => ({
+const makeFakePageProject = (): Page<Project> => ({
   offset: 0,
   hasNext: false,
   total: 30,
@@ -27,7 +28,7 @@ const makeFakePageProject = (): Page<ProjectModel> => ({
 
 const makePageProject = (): PageProject => {
   class PageProjectStub implements PageProject {
-    async page (_pageable: Pageable): Promise<Page<ProjectModel>> {
+    async page (_pageable: Pageable): Promise<Page<Project>> {
       return await Promise.resolve(makeFakePageProject())
     }
   }

@@ -1,11 +1,11 @@
 import { Resource } from '../../../../domain/model/Resource'
 import { AddResourceModel } from '../../../../domain/usecases/resource/add/AddResource'
 import { FindProjectByIdRepository } from '../../../../data/protocols/project/FindProjectByIdRepository'
-import { ProjectModel } from '../../../../domain/usecases/project/find/ProjectModel'
 import { AddResourceRepository } from '../../../../data/protocols/resource/AddResourceRepository'
 import { DbAddResource } from './DbAddResource'
 import { AddResourceError } from '../../../../domain/usecases/resource/validations/AddResourceError'
 import { FindResourceByNameAndProjectIdRepository } from '../../../protocols/resource/FindResourceByNameAndProjectIdRepository'
+import { Project } from 'src/domain/model/Project'
 
 const makeFakeResourceModel = (): AddResourceModel => ({
   name: 'any_name',
@@ -31,12 +31,13 @@ const makeAddResourceRepository = (): AddResourceRepository => {
 
 const makeFindProjectByIdRepository = (): FindProjectByIdRepository => {
   class FindProjectByIdRepositoryStub implements FindProjectByIdRepository {
-    async findById (_id: string): Promise<ProjectModel> {
+    async findById (_id: string): Promise<Project> {
       return await Promise.resolve({
         id: 'any_id',
         description: 'any_description',
         secretKey: 'any_secret_key',
-        title: 'any_title'
+        title: 'any_title',
+        user: 'any_user'
       })
     }
   }
