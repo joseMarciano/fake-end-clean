@@ -9,6 +9,9 @@ export class DbEditFakeData implements EditFakeData {
 
   async edit (data: FakeDataModel): Promise<FakeDataModel> {
     const fakeModel = await this.editFakeDataRepository.edit(data)
+
+    if (!fakeModel) return null as any
+
     return {
       id: fakeModel.id,
       ...fakeModel.content
