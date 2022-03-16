@@ -147,4 +147,48 @@ describe('projectRoute', () => {
       expect(response.body).toEqual({})
     })
   })
+  describe('/^.+\/list-all$/ GET', () => {
+    beforeEach(async () => {
+      await clearCollections()
+      await createContextAuthentication()
+    })
+
+    afterEach(async () => {
+      await clearCollections()
+      authorization = ''
+    })
+
+    test('Should return 200 on FakeData is found', async () => {
+      const result = await fakeDataCollection.insertOne(
+        {
+          project: resultProjectInsert.insertedId.toString(),
+          resource: resultResourceInsert.insertedId.toString(),
+          content: {
+            field: 123,
+            otherField: 'name'
+          }
+        })
+
+      const response = await request(app)
+        .get(`${defaultPath}/list-all`)
+        .set('Authorization', authorization)
+
+      expect(response.status).toBe(200)
+      expect(response.body.length > 0).toBe(true)
+      expect(response.body[0]).toEqual({
+        id: result.insertedId.toString(),
+        field: 123,
+        otherField: 'name'
+      })
+    })
+
+    test('Should return empty array on FakeData is not found', async () => {
+      const response = await request(app)
+        .get(`${defaultPath}/list-all`)
+        .set('Authorization', authorization)
+
+      expect(response.status).toBe(200)
+      expect(response.body.length > 0).toBe(false)
+    })
+  })
 })
