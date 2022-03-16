@@ -1,5 +1,5 @@
 import { Express, Router } from 'express'
-import { mapAuthRouters, mapFreeRouters } from './routerHelper'
+import { mapAuthRouters, mapFakeRouters, mapFreeRouters } from './routerHelper'
 
 export const setRoutes = (app: Express): void => {
   const router = Router()
@@ -7,6 +7,7 @@ export const setRoutes = (app: Express): void => {
   router
     .use(mapFreeRouters())
     .use('/auth', mapAuthRouters())
+    .use('/fake', mapFakeRouters())
 
   app
     .use(process.env.DEFAULT_PATH as string, router)
