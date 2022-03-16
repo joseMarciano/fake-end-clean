@@ -68,4 +68,13 @@ describe('DbAddFakeData', () => {
       ...makeFakeDataModel()
     })
   })
+
+  test('Should return null on EditFakeDataRepository returns null', async () => {
+    const { sut, editFakeDataRepositoryStub } = makeSut()
+
+    jest.spyOn(editFakeDataRepositoryStub, 'edit').mockResolvedValueOnce(null as any)
+    const fakeDataModel = await sut.edit(makeFakeDataModel())
+
+    expect(fakeDataModel).toBeNull()
+  })
 })
