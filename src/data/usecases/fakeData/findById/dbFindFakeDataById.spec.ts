@@ -50,6 +50,15 @@ describe('DbFindFakeDataById', () => {
     expect(findFakeDataByIdRepositorySpy).toHaveBeenCalledWith('any_id')
   })
 
+  test('Should return null if FindFakeDataByIdRepository returns null', async () => {
+    const { sut, findFakeDataByIdRepositoryStub } = makeSut()
+
+    jest.spyOn(findFakeDataByIdRepositoryStub, 'findById').mockResolvedValueOnce(null as any)
+    const fakeData = await sut.findById('any_id')
+
+    expect(fakeData).toBeNull()
+  })
+
   test('Should throws if FindFakeDataByIdRepository throw', async () => {
     const { sut, findFakeDataByIdRepositoryStub } = makeSut()
 
