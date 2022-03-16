@@ -245,38 +245,51 @@ describe('projectRoute', () => {
       expect(response.body?.hasNext).toBe(false)
       expect(response.body?.content).toEqual([])
     })
+  })
 
-    // test('Should return 200 on FakeData is found', async () => {
-    //   const result = await fakeDataCollection.insertOne(
-    //     {
-    //       project: resultProjectInsert.insertedId.toString(),
-    //       resource: resultResourceInsert.insertedId.toString(),
-    //       content: {
-    //         field: 123,
-    //         otherField: 'name'
-    //       }
-    //     })
+  describe('*/find-by-id/:id GET', () => {
+    let fakeDataId = ''
+    beforeEach(async () => {
+      await clearCollections()
+      await createContextAuthentication()
 
-    //   const response = await request(app)
-    //     .get(`${defaultPath}/list-all`)
-    //     .set('Authorization', authorization)
+      fakeDataId = (await fakeDataCollection.insertOne(
+        {
+          project: resultProjectInsert.insertedId.toString(),
+          resource: resultResourceInsert.insertedId.toString(),
+          content: {
+            field: 123,
+            otherField: 'name'
+          }
+        })).insertedId.toString()
+    })
 
-    //   expect(response.status).toBe(200)
-    //   expect(response.body.length > 0).toBe(true)
-    //   expect(response.body[0]).toEqual({
-    //     id: result.insertedId.toString(),
-    //     field: 123,
-    //     otherField: 'name'
-    //   })
-    // })
+    afterEach(async () => {
+      await clearCollections()
+      authorization = ''
+    })
 
-    // test('Should return empty array on FakeData is not found', async () => {
-    //   const response = await request(app)
-    //     .get(`${defaultPath}/list-all`)
-    //     .set('Authorization', authorization)
+    test('Should return 200 on has project', async () => {
+      const response = await request(app)
+        .get(`${defaultPath}/find-by-id/${fakeDataId}`)
+        .set('Authorization', authorization)
 
-    //   expect(response.status).toBe(200)
-    //   expect(response.body.length > 0).toBe(false)
-    // })
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({
+        id: fakeDataId,
+        field: 123,
+        otherField: 'name'
+      })
+    })
+
+    test('Should return no body if has no FakeData', async () => {
+      await fakeDataCollection.deleteMany({})
+      const response = await request(app)
+        .get(`${defaultPath}/find-by-id/${fakeDataId}`)
+        .set('Authorization', authorization)
+
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({})
+    })
   })
 })
