@@ -4,6 +4,7 @@ import { middlewaresAdapter } from '../../../main/adapters/express/middlewaresAd
 import { makeAuthControllerFactory } from '../../../main/factories/controller/authentication/authControllerFacotory'
 import loginRoute from '../../../main/routes/login/loginRoute'
 import projectRoute from '../../../main/routes/project/projectRoute'
+import fakeDataRoute from '../../routes/fakeData/fakeDataRoute'
 import resourceRoute from '../../../main/routes/resource/resourceRoute'
 
 export const mapFreeRouters = (): Router => {
@@ -20,5 +21,5 @@ export const mapAuthRouters = (): Router => {
 
 export const mapFakeRouters = (): Router => {
   return Router()
-    .post(/^.+\/create$/, middlewaresAdapter(makeFakeAuthController()), (req, res, next) => res.send('hello'))
+    .all('*', middlewaresAdapter(makeFakeAuthController()), fakeDataRoute)
 }
