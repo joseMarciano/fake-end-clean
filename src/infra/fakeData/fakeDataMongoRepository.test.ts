@@ -3,7 +3,7 @@ import { MongoHelper } from '../db/mongo/mongoHelper'
 import { FakeDataMongoRepository } from './FakeDataMongoRepository'
 import { FakeContext, GetFakeContext } from '../../data/protocols/application/fakeData/ApplicationContextFake'
 import { Resource } from '../../domain/model/Resource'
-import { Project } from 'src/domain/model/Project'
+import { Project } from '../../domain/model/Project'
 
 const makeFakeProject = (): Project => ({
   id: 'any_id',

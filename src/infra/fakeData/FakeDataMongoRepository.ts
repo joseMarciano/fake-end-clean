@@ -7,9 +7,9 @@ import { FakeDataModel } from '../../domain/usecases/fakeData/FakeDataModel'
 import { Filter, ObjectId } from 'mongodb'
 import { PageFakeDataRepository } from '../../data/protocols/fakeData/PageFakeDataRepository'
 import { Pageable, Page, PageUtils } from '../../domain/usecases/commons/Page'
-import { DeleteFakeDataByIdRepository } from 'src/data/protocols/fakeData/DeleteFakeDataByIdRepository'
-import { FindAllFakeDataRepository } from 'src/data/protocols/fakeData/FindAllFakeDataRepository'
-import { FindFakeDataByIdRepository } from 'src/data/protocols/fakeData/FindFakeDataByIdRepository'
+import { DeleteFakeDataByIdRepository } from '../../data/protocols/fakeData/DeleteFakeDataByIdRepository'
+import { FindAllFakeDataRepository } from '../../data/protocols/fakeData/FindAllFakeDataRepository'
+import { FindFakeDataByIdRepository } from '../../data/protocols/fakeData/FindFakeDataByIdRepository'
 
 interface BasicRepository
   extends
