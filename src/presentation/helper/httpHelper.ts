@@ -35,14 +35,15 @@ export const forbiden = (error: Error): HttpResponse => {
   }
 }
 
-export const unauthorized = (): HttpResponse => {
+export const unauthorized = (error?: Error): HttpResponse => {
   return {
     statusCode: 401,
-    body: null
+    body: getDefaultErrorStructure(error as any)
   }
 }
 
 function getDefaultErrorStructure (error: Error): any {
+  if (!error) return null
   return {
     message: error.message,
     error: error.name
