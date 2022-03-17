@@ -1,5 +1,5 @@
-import { serverError, badRequest } from '../../../helper/httpHelper'
-import { HttpRequest, Validator } from '../../../protocols'
+import { serverError } from '../../../helper/httpHelper'
+import { HttpRequest } from '../../../protocols'
 import { DeleteFakeDataById } from '../../../../domain/usecases/fakeData/remove/DeleteFakeDataById'
 import { DeleteFakeDataByIdController } from './DeleteFakeDataByIdController'
 
@@ -18,32 +18,18 @@ const makeDeleteFakeDataById = (): DeleteFakeDataById => {
 
   return new DeleteFakeDataByIdStub()
 }
-
-const makeValidator = (): Validator => {
-  class ValidatorStub implements Validator {
-    validate (_input: any): Error | null {
-      return null
-    }
-  }
-
-  return new ValidatorStub()
-}
-
 interface SutTypes {
   sut: DeleteFakeDataByIdController
   deleteFakeDataByIdStub: DeleteFakeDataById
-  validatorStub: Validator
 }
 
 const makeSut = (): SutTypes => {
   const deleteFakeDataByIdStub = makeDeleteFakeDataById()
-  const validatorStub = makeValidator()
-  const sut = new DeleteFakeDataByIdController(deleteFakeDataByIdStub, validatorStub)
+  const sut = new DeleteFakeDataByIdController(deleteFakeDataByIdStub)
 
   return {
     sut,
-    deleteFakeDataByIdStub,
-    validatorStub
+    deleteFakeDataByIdStub
   }
 }
 
@@ -69,33 +55,6 @@ describe('DeleteFakeDataByIdController', () => {
     const { sut, deleteFakeDataByIdStub } = makeSut()
 
     jest.spyOn(deleteFakeDataByIdStub, 'deleteById').mockImplementationOnce(() => { throw new Error() })
-    const response = await sut.handle(makeFakeHttpRequest())
-
-    expect(response).toEqual(serverError(new Error()))
-  })
-
-  test('Should call Validator with correct values', async () => {
-    const { sut, validatorStub } = makeSut()
-
-    const validateSpy = jest.spyOn(validatorStub, 'validate')
-    await sut.handle(makeFakeHttpRequest())
-
-    expect(validateSpy).toHaveBeenCalledWith(makeFakeHttpRequest())
-  })
-
-  test('Should return 400 if Validator returns an Error', async () => {
-    const { sut, validatorStub } = makeSut()
-
-    jest.spyOn(validatorStub, 'validate').mockReturnValueOnce(new Error())
-    const response = await sut.handle(makeFakeHttpRequest())
-
-    expect(response).toEqual(badRequest(new Error()))
-  })
-
-  test('Should return 500 if Validator throws', async () => {
-    const { sut, validatorStub } = makeSut()
-
-    jest.spyOn(validatorStub, 'validate').mockImplementationOnce(() => { throw new Error() })
     const response = await sut.handle(makeFakeHttpRequest())
 
     expect(response).toEqual(serverError(new Error()))
