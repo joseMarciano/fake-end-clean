@@ -3,6 +3,7 @@ import { User, UserAccessToken } from '../../../../domain/model/User'
 import { Decrypter } from '../../../../data/protocols/cryptography/Decrypter'
 import { DbAuthByToken } from './DbAuthByToken'
 import { FindUserAccessRepository } from '../../../../data/protocols/user/FindUserAccessRepository'
+import { AuthByTokenError } from '../../../../domain/usecases/user/validations/AuthByTokenError'
 
 const makeFakeUser = (): User => ({
   id: 'any_id',
@@ -90,16 +91,16 @@ describe('DbAuthByToken', () => {
     await expect(promise).rejects.toThrow()
   })
 
-  test('Should return null if Decrypter returns null', async () => {
+  test('Should return AuthByTokenError if Decrypter returns null', async () => {
     const { sut, decrypterStub } = makeSut()
 
     jest.spyOn(decrypterStub, 'decrypt').mockResolvedValueOnce(null)
     const result = await sut.authByToken('any_token')
 
-    expect(result).toBeNull()
+    expect(result).toEqual(new AuthByTokenError('Fail on decrypt token'))
   })
 
-  test('Should return null if User is not active', async () => {
+  test('Should return AuthByTokenError if User is not active', async () => {
     const { sut, findUserByEmailStub } = makeSut()
 
     jest.spyOn(findUserByEmailStub, 'findByEmail').mockResolvedValueOnce({
@@ -108,7 +109,7 @@ describe('DbAuthByToken', () => {
     })
     const result = await sut.authByToken('any_token')
 
-    expect(result).toBeNull()
+    expect(result).toEqual(new AuthByTokenError('No user is found/disabled'))
   })
 
   test('Should call FindUserByEmailRepository with correct value', async () => {
@@ -129,13 +130,13 @@ describe('DbAuthByToken', () => {
     await expect(promise).rejects.toThrow()
   })
 
-  test('Should return null if FindUserByEmailRepository returns null', async () => {
+  test('Should return AuthByTokenError if FindUserByEmailRepository returns null', async () => {
     const { sut, findUserByEmailStub } = makeSut()
 
     jest.spyOn(findUserByEmailStub, 'findByEmail').mockResolvedValueOnce(null as any)
     const result = await sut.authByToken('any_token')
 
-    expect(result).toBeNull()
+    expect(result).toEqual(new AuthByTokenError('No user is found/disabled'))
   })
 
   test('Should call FindUserAccessRepository with correct value', async () => {
@@ -148,13 +149,13 @@ describe('DbAuthByToken', () => {
     expect(findUserAccessRepositoryStubSpy).toHaveBeenCalledWith('any_id', 'any_token')
   })
 
-  test('Should return null if FindUserAccessRepository returns null', async () => {
+  test('Should return AuthByTokenError if FindUserAccessRepository returns null', async () => {
     const { sut, findUserAccessRepositoryStub } = makeSut()
 
     jest.spyOn(findUserAccessRepositoryStub, 'findUserAccess').mockResolvedValueOnce(null as any)
     const result = await sut.authByToken('any_token')
 
-    expect(result).toBeNull()
+    expect(result).toEqual(new AuthByTokenError())
   })
 
   test('Should return null if no token is provided', async () => {
@@ -162,7 +163,7 @@ describe('DbAuthByToken', () => {
 
     const result = await sut.authByToken(null as unknown as string)
 
-    expect(result).toBeNull()
+    expect(result).toEqual(new AuthByTokenError('No token was provided'))
   })
 
   test('Should return User if FindUserAccessRepository returns a UserAccessToken', async () => {
