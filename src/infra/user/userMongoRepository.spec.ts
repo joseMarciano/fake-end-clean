@@ -154,6 +154,16 @@ describe('UserMongoRepository', () => {
     })
   })
 
+  describe('INTERFACE DeleteUserRefreshTokensByUserIdRepository', () => {
+    test('Should add a delete all userRefreshTokens by userId on success', async () => {
+      const { sut } = makeSut()
+      await userRefreshTokenCollection.insertOne({ userId: 'any_id' })
+      await sut.deleteRefreshTokensByUserId('any_id')
+      const userAccessToken = await userRefreshTokenCollection.findOne() as any
+      expect(userAccessToken).toBeNull()
+    })
+  })
+
   describe('INTERFACE FindUserAccessRepository', () => {
     test('Should findUserAccess on success', async () => {
       await userAccessTokenCollection.insertOne({
