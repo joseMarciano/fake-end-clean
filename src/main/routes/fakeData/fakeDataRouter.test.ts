@@ -217,7 +217,7 @@ describe('projectRoute', () => {
       authorization = ''
     })
 
-    test('Should return 200 on has project', async () => {
+    test('Should return 200 on has FakeData', async () => {
       const response = await request(app)
         .get(`${defaultPath}/page`)
         .set('Authorization', authorization)
@@ -269,7 +269,7 @@ describe('projectRoute', () => {
       authorization = ''
     })
 
-    test('Should return 200 on has project', async () => {
+    test('Should return 200 on has FakeData', async () => {
       const response = await request(app)
         .get(`${defaultPath}/find-by-id/${fakeDataId}`)
         .set('Authorization', authorization)
@@ -290,6 +290,38 @@ describe('projectRoute', () => {
 
       expect(response.status).toBe(200)
       expect(response.body).toEqual({})
+    })
+  })
+
+  describe('*/delete-by-id/:id GET', () => {
+    let fakeDataId = ''
+    beforeEach(async () => {
+      await clearCollections()
+      await createContextAuthentication()
+
+      fakeDataId = (await fakeDataCollection.insertOne(
+        {
+          project: resultProjectInsert.insertedId.toString(),
+          resource: resultResourceInsert.insertedId.toString(),
+          content: {
+            field: 123,
+            otherField: 'name'
+          }
+        })).insertedId.toString()
+    })
+
+    afterEach(async () => {
+      await clearCollections()
+      authorization = ''
+    })
+
+    test('Should return 204 on FakeData is deleted ', async () => {
+      const response = await request(app)
+        .delete(`${defaultPath}/delete-by-id/${fakeDataId}`)
+        .set('Authorization', authorization)
+
+      expect(response.status).toBe(204)
+      expect(await fakeDataCollection.findOne({})).toBeFalsy()
     })
   })
 })
