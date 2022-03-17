@@ -1,6 +1,6 @@
 import { FindUserByEmailRepository } from '../../data/protocols/user/FindUserByEmailRepository'
 import { AddUserRepository } from '../../data/protocols/user/AddUserRepository'
-import { User, UserAccessToken } from '../../domain/model/User'
+import { User, UserAccessToken, UserRefreshToken } from '../../domain/model/User'
 import { UserModel } from '../../domain/usecases/user/add/AddUser'
 import { MongoHelper } from '../db/mongo/mongoHelper'
 import { AddUserRefreshTokenModel, AddUserRefreshTokenRepository } from '../../data/protocols/user/AddUserRefreshTokenRepository'
@@ -11,6 +11,7 @@ import { FindUserAccessRepository } from '../../data/protocols/user/FindUserAcce
 import { FindUserByIdRepository } from '../../data/protocols/user/FindUserByIdRepository'
 import { DeleteUserAccessTokensByUserIdRepository } from '../../data/protocols/user/DeleteUserAccessTokensByUserIdRepository'
 import { DeleteUserRefreshTokensByUserIdRepository } from 'src/data/protocols/user/DeleteUserRefreshTokensByUserIdRepository'
+import { FindRefreshTokenByValueRepository } from 'src/data/protocols/user/FindRefreshTokenByValueRepository'
 
 interface BasicRepository
   extends
@@ -22,7 +23,8 @@ interface BasicRepository
   AddUserAccessRepository,
   DeleteUserAccessTokensByUserIdRepository,
   DeleteUserRefreshTokensByUserIdRepository,
-  FindUserAccessRepository
+  FindUserAccessRepository,
+  FindRefreshTokenByValueRepository
 {}
 export class UserMongoRespository implements BasicRepository {
   async add (userModel: UserModel): Promise<User> {
@@ -57,6 +59,22 @@ export class UserMongoRespository implements BasicRepository {
       ...data,
       createdAt: new Date()
     })
+  }
+
+  async findRefreshTokenByValue (refreshToken: string): Promise<UserRefreshToken> {
+    const collection = await MongoHelper.getCollection('usersRefreshToken')
+
+    const result = await collection.findOne({
+      refreshToken
+    }) as any
+
+    if (!result) return null as any
+    const { _id, ...obj } = result
+
+    return {
+      id: _id.toString(),
+      ...obj
+    }
   }
 
   async activeById (id: string): Promise<User> {
