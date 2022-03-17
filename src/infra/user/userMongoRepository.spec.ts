@@ -143,6 +143,17 @@ describe('UserMongoRepository', () => {
       expect(userAccessToken.userId).toBe('any_id')
     })
   })
+
+  describe('INTERFACE DeleteUserAccessTokensByUserIdRepository', () => {
+    test('Should add a delete all userAccessTokens by userId on success', async () => {
+      const { sut } = makeSut()
+      await userAccessTokenCollection.insertOne({ userId: 'any_id' })
+      await sut.deleteAccessTokensByUserId('any_id')
+      const userAccessToken = await userAccessTokenCollection.findOne() as any
+      expect(userAccessToken).toBeNull()
+    })
+  })
+
   describe('INTERFACE FindUserAccessRepository', () => {
     test('Should findUserAccess on success', async () => {
       await userAccessTokenCollection.insertOne({
