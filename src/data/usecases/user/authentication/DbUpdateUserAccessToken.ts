@@ -14,6 +14,8 @@ export class DbUpdateUserAccessToken implements UpdateUserAccessToken {
   ) {}
 
   async updateUserAccessToken (refreshToken: string): Promise<string | UpdateAccessTokenError> {
+    if (!refreshToken) return new UpdateAccessTokenError('Refreshtoken was not provided')
+
     const userRefreshToken = await this.findRefreshTokenByValueRepository.findRefreshTokenByValue(refreshToken)
 
     if (!userRefreshToken) return new UpdateAccessTokenError('Refreshtoken expired')
