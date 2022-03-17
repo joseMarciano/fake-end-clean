@@ -3,11 +3,12 @@ import request from 'supertest'
 import { MongoHelper } from '../../../infra/db/mongo/mongoHelper'
 import { JwtAdapter } from '../../../infra/cryptography/jwt/JwtAdapter'
 import { Collection, ObjectId } from 'mongodb'
-import jwt from 'jsonwebtoken'
+import jwt, { sign } from 'jsonwebtoken'
 import { validate } from 'uuid'
 
 let userCollection: Collection
 let userAccessCollection: Collection
+let userRefreshCollection: Collection
 const defaultPath = process.env.DEFAULT_PATH as string
 const jwtAdapter = new JwtAdapter('secret')
 
@@ -22,8 +23,10 @@ const disconnectDb = async (): Promise<void> => {
 const clearCollections = async (): Promise<void> => {
   userCollection = await MongoHelper.getCollection('users')
   userAccessCollection = await MongoHelper.getCollection('usersAccessToken')
+  userRefreshCollection = await MongoHelper.getCollection('usersRefreshToken')
   await userCollection.deleteMany({})
   await userAccessCollection.deleteMany({})
+  await userRefreshCollection.deleteMany({})
 }
 
 describe('loginRouter', () => {
@@ -276,6 +279,54 @@ describe('loginRouter', () => {
 
       expect(response.status).toBe(400)
       expect(response.body).toEqual({ message: 'User is not active yet', error: 'LoginUserError' })
+    })
+  })
+
+  describe('POST /logout', () => {
+    let insertedId: string
+    let authorization: string
+
+    const createContextAuthentication = async (): Promise<any> => {
+      const result = await userCollection.insertOne({ email: 'any_email@mail.com', name: 'any_name', password: '123', isActive: true })
+      const token = sign({ id: result.insertedId.toString(), email: 'any_email@mail.com', name: 'any_name' }, process.env.JWT_SECRET_KEY as string)
+      await userAccessCollection.insertOne({ userId: result.insertedId.toString(), accessToken: token })
+      await userRefreshCollection.insertOne({ userId: result.insertedId.toString(), refreshToken: 'any_token' })
+      authorization = token
+
+      return {
+        userIdContext: result.insertedId.toString()
+      }
+    }
+
+    beforeEach(async () => {
+      await clearCollections()
+      insertedId = (await createContextAuthentication()).userIdContext
+    })
+
+    test('Should return an 204 if logout succeeds', async () => {
+      const response = await request(app)
+        .post(`${defaultPath}/auth/logout`)
+        .set('Authorization', authorization)
+
+      expect(response.status).toBe(204)
+    })
+
+    test('Should delete all userAccessTokens by userId', async () => {
+      const response = await request(app)
+        .post(`${defaultPath}/auth/logout`)
+        .set('Authorization', authorization)
+
+      expect(response.status).toBe(204)
+      expect(await userAccessCollection.findOne({ userId: insertedId })).toBeNull()
+    })
+
+    test('Should delete all userRefreshTokens by userId', async () => {
+      const response = await request(app)
+        .post(`${defaultPath}/auth/logout`)
+        .set('Authorization', authorization)
+
+      expect(response.status).toBe(204)
+      expect(await userRefreshCollection.findOne({ userId: insertedId })).toBeNull()
     })
   })
 })
