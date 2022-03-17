@@ -5,6 +5,7 @@ import { controllerAdapter } from '../../adapters/controllers/controllerAdapter'
 import { makeAddFakeDataController } from '../../factories/controller/fakeData/add/addFakeDataControllerFactory'
 import { makePageFakeDataController } from '../../../main/factories/controller/fakeData/page/pageFakeDataControllerFactory'
 import { makeFindFakeDataByIdController } from '../../../main/factories/controller/fakeData/findById/findFakeDataByIdControllerFactory'
+import { makeDeleteFakeDataByIdController } from '../../../main/factories/controller/fakeData/remove/deleteFakeDataByIdControllerFactory'
 
 export default Router()
   .post(/^.+\/create$/, controllerAdapter(makeAddFakeDataController()))
@@ -12,3 +13,4 @@ export default Router()
   .get(/^.+\/list-all$/, controllerAdapter(makeFindAllFakeDataController()))
   .get(/^.+\/page$/, controllerAdapter(makePageFakeDataController()))
   .get('*/find-by-id/:id', controllerAdapter(makeFindFakeDataByIdController()))
+  .delete('*/delete-by-id/:id', controllerAdapter(makeDeleteFakeDataByIdController()))
