@@ -73,8 +73,8 @@ describe('projectRoute', () => {
       .post(`${defaultPath}213`)
       .send({ description: 'Project to ue' })
 
-    expect(response.status).toBe(403)
-    expect(response.body).toEqual({ statusCode: 403 })
+    expect(response.status).toBe(401)
+    expect(response.body).toEqual({ statusCode: 401 })
   })
 
   describe('/^.+\/create$/ POST', () => {
