@@ -126,6 +126,12 @@ describe('DbUpdateUserAccessToken', () => {
     expect(result).toEqual(new UpdateAccessTokenError())
   })
 
+  test('Should return UpdateUserAccessTokenError if refreshtoken is null', async () => {
+    const { sut } = makeSut()
+    const result = await sut.updateUserAccessToken(null as any)
+    expect(result).toEqual(new UpdateAccessTokenError('Refreshtoken was not provided'))
+  })
+
   test('Should throws if FindUserByIdRepository throw', async () => {
     const { sut, findUserByIdRepositoryStub } = makeSut()
     jest.spyOn(findUserByIdRepositoryStub, 'findById').mockImplementationOnce(() => { throw new Error() })
