@@ -198,6 +198,34 @@ describe('UserMongoRepository', () => {
       expect(userAccessToken).toBeNull()
     })
   })
+
+  describe('INTERFACE FindRefreshTokenByValueRepository', () => {
+    test('Should findRefreshTokenByValue on success', async () => {
+      const refreshTokenModel = {
+        refreshToken: 'any_access_token',
+        userId: 'any_id',
+        createdAt: new Date()
+      }
+
+      const insertedId = (await userRefreshTokenCollection.insertOne({ ...refreshTokenModel })).insertedId.toString()
+
+      const { sut } = makeSut()
+
+      const refreshToken = await sut.findRefreshTokenByValue('any_access_token')
+      expect(refreshToken).toEqual({
+        id: insertedId,
+        ...refreshTokenModel
+      })
+    })
+
+    test('Should return null on findRefreshTokenByValue fails', async () => {
+      const { sut } = makeSut()
+
+      const refreshToken = await sut.findRefreshTokenByValue('any_access_token')
+      expect(refreshToken).toBeNull()
+    })
+  })
+
   describe('INTERFACE FindUserByIdRepository', () => {
     test('Should findUserById on success', async () => {
       const result = await userCollection.insertOne(makeFakeUserModel())
