@@ -11,11 +11,11 @@ export class AuthController implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const user = await this.auth.authByToken(httpRequest.headers.authorization)
+      const result = await this.auth.authByToken(httpRequest.headers.authorization)
 
-      if (!user) return unauthorized()
+      if (result instanceof Error) return unauthorized(result)
 
-      await this.applicationContext.setUser(user)
+      await this.applicationContext.setUser(result)
 
       return noContent()
     } catch (error) {
