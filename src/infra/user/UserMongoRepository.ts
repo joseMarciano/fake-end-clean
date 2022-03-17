@@ -10,6 +10,7 @@ import { AddUserAccessRepository, AddUserAccessTokenModel } from '../../data/pro
 import { FindUserAccessRepository } from '../../data/protocols/user/FindUserAccessRepository'
 import { FindUserByIdRepository } from '../../data/protocols/user/FindUserByIdRepository'
 import { DeleteUserAccessTokensByUserIdRepository } from '../../data/protocols/user/DeleteUserAccessTokensByUserIdRepository'
+import { DeleteUserRefreshTokensByUserIdRepository } from 'src/data/protocols/user/DeleteUserRefreshTokensByUserIdRepository'
 
 interface BasicRepository
   extends
@@ -20,6 +21,7 @@ interface BasicRepository
   ActiveUserByIdRepository,
   AddUserAccessRepository,
   DeleteUserAccessTokensByUserIdRepository,
+  DeleteUserRefreshTokensByUserIdRepository,
   FindUserAccessRepository
 {}
 export class UserMongoRespository implements BasicRepository {
@@ -98,6 +100,14 @@ export class UserMongoRespository implements BasicRepository {
 
   async deleteAccessTokensByUserId (userId: string): Promise<void> {
     const collection = await MongoHelper.getCollection('usersAccessToken')
+
+    await collection.deleteMany({
+      userId
+    })
+  }
+
+  async deleteRefreshTokensByUserId (userId: string): Promise<void> {
+    const collection = await MongoHelper.getCollection('usersRefreshToken')
 
     await collection.deleteMany({
       userId
