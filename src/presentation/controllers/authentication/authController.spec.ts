@@ -75,13 +75,13 @@ describe('Authentication', () => {
     expect(httpResponse).toEqual(serverError(new Error()))
   })
 
-  test('Should return 401 if AuthByToken retuns null', async () => {
+  test('Should return 401 if AuthByToken retuns Error', async () => {
     const { sut, authByTokenStub } = makeSut()
 
-    jest.spyOn(authByTokenStub, 'authByToken').mockResolvedValueOnce(null)
+    jest.spyOn(authByTokenStub, 'authByToken').mockResolvedValueOnce(new Error())
     const httpResponse = await sut.handle(makeFakeHttpRequest())
 
-    expect(httpResponse).toEqual(unauthorized())
+    expect(httpResponse).toEqual(unauthorized(new Error()))
   })
 
   test('Should return 204 if AuthByToken retuns User', async () => {
