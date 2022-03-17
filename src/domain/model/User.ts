@@ -12,3 +12,9 @@ export interface UserAccessToken {
   userId: string
   createdAt: Date
 }
+export interface UserRefreshToken {
+  id: string
+  refreshToken: string
+  userId: string
+  createdAt: Date
+}
