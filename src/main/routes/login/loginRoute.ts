@@ -10,7 +10,7 @@ export const loginFreeRoute = Router()
   .post('/signup', controllerAdapter(makeSignUpController()))
   .get('/active', controllerAdapter(makeActiveSignUpController()))
   .post('/login', controllerAdapter(makeLoginController()))
-  .post('/access-token', controllerAdapter(makeUpdateAccessTokenController()))
+  .put('/access-token', controllerAdapter(makeUpdateAccessTokenController()))
 
 export const loginAuthRoute = Router()
   .post('/', controllerAdapter(makeLogOutController()))

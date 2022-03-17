@@ -330,7 +330,7 @@ describe('loginRouter', () => {
     })
   })
 
-  describe('POST /access-token', () => {
+  describe('PUT /access-token', () => {
     let insertedId: string
     const insertFakeUser = async (): Promise<string> => {
       const result = await userCollection.insertOne({
@@ -359,7 +359,7 @@ describe('loginRouter', () => {
 
     test('Should return an 200 on updateAccessToken success', async () => {
       const response = await request(app)
-        .post(`${defaultPath}/access-token`)
+        .put(`${defaultPath}/access-token`)
         .send(createRefreshTokenBody())
 
       expect(response.status).toBe(200)
@@ -368,7 +368,7 @@ describe('loginRouter', () => {
 
     test('Should return an 401 if refresh token is not provided', async () => {
       const response = await request(app)
-        .post(`${defaultPath}/access-token`)
+        .put(`${defaultPath}/access-token`)
         .send()
 
       expect(response.status).toBe(401)
@@ -381,7 +381,7 @@ describe('loginRouter', () => {
     test('Should return an 401 if refresh token is expired', async () => {
       await userRefreshCollection.deleteMany({})
       const response = await request(app)
-        .post(`${defaultPath}/access-token`)
+        .put(`${defaultPath}/access-token`)
         .send(createRefreshTokenBody())
 
       expect(response.status).toBe(401)
@@ -394,7 +394,7 @@ describe('loginRouter', () => {
     test('Should return an 401 if user not exists', async () => {
       await userCollection.deleteMany({})
       const response = await request(app)
-        .post(`${defaultPath}/access-token`)
+        .put(`${defaultPath}/access-token`)
         .send(createRefreshTokenBody())
 
       expect(response.status).toBe(401)
@@ -403,62 +403,5 @@ describe('loginRouter', () => {
         error: 'UpdateAccessTokenError'
       })
     })
-
-    // test('Should return an accessToken if password not match', async () => {
-    //   const response = await request(app)
-    //     .post(`${defaultPath}/login`)
-    //     .send(createLoginBody())
-
-    //   expect(response.status).toBe(200)
-    //   expect(jwt.verify(response.body.accessToken, process.env.JWT_SECRET_KEY as string)).toBeTruthy()
-    //   expect(validate(response.body.refreshToken)).toBeTruthy()
-    // })
-
-    // test('Should return an 400 if no email is provided', async () => {
-    //   const response = await request(app)
-    //     .post(`${defaultPath}/login`)
-    //     .send({ password: '123456789' })
-
-    //   expect(response.status).toBe(400)
-    //   expect(response.body).toEqual({ message: 'Missing param: email', error: 'MissingParamError' })
-    // })
-
-    // test('Should return an 400 if no password is provided', async () => {
-    //   const response = await request(app)
-    //     .post(`${defaultPath}/login`)
-    //     .send({ email: 'any_email@mail.com' })
-
-    //   expect(response.status).toBe(400)
-    //   expect(response.body).toEqual({ message: 'Missing param: password', error: 'MissingParamError' })
-    // })
-
-    // test('Should return an 400 if email not exists', async () => {
-    //   const response = await request(app)
-    //     .post(`${defaultPath}/login`)
-    //     .send({ email: 'any_not_exists_email@mail.com', password: '123456789' })
-
-    //   expect(response.status).toBe(400)
-    //   expect(response.body).toEqual({ message: 'Email or password are incorrects', error: 'LoginUserError' })
-    // })
-
-    // test('Should return an 400 if password not match', async () => {
-    //   const response = await request(app)
-    //     .post(`${defaultPath}/login`)
-    //     .send({ email: 'any_email@mail.com', password: '123' })
-
-    //   expect(response.status).toBe(400)
-    //   expect(response.body).toEqual({ message: 'Email or password are incorrects', error: 'LoginUserError' })
-    // })
-
-    // test('Should return an 400 if User is not active', async () => {
-    //   await userCollection.findOneAndUpdate({ _id: new ObjectId(insertedId) }, { $set: { isActive: false } })
-
-    //   const response = await request(app)
-    //     .post(`${defaultPath}/login`)
-    //     .send({ email: 'any_email@mail.com', password: '123456789' })
-
-    //   expect(response.status).toBe(400)
-    //   expect(response.body).toEqual({ message: 'User is not active yet', error: 'LoginUserError' })
-    // })
   })
 })
