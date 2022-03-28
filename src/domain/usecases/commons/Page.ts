@@ -13,7 +13,7 @@ export interface Page<T> {
 
 export const PageUtils = {
   buildPage<T> (pageable: Pageable, total: number, arrayResults: T[] = []): Page<T> {
-    const hasNext = total - ((pageable.offset * pageable.limit) + arrayResults.length) > 0
+    const hasNext = total - ((pageable.offset || 1) * pageable.limit) > 0
     return {
       total,
       content: arrayResults,
