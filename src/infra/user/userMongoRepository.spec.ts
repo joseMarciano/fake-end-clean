@@ -52,7 +52,7 @@ describe('UserMongoRepository', () => {
       expect(user).toBeTruthy()
       expect(user.id).toBeTruthy()
       expect(user.name).toBe('any_name')
-      expect(user.password).toBe('any_password')
+      expect(user.password).toBe('any_password-jenkins-test')
     })
   })
   describe('INTERFACE FindUserByEmailRepository', () => {
